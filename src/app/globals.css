@@ -1,14 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  /* Design Tokens from DESIGN.md */
-  --bg-canvas: #0B0F19;
-  --bg-surface: #161D30;
-  --border-muted: #24314D;
-  --brand-orange: #F06A28;
-  --brand-green: #4BB583;
-  --text-primary: #F9FAFB;
-  --text-secondary: #9CA3AF;
+  /* Mintlify Design System Colors */
+  --bg-canvas: #ffffff;
+  --bg-surface: #f7f7f7;
+  --border-muted: #e5e5e5;
+  --brand-orange: #00d4a4; /* Map old orange brand token to Mintlify brand green */
+  --brand-green: #00b48a;  /* Map old green token to Mintlify brand green deep */
+  --brand-tag: #3772cf;    /* Brand tag blue */
+  --brand-error: #d45656;  /* Brand error red */
+  --text-primary: #0a0a0a;  /* Ink */
+  --text-secondary: #5a5a5c; /* Steel */
+  --hero-sky-from: #87a8c8;
+  --hero-sky-to: #f5e9d8;
 }
 
 @theme {
@@ -17,8 +21,12 @@
   --color-muted: var(--border-muted);
   --color-brand-orange: var(--brand-orange);
   --color-brand-green: var(--brand-green);
+  --color-brand-tag: var(--brand-tag);
+  --color-brand-error: var(--brand-error);
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
+  --color-hero-sky-from: var(--hero-sky-from);
+  --color-hero-sky-to: var(--hero-sky-to);
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
@@ -35,7 +43,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbars matching the premium digital canvas style */
+/* Custom scrollbars matching the premium Mintlify style */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
