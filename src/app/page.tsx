@@ -319,25 +319,25 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 py-24 md:py-32 flex flex-col items-center text-center">
           
           {/* Tagline Badge */}
-          <div className="inline-flex items-center space-x-2 border border-muted bg-canvas/60 backdrop-blur-sm px-3.5 py-1.5 rounded-full mb-8 shadow-sm">
+          <div className="inline-flex items-center space-x-2 border border-muted bg-surface/60 backdrop-blur-sm px-3.5 py-1.5 rounded-full mb-8 shadow-sm">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-green opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-green"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-orange opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-orange"></span>
             </span>
-            <span className="text-[10px] font-mono tracking-widest text-text-secondary uppercase">
+            <span className="text-[10px] font-bold font-mono tracking-widest text-text-secondary uppercase">
               {t.hero.tag}
             </span>
           </div>
 
           {/* Heading */}
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight text-text-primary max-w-5xl leading-[1.1] mb-8">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight text-text-primary max-w-5xl leading-[1.1] mb-8">
             {lang === "en" ? (
               <>
-                Bringing Vietnam’s <span className="text-brand-green">Finest</span> to the Global Stage.
+                Bringing Vietnam’s <span className="text-brand-orange">Finest</span> to the Global Stage.
               </>
             ) : (
               <>
-                Đưa Sản Phẩm Việt <span className="text-brand-green">Vươn Tầm</span> Thế Giới.
+                Đưa Sản Phẩm Việt <span className="text-brand-orange">Vươn Tầm</span> Thế Giới.
               </>
             )}
           </h1>
@@ -350,7 +350,7 @@ export default function Home() {
           {/* Action CTA */}
           <button
             onClick={handleScrollToWaitlist}
-            className="group h-14 px-8 rounded-full bg-text-primary hover:bg-[#1c1c1e] text-canvas font-semibold transition-all duration-200 flex items-center justify-center space-x-3 max-w-xs border border-text-primary hover:scale-[1.02] active:scale-[0.98] cursor-pointer shadow-md"
+            className="group h-14 px-8 rounded-lg bg-text-primary hover:bg-[#1a1a1a] text-canvas font-semibold transition-all duration-200 flex items-center justify-center space-x-3 max-w-xs border border-text-primary hover:scale-[1.02] active:scale-[0.98] cursor-pointer shadow-md"
           >
             <span>{t.hero.cta}</span>
             <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -365,10 +365,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 py-20 md:py-24">
           
           <div className="text-center mb-16">
-            <span className="text-xs font-mono tracking-widest text-brand-green uppercase block mb-3">
+            <span className="text-xs font-bold font-mono tracking-widest text-brand-orange uppercase block mb-3">
               {t.valueProp.subtitle}
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-text-primary">
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-text-primary">
               {t.valueProp.title}
             </h2>
           </div>
@@ -377,18 +377,18 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             
             {/* Left Card: Global Buyers */}
-            <div className="bg-canvas border border-muted rounded-lg p-8 md:p-10 flex flex-col justify-between transition-all duration-300 hover:border-brand-orange/60 hover:shadow-lg hover:shadow-brand-orange/5 relative overflow-hidden group">
+            <div className="bg-surface border border-muted rounded-lg p-8 md:p-10 flex flex-col justify-between transition-all duration-300 hover:border-brand-orange/60 hover:shadow-lg hover:shadow-brand-orange/5 relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-3 text-[9px] font-mono text-text-muted select-none">
                 [ BUY-TRACK.LOGIC ]
               </div>
               
               <div>
-                <div className="inline-flex items-center px-2.5 py-1 rounded-md border border-brand-orange/20 bg-brand-orange/10 text-brand-green font-mono text-[10px] sm:text-xs tracking-wider uppercase mb-6">
+                <div className="inline-flex items-center px-3 py-1.5 rounded-md border border-brand-orange/30 bg-brand-orange/15 text-brand-orange font-bold font-mono text-xs tracking-wider uppercase mb-6 shadow-xs">
                   {t.valueProp.buyers.tag}
                 </div>
                 
                 <h3 className="text-2xl font-bold text-text-primary mb-3 flex items-center gap-3">
-                  <Globe className="w-7 h-7 text-brand-green shrink-0" strokeWidth={2.25} />
+                  <Globe className="w-7 h-7 text-brand-orange shrink-0" strokeWidth={2.25} />
                   <span>{t.valueProp.buyers.title}</span>
                 </h3>
                 
@@ -400,7 +400,7 @@ export default function Home() {
                 <ul className="space-y-5 text-sm">
                   {t.valueProp.buyers.bullets.map((bullet, idx) => (
                     <li key={idx} className="flex items-start space-x-3.5">
-                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-brand-orange/10 text-brand-green border border-brand-orange/20 mt-0.5">
+                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-brand-orange/10 text-brand-orange border border-brand-orange/20 mt-0.5">
                         <Check className="w-3.5 h-3.5" strokeWidth={3} />
                       </div>
                       <div className="text-text-secondary leading-relaxed">
@@ -415,24 +415,24 @@ export default function Home() {
               </div>
 
               <div className="mt-8 pt-6 border-t border-muted flex items-center space-x-3 text-xs font-mono text-text-secondary/80">
-                <Check className="text-brand-green shrink-0" />
+                <Check className="text-brand-orange shrink-0" />
                 <span>Zero Pricing Surprises (Landed Costs Included)</span>
               </div>
             </div>
 
             {/* Right Card: Vietnamese Sellers */}
-            <div className="bg-canvas border border-muted rounded-lg p-8 md:p-10 flex flex-col justify-between transition-all duration-300 hover:border-brand-tag/60 hover:shadow-lg hover:shadow-brand-tag/5 relative overflow-hidden group">
+            <div className="bg-surface border border-muted rounded-lg p-8 md:p-10 flex flex-col justify-between transition-all duration-300 hover:border-brand-blue/60 hover:shadow-lg hover:shadow-brand-blue/5 relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-3 text-[9px] font-mono text-text-muted select-none">
                 [ SELL-FULFILL.SYS ]
               </div>
 
               <div>
-                <div className="inline-flex items-center px-2.5 py-1 rounded-md border border-brand-tag/20 bg-brand-tag/10 text-brand-tag font-mono text-[10px] sm:text-xs tracking-wider uppercase mb-6">
+                <div className="inline-flex items-center px-3 py-1.5 rounded-md border border-brand-blue/30 bg-brand-blue/15 text-brand-blue font-bold font-mono text-xs tracking-wider uppercase mb-6 shadow-xs">
                   {t.valueProp.sellers.tag}
                 </div>
                 
                 <h3 className="text-2xl font-bold text-text-primary mb-3 flex items-center gap-3">
-                  <Truck className="w-7 h-7 text-brand-tag shrink-0" strokeWidth={2.25} />
+                  <Truck className="w-7 h-7 text-brand-blue shrink-0" strokeWidth={2.25} />
                   <span>{t.valueProp.sellers.title}</span>
                 </h3>
                 
@@ -444,7 +444,7 @@ export default function Home() {
                 <ul className="space-y-5 text-sm">
                   {t.valueProp.sellers.bullets.map((bullet, idx) => (
                     <li key={idx} className="flex items-start space-x-3.5">
-                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-brand-tag/10 text-brand-tag border border-brand-tag/20 mt-0.5">
+                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-brand-blue/10 text-brand-blue border border-brand-blue/20 mt-0.5">
                         <Check className="w-3.5 h-3.5" strokeWidth={3} />
                       </div>
                       <div className="text-text-secondary leading-relaxed">
@@ -459,7 +459,7 @@ export default function Home() {
               </div>
 
               <div className="mt-8 pt-6 border-t border-muted flex items-center space-x-3 text-xs font-mono text-text-secondary/80">
-                <Check className="text-brand-tag shrink-0" />
+                <Check className="text-brand-blue shrink-0" />
                 <span>100% Hands-Free Local Pickup & International Logistics</span>
               </div>
             </div>
@@ -471,37 +471,32 @@ export default function Home() {
       {/* ==========================================
           4. THE INTERACTIVE WAITLIST FORM BLOCK
           ========================================== */}
-      <section ref={waitlistRef} className="border-b border-muted bg-surface">
+      <section ref={waitlistRef} className="border-b border-muted bg-surface-alt">
         <div className="max-w-4xl mx-auto px-6 py-24 md:py-28 flex flex-col items-center">
           
           <div className="text-center mb-10">
-            <span className="text-xs font-mono tracking-widest text-brand-green uppercase block mb-3">
+            <span className="text-xs font-bold font-mono tracking-widest text-brand-orange uppercase block mb-3">
               {t.waitlist.subtitle}
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-text-primary mb-4">
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-text-primary mb-4">
               {t.waitlist.title}
             </h2>
           </div>
 
           {/* Form Container (Flat elevated panel surface with sharp border) */}
-          <div className="w-full bg-canvas border border-muted rounded-lg p-6 sm:p-8 md:p-12 relative shadow-md shadow-[#00d4a4]/5">
-            
-            {/* Card edge decorative identifier */}
-            <div className="absolute top-0 left-6 transform -translate-y-1/2 bg-surface px-3 border-x border-muted font-mono text-[9px] text-text-secondary/80">
-              KIALNA.REG_PORTAL_V1
-            </div>
+          <div className="w-full bg-surface border border-muted rounded-lg p-6 sm:p-8 md:p-12 relative shadow-md shadow-brand-orange/5">
 
             {/* Segmented switches at the top */}
-            <div className="grid grid-cols-2 p-1 bg-surface border border-muted rounded-full mb-8">
+            <div className="grid grid-cols-2 p-1 bg-surface-alt border border-muted rounded-full mb-8">
               <button
                 type="button"
                 onClick={() => {
                   setRole("shop");
                   if (isSubmitted) handleResetForm();
                 }}
-                className={`py-3 text-center text-xs sm:text-sm font-semibold rounded-full transition-all duration-200 cursor-pointer ${
+                className={`py-3 text-center text-xs sm:text-sm font-bold rounded-full transition-all duration-200 cursor-pointer ${
                   role === "shop"
-                    ? "bg-text-primary text-canvas shadow-sm"
+                    ? "bg-text-primary text-canvas shadow-xs"
                     : "text-text-secondary hover:text-text-primary"
                 }`}
               >
@@ -513,9 +508,9 @@ export default function Home() {
                   setRole("sell");
                   if (isSubmitted) handleResetForm();
                 }}
-                className={`py-3 text-center text-xs sm:text-sm font-semibold rounded-full transition-all duration-200 cursor-pointer ${
+                className={`py-3 text-center text-xs sm:text-sm font-bold rounded-full transition-all duration-200 cursor-pointer ${
                   role === "sell"
-                    ? "bg-brand-orange text-text-primary shadow-sm"
+                    ? "bg-brand-orange text-white shadow-xs"
                     : "text-text-secondary hover:text-text-primary"
                 }`}
               >
@@ -524,7 +519,7 @@ export default function Home() {
             </div>
 
             {/* Dynamic Role Description */}
-            <p className="text-sm text-text-secondary bg-surface border-l-2 border-brand-orange p-4 mb-8 font-mono leading-relaxed rounded-r-md">
+            <p className="text-sm text-text-secondary bg-surface-alt border-l-2 border-brand-orange p-4 mb-8 font-mono leading-relaxed rounded-r-md">
               {role === "shop" ? t.waitlist.descBuyer : t.waitlist.descSeller}
             </p>
 
@@ -611,10 +606,10 @@ export default function Home() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`w-full min-h-[48px] rounded-full font-semibold transition-all duration-200 cursor-pointer flex items-center justify-center space-x-2 border ${
+                    className={`w-full min-h-[48px] rounded-lg font-semibold transition-all duration-200 cursor-pointer flex items-center justify-center space-x-2 border ${
                       role === "shop"
-                        ? "bg-text-primary border-text-primary hover:bg-[#1c1c1e] text-canvas hover:scale-[1.01] active:scale-[0.99] shadow-sm"
-                        : "bg-brand-orange border-brand-orange hover:bg-brand-green text-text-primary hover:scale-[1.01] active:scale-[0.99] shadow-sm"
+                        ? "bg-text-primary border-text-primary hover:bg-[#1a1a1a] text-canvas hover:scale-[1.01] active:scale-[0.99] shadow-sm"
+                        : "bg-brand-orange border-brand-orange hover:bg-brand-orange/90 text-white hover:scale-[1.01] active:scale-[0.99] shadow-sm"
                     } disabled:opacity-50 disabled:pointer-events-none`}
                   >
                     {isSubmitting ? (
@@ -668,8 +663,8 @@ export default function Home() {
                 key={idx} 
                 className="bg-surface border border-muted rounded-lg p-6 flex flex-col space-y-3 hover:border-brand-orange/40 hover:shadow-md transition-all duration-200"
               >
-                <div className="inline-flex items-center space-x-2 text-brand-green font-mono text-[10px] tracking-widest uppercase">
-                  <Zap className="w-3.5 h-3.5 shrink-0 text-brand-green" />
+                <div className="inline-flex items-center space-x-2 text-brand-orange font-mono text-[10px] tracking-widest uppercase">
+                  <Zap className="w-3.5 h-3.5 shrink-0 text-brand-orange" />
                   <span>{item.code}</span>
                 </div>
                 <h4 className="text-lg font-bold text-text-primary">
@@ -696,8 +691,8 @@ export default function Home() {
           
           {/* Operational Status Dot */}
           <div className="flex items-center space-x-2 border border-muted rounded-full px-3 py-1 bg-surface">
-            <span className="w-1.5 h-1.5 rounded-full bg-brand-green animate-pulse" />
-            <span className="text-[10px] text-brand-green">{t.footer.status}</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[10px] text-emerald-600 font-semibold">{t.footer.status}</span>
           </div>
         </div>
       </footer>

@@ -1,35 +1,43 @@
 @import "tailwindcss";
 
 :root {
-  /* Mintlify Design System Colors */
-  --bg-canvas: #ffffff;
-  --bg-surface: #f7f7f7;
-  --border-muted: #e5e5e5;
-  --brand-orange: #00d4a4; /* Map old orange brand token to Mintlify brand green */
-  --brand-green: #00b48a;  /* Map old green token to Mintlify brand green deep */
-  --brand-tag: #3772cf;    /* Brand tag blue */
-  --brand-error: #d45656;  /* Brand error red */
-  --text-primary: #0a0a0a;  /* Ink */
-  --text-secondary: #5a5a5c; /* Steel */
-  --hero-sky-from: #87a8c8;
-  --hero-sky-to: #f5e9d8;
+  /* Intercom Editorial Design System Colors */
+  --bg-canvas: #f5f1ec;       /* Cream background */
+  --bg-surface: #ffffff;      /* Pure white for floating cards */
+  --bg-surface-alt: #ebe7e1;  /* Slightly darker cream for alt panels/tabs */
+  --border-muted: #d3cec6;    /* Hairline */
+  --border-soft: #ebe7e1;     /* Soft hairline */
+  --brand-orange: #ff5600;    /* Fin Orange */
+  --brand-green: #ff5600;     /* Map green to brand orange for premium consistency */
+  --brand-blue: #0007cb;      /* Saturated Brand Blue */
+  --brand-tag: #0007cb;       /* Map brand tag to Brand Blue */
+  --brand-error: #c41c1c;     /* Semantic error red */
+  --text-primary: #111111;    /* Ink */
+  --text-secondary: #626260;  /* Ink Muted */
+  --text-subtle: #7b7b78;     /* Ink Subtle */
+  --hero-sky-from: #f5f1ec;
+  --hero-sky-to: #ebe7e1;
 }
 
 @theme {
   --color-canvas: var(--bg-canvas);
   --color-surface: var(--bg-surface);
+  --color-surface-alt: var(--bg-surface-alt);
   --color-muted: var(--border-muted);
+  --color-border-soft: var(--border-soft);
   --color-brand-orange: var(--brand-orange);
   --color-brand-green: var(--brand-green);
+  --color-brand-blue: var(--brand-blue);
   --color-brand-tag: var(--brand-tag);
   --color-brand-error: var(--brand-error);
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
+  --color-text-subtle: var(--text-subtle);
   --color-hero-sky-from: var(--hero-sky-from);
   --color-hero-sky-to: var(--hero-sky-to);
 
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), monospace;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), monospace;
 }
 
 body {
