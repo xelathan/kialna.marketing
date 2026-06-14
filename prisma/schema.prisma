@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String    @id @default(uuid())
+  role            String    // "seller", "buyer", "admin"
+  name            String
+  email           String    @unique
+  phone           String?
+  address         String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  products        Product[] @relation("SellerProducts")
+  orders          Order[]   @relation("BuyerOrders")
+}
+
+model Product {
+  id          String      @id @default(uuid())
+  sellerId    String
+  seller      User        @relation("SellerProducts", fields: [sellerId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  category    String      @default("General")
+  basePrice   Float       // Base price in VND
+  inventory   Int         @default(0)
+  images      String      // Store images as JSON array string: '["url1", "url2"]'
+  status      String      @default("active") // "active", "draft", "out_of_stock"
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  orderItems  OrderItem[]
+}
+
+model Fee {
+  id            String    @id @default(uuid())
+  feeName       String    @unique // "shipping", "packaging"
+  amount        Float     // fee amount in VND
+  effectiveDate DateTime  @default(now())
+}
+
+model Order {
+  id        String      @id @default(uuid())
+  buyerId   String
+  buyer     User        @relation("BuyerOrders", fields: [buyerId], references: [id])
+  totalPaid Float       // Total paid by buyer in USD (or VND)
+  status    String      @default("Ready for Pickup") // "Ready for Pickup", "Driver Assigned", "Picked Up", "In Packaging", "Shipped", "Delivered"
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  items     OrderItem[]
+}
+
+model OrderItem {
+  id                       String  @id @default(uuid())
+  orderId                  String
+  order                    Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId                String
+  product                  Product @relation(fields: [productId], references: [id])
+  quantity                 Int
+  sellerPriceAtPurchase    Float
+  shippingFeeAtPurchase    Float
+  packagingFeeAtPurchase    Float
+}

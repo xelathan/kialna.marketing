@@ -1,0 +1,2407 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "postcss.config.mjs",
+      "file_type": "code",
+      "source_file": "postcss.config.mjs",
+      "source_location": "L1",
+      "id": "postcss_config_mjs",
+      "community": 13,
+      "norm_label": "postcss.config.mjs"
+    },
+    {
+      "label": "config",
+      "file_type": "code",
+      "source_file": "postcss.config.mjs",
+      "source_location": "L1",
+      "id": "kialna_shop_postcss_config_config",
+      "community": 13,
+      "norm_label": "config"
+    },
+    {
+      "label": "package.json",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L1",
+      "id": "package_json",
+      "community": 2,
+      "norm_label": "package.json"
+    },
+    {
+      "label": "name",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L2",
+      "id": "kialna_shop_package_name",
+      "community": 2,
+      "norm_label": "name"
+    },
+    {
+      "label": "version",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L3",
+      "id": "kialna_shop_package_version",
+      "community": 2,
+      "norm_label": "version"
+    },
+    {
+      "label": "private",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L4",
+      "id": "kialna_shop_package_private",
+      "community": 2,
+      "norm_label": "private"
+    },
+    {
+      "label": "scripts",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L5",
+      "id": "kialna_shop_package_scripts",
+      "community": 2,
+      "norm_label": "scripts"
+    },
+    {
+      "label": "dev",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L6",
+      "id": "kialna_shop_package_scripts_dev",
+      "community": 2,
+      "norm_label": "dev"
+    },
+    {
+      "label": "build",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L7",
+      "id": "kialna_shop_package_scripts_build",
+      "community": 2,
+      "norm_label": "build"
+    },
+    {
+      "label": "start",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L8",
+      "id": "kialna_shop_package_scripts_start",
+      "community": 2,
+      "norm_label": "start"
+    },
+    {
+      "label": "lint",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L9",
+      "id": "kialna_shop_package_scripts_lint",
+      "community": 2,
+      "norm_label": "lint"
+    },
+    {
+      "label": "dependencies",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L11",
+      "id": "kialna_shop_package_dependencies",
+      "community": 2,
+      "norm_label": "dependencies"
+    },
+    {
+      "label": "@prisma/client",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L12",
+      "id": "kialna_shop_package_dependencies_prisma_client",
+      "community": 2,
+      "norm_label": "@prisma/client"
+    },
+    {
+      "label": "lucide-react",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L13",
+      "id": "kialna_shop_package_dependencies_lucide_react",
+      "community": 2,
+      "norm_label": "lucide-react"
+    },
+    {
+      "label": "next",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L14",
+      "id": "kialna_shop_package_dependencies_next",
+      "community": 2,
+      "norm_label": "next"
+    },
+    {
+      "label": "react",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L15",
+      "id": "kialna_shop_package_dependencies_react",
+      "community": 2,
+      "norm_label": "react"
+    },
+    {
+      "label": "react-dom",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L16",
+      "id": "kialna_shop_package_dependencies_react_dom",
+      "community": 2,
+      "norm_label": "react-dom"
+    },
+    {
+      "label": "devDependencies",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L18",
+      "id": "kialna_shop_package_devdependencies",
+      "community": 4,
+      "norm_label": "devdependencies"
+    },
+    {
+      "label": "@tailwindcss/postcss",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L19",
+      "id": "kialna_shop_package_devdependencies_tailwindcss_postcss",
+      "community": 4,
+      "norm_label": "@tailwindcss/postcss"
+    },
+    {
+      "label": "@types/node",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L20",
+      "id": "kialna_shop_package_devdependencies_types_node",
+      "community": 4,
+      "norm_label": "@types/node"
+    },
+    {
+      "label": "@types/react",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L21",
+      "id": "kialna_shop_package_devdependencies_types_react",
+      "community": 4,
+      "norm_label": "@types/react"
+    },
+    {
+      "label": "@types/react-dom",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L22",
+      "id": "kialna_shop_package_devdependencies_types_react_dom",
+      "community": 4,
+      "norm_label": "@types/react-dom"
+    },
+    {
+      "label": "eslint",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L23",
+      "id": "kialna_shop_package_devdependencies_eslint",
+      "community": 4,
+      "norm_label": "eslint"
+    },
+    {
+      "label": "eslint-config-next",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L24",
+      "id": "kialna_shop_package_devdependencies_eslint_config_next",
+      "community": 4,
+      "norm_label": "eslint-config-next"
+    },
+    {
+      "label": "prisma",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L25",
+      "id": "kialna_shop_package_devdependencies_prisma",
+      "community": 4,
+      "norm_label": "prisma"
+    },
+    {
+      "label": "tailwindcss",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L26",
+      "id": "kialna_shop_package_devdependencies_tailwindcss",
+      "community": 4,
+      "norm_label": "tailwindcss"
+    },
+    {
+      "label": "typescript",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L27",
+      "id": "kialna_shop_package_devdependencies_typescript",
+      "community": 4,
+      "norm_label": "typescript"
+    },
+    {
+      "label": "tsconfig.json",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L1",
+      "id": "tsconfig_json",
+      "community": 1,
+      "norm_label": "tsconfig.json"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L2",
+      "id": "kialna_shop_tsconfig_compileroptions",
+      "community": 1,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "target",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "id": "kialna_shop_tsconfig_compileroptions_target",
+      "community": 1,
+      "norm_label": "target"
+    },
+    {
+      "label": "lib",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L4",
+      "id": "kialna_shop_tsconfig_compileroptions_lib",
+      "community": 1,
+      "norm_label": "lib"
+    },
+    {
+      "label": "allowJs",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "id": "kialna_shop_tsconfig_compileroptions_allowjs",
+      "community": 1,
+      "norm_label": "allowjs"
+    },
+    {
+      "label": "skipLibCheck",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L6",
+      "id": "kialna_shop_tsconfig_compileroptions_skiplibcheck",
+      "community": 1,
+      "norm_label": "skiplibcheck"
+    },
+    {
+      "label": "strict",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L7",
+      "id": "kialna_shop_tsconfig_compileroptions_strict",
+      "community": 1,
+      "norm_label": "strict"
+    },
+    {
+      "label": "noEmit",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L8",
+      "id": "kialna_shop_tsconfig_compileroptions_noemit",
+      "community": 1,
+      "norm_label": "noemit"
+    },
+    {
+      "label": "esModuleInterop",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L9",
+      "id": "kialna_shop_tsconfig_compileroptions_esmoduleinterop",
+      "community": 1,
+      "norm_label": "esmoduleinterop"
+    },
+    {
+      "label": "module",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L10",
+      "id": "kialna_shop_tsconfig_compileroptions_module",
+      "community": 1,
+      "norm_label": "module"
+    },
+    {
+      "label": "moduleResolution",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L11",
+      "id": "kialna_shop_tsconfig_compileroptions_moduleresolution",
+      "community": 1,
+      "norm_label": "moduleresolution"
+    },
+    {
+      "label": "resolveJsonModule",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L12",
+      "id": "kialna_shop_tsconfig_compileroptions_resolvejsonmodule",
+      "community": 1,
+      "norm_label": "resolvejsonmodule"
+    },
+    {
+      "label": "isolatedModules",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L13",
+      "id": "kialna_shop_tsconfig_compileroptions_isolatedmodules",
+      "community": 1,
+      "norm_label": "isolatedmodules"
+    },
+    {
+      "label": "jsx",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L14",
+      "id": "kialna_shop_tsconfig_compileroptions_jsx",
+      "community": 1,
+      "norm_label": "jsx"
+    },
+    {
+      "label": "incremental",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L15",
+      "id": "kialna_shop_tsconfig_compileroptions_incremental",
+      "community": 1,
+      "norm_label": "incremental"
+    },
+    {
+      "label": "plugins",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L16",
+      "id": "kialna_shop_tsconfig_compileroptions_plugins",
+      "community": 1,
+      "norm_label": "plugins"
+    },
+    {
+      "label": "paths",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L21",
+      "id": "kialna_shop_tsconfig_compileroptions_paths",
+      "community": 1,
+      "norm_label": "paths"
+    },
+    {
+      "label": "@/*",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L22",
+      "id": "kialna_shop_tsconfig_paths",
+      "community": 1,
+      "norm_label": "@/*"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L25",
+      "id": "kialna_shop_tsconfig_include",
+      "community": 1,
+      "norm_label": "include"
+    },
+    {
+      "label": "exclude",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L33",
+      "id": "kialna_shop_tsconfig_exclude",
+      "community": 1,
+      "norm_label": "exclude"
+    },
+    {
+      "label": "eslint.config.mjs",
+      "file_type": "code",
+      "source_file": "eslint.config.mjs",
+      "source_location": "L1",
+      "id": "eslint_config_mjs",
+      "community": 11,
+      "norm_label": "eslint.config.mjs"
+    },
+    {
+      "label": "eslintConfig",
+      "file_type": "code",
+      "source_file": "eslint.config.mjs",
+      "source_location": "L5",
+      "id": "kialna_shop_eslint_config_eslintconfig",
+      "community": 11,
+      "norm_label": "eslintconfig"
+    },
+    {
+      "label": "next.config.ts",
+      "file_type": "code",
+      "source_file": "next.config.ts",
+      "source_location": "L1",
+      "id": "next_config_ts",
+      "community": 12,
+      "norm_label": "next.config.ts"
+    },
+    {
+      "label": "nextConfig",
+      "file_type": "code",
+      "source_file": "next.config.ts",
+      "source_location": "L3",
+      "id": "kialna_shop_next_config_nextconfig",
+      "community": 12,
+      "norm_label": "nextconfig"
+    },
+    {
+      "label": "seed.js",
+      "file_type": "code",
+      "source_file": "prisma/seed.js",
+      "source_location": "L1",
+      "id": "prisma_seed_js",
+      "community": 8,
+      "norm_label": "seed.js"
+    },
+    {
+      "label": "{ PrismaClient }",
+      "file_type": "code",
+      "source_file": "prisma/seed.js",
+      "source_location": "L1",
+      "id": "prisma_seed_prismaclient",
+      "community": 8,
+      "norm_label": "{ prismaclient }"
+    },
+    {
+      "label": "prisma",
+      "file_type": "code",
+      "source_file": "prisma/seed.js",
+      "source_location": "L2",
+      "id": "prisma_seed_prisma",
+      "community": 8,
+      "norm_label": "prisma"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": "prisma/seed.js",
+      "source_location": "L4",
+      "id": "prisma_seed_main",
+      "community": 8,
+      "norm_label": "main()"
+    },
+    {
+      "label": "layout.tsx",
+      "file_type": "code",
+      "source_file": "src/app/layout.tsx",
+      "source_location": "L1",
+      "id": "src_app_layout_tsx",
+      "community": 7,
+      "norm_label": "layout.tsx"
+    },
+    {
+      "label": "geistSans",
+      "file_type": "code",
+      "source_file": "src/app/layout.tsx",
+      "source_location": "L5",
+      "id": "app_layout_geistsans",
+      "community": 7,
+      "norm_label": "geistsans"
+    },
+    {
+      "label": "geistMono",
+      "file_type": "code",
+      "source_file": "src/app/layout.tsx",
+      "source_location": "L10",
+      "id": "app_layout_geistmono",
+      "community": 7,
+      "norm_label": "geistmono"
+    },
+    {
+      "label": "metadata",
+      "file_type": "code",
+      "source_file": "src/app/layout.tsx",
+      "source_location": "L15",
+      "id": "app_layout_metadata",
+      "community": 7,
+      "norm_label": "metadata"
+    },
+    {
+      "label": "RootLayout()",
+      "file_type": "code",
+      "source_file": "src/app/layout.tsx",
+      "source_location": "L20",
+      "id": "app_layout_rootlayout",
+      "community": 7,
+      "norm_label": "rootlayout()"
+    },
+    {
+      "label": "page.tsx",
+      "file_type": "code",
+      "source_file": "src/app/page.tsx",
+      "source_location": "L1",
+      "id": "src_app_page_tsx",
+      "community": 0,
+      "norm_label": "page.tsx"
+    },
+    {
+      "label": "Home()",
+      "file_type": "code",
+      "source_file": "src/app/page.tsx",
+      "source_location": "L9",
+      "id": "app_page_home",
+      "community": 0,
+      "norm_label": "home()"
+    },
+    {
+      "label": "page.tsx",
+      "file_type": "code",
+      "source_file": "src/app/seller/products/new/page.tsx",
+      "source_location": "L1",
+      "id": "src_app_seller_products_new_page_tsx",
+      "community": 0,
+      "norm_label": "page.tsx"
+    },
+    {
+      "label": "NewProductPage()",
+      "file_type": "code",
+      "source_file": "src/app/seller/products/new/page.tsx",
+      "source_location": "L9",
+      "id": "new_page_newproductpage",
+      "community": 0,
+      "norm_label": "newproductpage()"
+    },
+    {
+      "label": "page.tsx",
+      "file_type": "code",
+      "source_file": "src/app/seller/products/[id]/edit/page.tsx",
+      "source_location": "L1",
+      "id": "src_app_seller_products_id_edit_page_tsx",
+      "community": 0,
+      "norm_label": "page.tsx"
+    },
+    {
+      "label": "EditProductPageProps",
+      "file_type": "code",
+      "source_file": "src/app/seller/products/[id]/edit/page.tsx",
+      "source_location": "L10",
+      "id": "edit_page_editproductpageprops",
+      "community": 0,
+      "norm_label": "editproductpageprops"
+    },
+    {
+      "label": "EditProductPage()",
+      "file_type": "code",
+      "source_file": "src/app/seller/products/[id]/edit/page.tsx",
+      "source_location": "L14",
+      "id": "edit_page_editproductpage",
+      "community": 0,
+      "norm_label": "editproductpage()"
+    },
+    {
+      "label": "products.ts",
+      "file_type": "code",
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L1",
+      "id": "src_app_actions_products_ts",
+      "community": 0,
+      "norm_label": "products.ts"
+    },
+    {
+      "label": "getSellerProducts()",
+      "file_type": "code",
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L7",
+      "id": "actions_products_getsellerproducts",
+      "community": 0,
+      "norm_label": "getsellerproducts()"
+    },
+    {
+      "label": "getFees()",
+      "file_type": "code",
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L24",
+      "id": "actions_products_getfees",
+      "community": 0,
+      "norm_label": "getfees()"
+    },
+    {
+      "label": "createProduct()",
+      "file_type": "code",
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L35",
+      "id": "actions_products_createproduct",
+      "community": 0,
+      "norm_label": "createproduct()"
+    },
+    {
+      "label": "updateProduct()",
+      "file_type": "code",
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L83",
+      "id": "actions_products_updateproduct",
+      "community": 0,
+      "norm_label": "updateproduct()"
+    },
+    {
+      "label": "deleteProduct()",
+      "file_type": "code",
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L147",
+      "id": "actions_products_deleteproduct",
+      "community": 0,
+      "norm_label": "deleteproduct()"
+    },
+    {
+      "label": "toggleProductStatus()",
+      "file_type": "code",
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L178",
+      "id": "actions_products_toggleproductstatus",
+      "community": 0,
+      "norm_label": "toggleproductstatus()"
+    },
+    {
+      "label": "getSellerOrders()",
+      "file_type": "code",
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L212",
+      "id": "actions_products_getsellerorders",
+      "community": 0,
+      "norm_label": "getsellerorders()"
+    },
+    {
+      "label": "auth.ts",
+      "file_type": "code",
+      "source_file": "src/app/actions/auth.ts",
+      "source_location": "L1",
+      "id": "src_app_actions_auth_ts",
+      "community": 5,
+      "norm_label": "auth.ts"
+    },
+    {
+      "label": "switchRole()",
+      "file_type": "code",
+      "source_file": "src/app/actions/auth.ts",
+      "source_location": "L7",
+      "id": "actions_auth_switchrole",
+      "community": 5,
+      "norm_label": "switchrole()"
+    },
+    {
+      "label": "getAllUsers()",
+      "file_type": "code",
+      "source_file": "src/app/actions/auth.ts",
+      "source_location": "L25",
+      "id": "actions_auth_getallusers",
+      "community": 5,
+      "norm_label": "getallusers()"
+    },
+    {
+      "label": "RoleSwitcher.tsx",
+      "file_type": "code",
+      "source_file": "src/components/RoleSwitcher.tsx",
+      "source_location": "L1",
+      "id": "src_components_roleswitcher_tsx",
+      "community": 5,
+      "norm_label": "roleswitcher.tsx"
+    },
+    {
+      "label": "RoleSwitcherProps",
+      "file_type": "code",
+      "source_file": "src/components/RoleSwitcher.tsx",
+      "source_location": "L8",
+      "id": "components_roleswitcher_roleswitcherprops",
+      "community": 5,
+      "norm_label": "roleswitcherprops"
+    },
+    {
+      "label": "RoleSwitcher()",
+      "file_type": "code",
+      "source_file": "src/components/RoleSwitcher.tsx",
+      "source_location": "L17",
+      "id": "components_roleswitcher_roleswitcher",
+      "community": 5,
+      "norm_label": "roleswitcher()"
+    },
+    {
+      "label": "ProductForm.tsx",
+      "file_type": "code",
+      "source_file": "src/components/ProductForm.tsx",
+      "source_location": "L1",
+      "id": "src_components_productform_tsx",
+      "community": 9,
+      "norm_label": "productform.tsx"
+    },
+    {
+      "label": "ProductFormProps",
+      "file_type": "code",
+      "source_file": "src/components/ProductForm.tsx",
+      "source_location": "L7",
+      "id": "components_productform_productformprops",
+      "community": 9,
+      "norm_label": "productformprops"
+    },
+    {
+      "label": "ProductForm()",
+      "file_type": "code",
+      "source_file": "src/components/ProductForm.tsx",
+      "source_location": "L23",
+      "id": "components_productform_productform",
+      "community": 9,
+      "norm_label": "productform()"
+    },
+    {
+      "label": "SellerDashboard.tsx",
+      "file_type": "code",
+      "source_file": "src/components/SellerDashboard.tsx",
+      "source_location": "L1",
+      "id": "src_components_sellerdashboard_tsx",
+      "community": 0,
+      "norm_label": "sellerdashboard.tsx"
+    },
+    {
+      "label": "SellerDashboardProps",
+      "file_type": "code",
+      "source_file": "src/components/SellerDashboard.tsx",
+      "source_location": "L28",
+      "id": "components_sellerdashboard_sellerdashboardprops",
+      "community": 0,
+      "norm_label": "sellerdashboardprops"
+    },
+    {
+      "label": "SellerDashboard()",
+      "file_type": "code",
+      "source_file": "src/components/SellerDashboard.tsx",
+      "source_location": "L41",
+      "id": "components_sellerdashboard_sellerdashboard",
+      "community": 0,
+      "norm_label": "sellerdashboard()"
+    },
+    {
+      "label": "session.ts",
+      "file_type": "code",
+      "source_file": "src/lib/session.ts",
+      "source_location": "L1",
+      "id": "src_lib_session_ts",
+      "community": 0,
+      "norm_label": "session.ts"
+    },
+    {
+      "label": "SessionUser",
+      "file_type": "code",
+      "source_file": "src/lib/session.ts",
+      "source_location": "L4",
+      "id": "lib_session_sessionuser",
+      "community": 0,
+      "norm_label": "sessionuser"
+    },
+    {
+      "label": "getCurrentUser()",
+      "file_type": "code",
+      "source_file": "src/lib/session.ts",
+      "source_location": "L13",
+      "id": "lib_session_getcurrentuser",
+      "community": 0,
+      "norm_label": "getcurrentuser()"
+    },
+    {
+      "label": "db.ts",
+      "file_type": "code",
+      "source_file": "src/lib/db.ts",
+      "source_location": "L1",
+      "id": "src_lib_db_ts",
+      "community": 0,
+      "norm_label": "db.ts"
+    },
+    {
+      "label": "prismaClientSingleton()",
+      "file_type": "code",
+      "source_file": "src/lib/db.ts",
+      "source_location": "L3",
+      "id": "lib_db_prismaclientsingleton",
+      "community": 0,
+      "norm_label": "prismaclientsingleton()"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "id": "readme_md",
+      "community": 6,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "Getting Started",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L3",
+      "id": "kialna_shop_readme_getting_started",
+      "community": 6,
+      "norm_label": "getting started"
+    },
+    {
+      "label": "code:bash (npm run dev)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L7",
+      "id": "kialna_shop_readme_codeblock_1",
+      "community": 6,
+      "norm_label": "code:bash (npm run dev)"
+    },
+    {
+      "label": "Learn More",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L23",
+      "id": "kialna_shop_readme_learn_more",
+      "community": 6,
+      "norm_label": "learn more"
+    },
+    {
+      "label": "Deploy on Vercel",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L32",
+      "id": "kialna_shop_readme_deploy_on_vercel",
+      "community": 6,
+      "norm_label": "deploy on vercel"
+    },
+    {
+      "label": "DESIGN.md",
+      "file_type": "document",
+      "source_file": "DESIGN.md",
+      "source_location": "L1",
+      "id": "design_md",
+      "community": 3,
+      "norm_label": "design.md"
+    },
+    {
+      "label": "DESIGN.md",
+      "file_type": "document",
+      "source_file": "DESIGN.md",
+      "source_location": "L1",
+      "id": "kialna_shop_design_design_md",
+      "community": 3,
+      "norm_label": "design.md"
+    },
+    {
+      "label": "Theme: Modern Premium Marketplace (Clean, Accessible, Mobile-First)",
+      "file_type": "document",
+      "source_file": "DESIGN.md",
+      "source_location": "L2",
+      "id": "kialna_shop_design_theme_modern_premium_marketplace_clean_accessible_mobile_first",
+      "community": 3,
+      "norm_label": "theme: modern premium marketplace (clean, accessible, mobile-first)"
+    },
+    {
+      "label": "Visual Theme and Atmosphere",
+      "file_type": "document",
+      "source_file": "DESIGN.md",
+      "source_location": "L4",
+      "id": "kialna_shop_design_visual_theme_and_atmosphere",
+      "community": 3,
+      "norm_label": "visual theme and atmosphere"
+    },
+    {
+      "label": "Color Palette and Roles",
+      "file_type": "document",
+      "source_file": "DESIGN.md",
+      "source_location": "L7",
+      "id": "kialna_shop_design_color_palette_and_roles",
+      "community": 3,
+      "norm_label": "color palette and roles"
+    },
+    {
+      "label": "Typography Rules",
+      "file_type": "document",
+      "source_file": "DESIGN.md",
+      "source_location": "L18",
+      "id": "kialna_shop_design_typography_rules",
+      "community": 3,
+      "norm_label": "typography rules"
+    },
+    {
+      "label": "Component Styles",
+      "file_type": "document",
+      "source_file": "DESIGN.md",
+      "source_location": "L29",
+      "id": "kialna_shop_design_component_styles",
+      "community": 3,
+      "norm_label": "component styles"
+    },
+    {
+      "label": "Cards & Surfaces",
+      "file_type": "document",
+      "source_file": "DESIGN.md",
+      "source_location": "L30",
+      "id": "kialna_shop_design_cards_surfaces",
+      "community": 3,
+      "norm_label": "cards & surfaces"
+    },
+    {
+      "label": "Form Inputs (Critical for Sellers)",
+      "file_type": "document",
+      "source_file": "DESIGN.md",
+      "source_location": "L35",
+      "id": "kialna_shop_design_form_inputs_critical_for_sellers",
+      "community": 3,
+      "norm_label": "form inputs (critical for sellers)"
+    },
+    {
+      "label": "Buttons",
+      "file_type": "document",
+      "source_file": "DESIGN.md",
+      "source_location": "L39",
+      "id": "kialna_shop_design_buttons",
+      "community": 3,
+      "norm_label": "buttons"
+    },
+    {
+      "label": "AGENTS.md",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L1",
+      "id": "agents_md",
+      "community": 10,
+      "norm_label": "agents.md"
+    },
+    {
+      "label": "This is NOT the Next.js you know",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L2",
+      "id": "kialna_shop_agents_this_is_not_the_next_js_you_know",
+      "community": 10,
+      "norm_label": "this is not the next.js you know"
+    },
+    {
+      "label": "CLAUDE.md",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": "L1",
+      "id": "claude_md",
+      "community": 14,
+      "norm_label": "claude.md"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "postcss.config.mjs",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "postcss_config_mjs",
+      "target": "kialna_shop_postcss_config_config",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "kialna_shop_package_name",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "kialna_shop_package_version",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "kialna_shop_package_private",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "kialna_shop_package_scripts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "kialna_shop_package_dependencies",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "kialna_shop_package_devdependencies",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "kialna_shop_package_scripts",
+      "target": "kialna_shop_package_scripts_dev",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "kialna_shop_package_scripts",
+      "target": "kialna_shop_package_scripts_build",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "kialna_shop_package_scripts",
+      "target": "kialna_shop_package_scripts_start",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "kialna_shop_package_scripts",
+      "target": "kialna_shop_package_scripts_lint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "kialna_shop_package_dependencies",
+      "target": "kialna_shop_package_dependencies_prisma_client",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "kialna_shop_package_dependencies",
+      "target": "kialna_shop_package_dependencies_lucide_react",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "kialna_shop_package_dependencies",
+      "target": "kialna_shop_package_dependencies_next",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "kialna_shop_package_dependencies",
+      "target": "kialna_shop_package_dependencies_react",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "kialna_shop_package_dependencies",
+      "target": "kialna_shop_package_dependencies_react_dom",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "kialna_shop_package_devdependencies",
+      "target": "kialna_shop_package_devdependencies_tailwindcss_postcss",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "kialna_shop_package_devdependencies",
+      "target": "kialna_shop_package_devdependencies_types_node",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "kialna_shop_package_devdependencies",
+      "target": "kialna_shop_package_devdependencies_types_react",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "kialna_shop_package_devdependencies",
+      "target": "kialna_shop_package_devdependencies_types_react_dom",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "kialna_shop_package_devdependencies",
+      "target": "kialna_shop_package_devdependencies_eslint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "kialna_shop_package_devdependencies",
+      "target": "kialna_shop_package_devdependencies_eslint_config_next",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "kialna_shop_package_devdependencies",
+      "target": "kialna_shop_package_devdependencies_prisma",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "kialna_shop_package_devdependencies",
+      "target": "kialna_shop_package_devdependencies_tailwindcss",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "kialna_shop_package_devdependencies",
+      "target": "kialna_shop_package_devdependencies_typescript",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "kialna_shop_tsconfig_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "kialna_shop_tsconfig_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "kialna_shop_tsconfig_exclude",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "kialna_shop_tsconfig_compileroptions",
+      "target": "kialna_shop_tsconfig_compileroptions_target",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "kialna_shop_tsconfig_compileroptions",
+      "target": "kialna_shop_tsconfig_compileroptions_lib",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "kialna_shop_tsconfig_compileroptions",
+      "target": "kialna_shop_tsconfig_compileroptions_allowjs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "kialna_shop_tsconfig_compileroptions",
+      "target": "kialna_shop_tsconfig_compileroptions_skiplibcheck",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "kialna_shop_tsconfig_compileroptions",
+      "target": "kialna_shop_tsconfig_compileroptions_strict",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "kialna_shop_tsconfig_compileroptions",
+      "target": "kialna_shop_tsconfig_compileroptions_noemit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "kialna_shop_tsconfig_compileroptions",
+      "target": "kialna_shop_tsconfig_compileroptions_esmoduleinterop",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "kialna_shop_tsconfig_compileroptions",
+      "target": "kialna_shop_tsconfig_compileroptions_module",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "kialna_shop_tsconfig_compileroptions",
+      "target": "kialna_shop_tsconfig_compileroptions_moduleresolution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "kialna_shop_tsconfig_compileroptions",
+      "target": "kialna_shop_tsconfig_compileroptions_resolvejsonmodule",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "kialna_shop_tsconfig_compileroptions",
+      "target": "kialna_shop_tsconfig_compileroptions_isolatedmodules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "kialna_shop_tsconfig_compileroptions",
+      "target": "kialna_shop_tsconfig_compileroptions_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "kialna_shop_tsconfig_compileroptions",
+      "target": "kialna_shop_tsconfig_compileroptions_incremental",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "kialna_shop_tsconfig_compileroptions",
+      "target": "kialna_shop_tsconfig_compileroptions_plugins",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "kialna_shop_tsconfig_compileroptions",
+      "target": "kialna_shop_tsconfig_compileroptions_paths",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "kialna_shop_tsconfig_compileroptions_paths",
+      "target": "kialna_shop_tsconfig_paths",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "eslint.config.mjs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "eslint_config_mjs",
+      "target": "kialna_shop_eslint_config_eslintconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "next.config.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "next_config_ts",
+      "target": "kialna_shop_next_config_nextconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "prisma/seed.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "prisma_seed_js",
+      "target": "prisma_seed_prismaclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "prisma/seed.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "prisma_seed_js",
+      "target": "prisma_seed_prisma",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "prisma/seed.js",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "prisma_seed_js",
+      "target": "prisma_seed_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/layout.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_layout_tsx",
+      "target": "app_layout_geistsans",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/layout.tsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_app_layout_tsx",
+      "target": "app_layout_geistmono",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/layout.tsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_app_layout_tsx",
+      "target": "app_layout_metadata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/layout.tsx",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_app_layout_tsx",
+      "target": "app_layout_rootlayout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/page.tsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_app_page_tsx",
+      "target": "src_lib_session_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/page.tsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_app_page_tsx",
+      "target": "lib_session_getcurrentuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/page.tsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_app_page_tsx",
+      "target": "src_app_actions_products_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/page.tsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_app_page_tsx",
+      "target": "actions_products_getsellerproducts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/page.tsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_app_page_tsx",
+      "target": "actions_products_getsellerorders",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/page.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_app_page_tsx",
+      "target": "src_components_sellerdashboard_tsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/page.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_app_page_tsx",
+      "target": "src_components_roleswitcher_tsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/page.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_app_page_tsx",
+      "target": "src_lib_db_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/page.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_app_page_tsx",
+      "target": "app_page_home",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/page.tsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "app_page_home",
+      "target": "lib_session_getcurrentuser"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/page.tsx",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "app_page_home",
+      "target": "actions_products_getsellerproducts"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/page.tsx",
+      "source_location": "L37",
+      "weight": 1.0,
+      "source": "app_page_home",
+      "target": "actions_products_getsellerorders"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/seller/products/new/page.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_app_seller_products_new_page_tsx",
+      "target": "src_lib_session_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/seller/products/new/page.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_app_seller_products_new_page_tsx",
+      "target": "lib_session_getcurrentuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/seller/products/new/page.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_seller_products_new_page_tsx",
+      "target": "src_app_actions_products_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/seller/products/new/page.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_seller_products_new_page_tsx",
+      "target": "actions_products_getfees",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/seller/products/new/page.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_seller_products_new_page_tsx",
+      "target": "actions_products_createproduct",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/seller/products/new/page.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_app_seller_products_new_page_tsx",
+      "target": "src_components_productform_tsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/seller/products/new/page.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_app_seller_products_new_page_tsx",
+      "target": "src_components_roleswitcher_tsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/seller/products/new/page.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_app_seller_products_new_page_tsx",
+      "target": "new_page_newproductpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/seller/products/new/page.tsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "new_page_newproductpage",
+      "target": "lib_session_getcurrentuser"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/seller/products/new/page.tsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "new_page_newproductpage",
+      "target": "actions_products_getfees"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/seller/products/[id]/edit/page.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_app_seller_products_id_edit_page_tsx",
+      "target": "src_lib_db_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/seller/products/[id]/edit/page.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_seller_products_id_edit_page_tsx",
+      "target": "src_lib_session_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/seller/products/[id]/edit/page.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_seller_products_id_edit_page_tsx",
+      "target": "lib_session_getcurrentuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/seller/products/[id]/edit/page.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_app_seller_products_id_edit_page_tsx",
+      "target": "src_app_actions_products_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/seller/products/[id]/edit/page.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_app_seller_products_id_edit_page_tsx",
+      "target": "actions_products_getfees",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/seller/products/[id]/edit/page.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_app_seller_products_id_edit_page_tsx",
+      "target": "actions_products_updateproduct",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/seller/products/[id]/edit/page.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_app_seller_products_id_edit_page_tsx",
+      "target": "src_components_productform_tsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/seller/products/[id]/edit/page.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_app_seller_products_id_edit_page_tsx",
+      "target": "src_components_roleswitcher_tsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/seller/products/[id]/edit/page.tsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_app_seller_products_id_edit_page_tsx",
+      "target": "edit_page_editproductpageprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/seller/products/[id]/edit/page.tsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_app_seller_products_id_edit_page_tsx",
+      "target": "edit_page_editproductpage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/seller/products/[id]/edit/page.tsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "edit_page_editproductpage",
+      "target": "lib_session_getcurrentuser"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/seller/products/[id]/edit/page.tsx",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "edit_page_editproductpage",
+      "target": "actions_products_getfees"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_app_actions_products_ts",
+      "target": "src_lib_db_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_app_actions_products_ts",
+      "target": "src_lib_session_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_app_actions_products_ts",
+      "target": "lib_session_getcurrentuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_app_actions_products_ts",
+      "target": "actions_products_getsellerproducts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "src_app_actions_products_ts",
+      "target": "actions_products_getfees",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L35",
+      "weight": 1.0,
+      "source": "src_app_actions_products_ts",
+      "target": "actions_products_createproduct",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L83",
+      "weight": 1.0,
+      "source": "src_app_actions_products_ts",
+      "target": "actions_products_updateproduct",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L147",
+      "weight": 1.0,
+      "source": "src_app_actions_products_ts",
+      "target": "actions_products_deleteproduct",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L178",
+      "weight": 1.0,
+      "source": "src_app_actions_products_ts",
+      "target": "actions_products_toggleproductstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L212",
+      "weight": 1.0,
+      "source": "src_app_actions_products_ts",
+      "target": "actions_products_getsellerorders",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/SellerDashboard.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_components_sellerdashboard_tsx",
+      "target": "src_app_actions_products_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "actions_products_getsellerproducts",
+      "target": "lib_session_getcurrentuser"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "actions_products_createproduct",
+      "target": "lib_session_getcurrentuser"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L95",
+      "weight": 1.0,
+      "source": "actions_products_updateproduct",
+      "target": "lib_session_getcurrentuser"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/SellerDashboard.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_components_sellerdashboard_tsx",
+      "target": "actions_products_deleteproduct",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L148",
+      "weight": 1.0,
+      "source": "actions_products_deleteproduct",
+      "target": "lib_session_getcurrentuser"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/SellerDashboard.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_components_sellerdashboard_tsx",
+      "target": "actions_products_toggleproductstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L179",
+      "weight": 1.0,
+      "source": "actions_products_toggleproductstatus",
+      "target": "lib_session_getcurrentuser"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/actions/products.ts",
+      "source_location": "L213",
+      "weight": 1.0,
+      "source": "actions_products_getsellerorders",
+      "target": "lib_session_getcurrentuser"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/actions/auth.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_app_actions_auth_ts",
+      "target": "src_lib_db_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/actions/auth.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_app_actions_auth_ts",
+      "target": "actions_auth_switchrole",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/actions/auth.ts",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "src_app_actions_auth_ts",
+      "target": "actions_auth_getallusers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/RoleSwitcher.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_components_roleswitcher_tsx",
+      "target": "src_app_actions_auth_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/RoleSwitcher.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_components_roleswitcher_tsx",
+      "target": "actions_auth_switchrole",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/RoleSwitcher.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_components_roleswitcher_tsx",
+      "target": "components_roleswitcher_roleswitcherprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/RoleSwitcher.tsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "src_components_roleswitcher_tsx",
+      "target": "components_roleswitcher_roleswitcher",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/SellerDashboard.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_components_sellerdashboard_tsx",
+      "target": "src_components_roleswitcher_tsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/ProductForm.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_components_productform_tsx",
+      "target": "components_productform_productformprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/ProductForm.tsx",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "src_components_productform_tsx",
+      "target": "components_productform_productform",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/SellerDashboard.tsx",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "src_components_sellerdashboard_tsx",
+      "target": "components_sellerdashboard_sellerdashboardprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/SellerDashboard.tsx",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "src_components_sellerdashboard_tsx",
+      "target": "components_sellerdashboard_sellerdashboard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/session.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lib_session_ts",
+      "target": "src_lib_db_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/session.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_session_ts",
+      "target": "lib_session_sessionuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/session.ts",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_lib_session_ts",
+      "target": "lib_session_getcurrentuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/db.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_db_ts",
+      "target": "lib_db_prismaclientsingleton",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "readme_md",
+      "target": "kialna_shop_readme_getting_started",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "readme_md",
+      "target": "kialna_shop_readme_learn_more",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "readme_md",
+      "target": "kialna_shop_readme_deploy_on_vercel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "kialna_shop_readme_getting_started",
+      "target": "kialna_shop_readme_codeblock_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "design_md",
+      "target": "kialna_shop_design_design_md",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.md",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "design_md",
+      "target": "kialna_shop_design_theme_modern_premium_marketplace_clean_accessible_mobile_first",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.md",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "kialna_shop_design_theme_modern_premium_marketplace_clean_accessible_mobile_first",
+      "target": "kialna_shop_design_visual_theme_and_atmosphere",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.md",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "kialna_shop_design_theme_modern_premium_marketplace_clean_accessible_mobile_first",
+      "target": "kialna_shop_design_color_palette_and_roles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.md",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "kialna_shop_design_theme_modern_premium_marketplace_clean_accessible_mobile_first",
+      "target": "kialna_shop_design_typography_rules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.md",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "kialna_shop_design_theme_modern_premium_marketplace_clean_accessible_mobile_first",
+      "target": "kialna_shop_design_component_styles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "kialna_shop_design_component_styles",
+      "target": "kialna_shop_design_cards_surfaces",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.md",
+      "source_location": "L35",
+      "weight": 1.0,
+      "source": "kialna_shop_design_component_styles",
+      "target": "kialna_shop_design_form_inputs_critical_for_sellers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DESIGN.md",
+      "source_location": "L39",
+      "weight": 1.0,
+      "source": "kialna_shop_design_component_styles",
+      "target": "kialna_shop_design_buttons",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AGENTS.md",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "agents_md",
+      "target": "kialna_shop_agents_this_is_not_the_next_js_you_know",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": []
+}
