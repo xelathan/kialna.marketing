@@ -150,10 +150,10 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search products..."
-                className="input-primary w-full pl-10 text-sm"
+                placeholder="Search your listings..."
+                className="input-primary w-full pl-11 text-sm"
               />
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
             </div>
 
             {/* Filter Tabs Segmented Control */}
@@ -409,6 +409,18 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
                   </div>
                 )}
               </div>
+
+              {/* Sign Out Button */}
+              <button
+                onClick={async () => {
+                  const { signOut } = await import("@/app/actions/auth");
+                  await signOut();
+                  window.location.href = "/login";
+                }}
+                className="w-full mt-2 py-2.5 px-4 rounded-xl border border-red-200 dark:border-red-900 bg-red-50 hover:bg-red-100 dark:bg-red-950/20 text-red-600 dark:text-red-400 text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+              >
+                Sign Out
+              </button>
             </div>
 
             {/* Shipping Hub Info Card */}

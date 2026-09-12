@@ -1,8 +1,22 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Trash2, Plus, Image as ImageIcon, AlertCircle, DollarSign, Calculator, RefreshCw } from "lucide-react";
+import {
+  Trash2,
+  Plus,
+  Image as ImageIcon,
+  AlertCircle,
+  DollarSign,
+  Calculator,
+  RefreshCw,
+  Camera,
+  UploadCloud,
+  Loader2,
+  Star,
+  Link as LinkIcon,
+  CheckCircle2,
+} from "lucide-react";
 
 interface ProductFormProps {
   initialProduct?: {
@@ -20,20 +34,44 @@ interface ProductFormProps {
   onSave: (data: any) => Promise<{ success: boolean; error?: string }>;
 }
 
-export default function ProductForm({ initialProduct, shippingFee, packagingFee, onSave }: ProductFormProps) {
+interface UploadingState {
+  id: string;
+  fileName: string;
+  previewUrl: string;
+  status: "uploading" | "success" | "error";
+  errorMessage?: string;
+}
+
+export default function ProductForm({
+  initialProduct,
+  shippingFee,
+  packagingFee,
+  onSave,
+}: ProductFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+
+  // File input refs
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   // Form State
   const [name, setName] = useState(initialProduct?.name || "");
   const [description, setDescription] = useState(initialProduct?.description || "");
   const [category, setCategory] = useState(initialProduct?.category || "Crafts & Decor");
-  const [basePriceStr, setBasePriceStr] = useState(initialProduct ? String(initialProduct.basePrice) : "");
-  const [inventoryStr, setInventoryStr] = useState(initialProduct ? String(initialProduct.inventory) : "0");
+  const [basePriceStr, setBasePriceStr] = useState(
+    initialProduct ? String(initialProduct.basePrice) : ""
+  );
+  const [inventoryStr, setInventoryStr] = useState(
+    initialProduct ? String(initialProduct.inventory) : "0"
+  );
   const [status, setStatus] = useState(initialProduct?.status || "active");
 
-  // Image URLs State
+  // Image State
   const [images, setImages] = useState<string[]>([]);
+  const [uploadingFiles, setUploadingFiles] = useState<UploadingState[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [showUrlInput, setShowUrlInput] = useState(false);
   const [newImageUrl, setNewImageUrl] = useState("");
   const [imageError, setImageError] = useState("");
 
@@ -45,7 +83,13 @@ export default function ProductForm({ initialProduct, shippingFee, packagingFee,
   const VND_TO_USD_RATE = 25000;
 
   // Categories list
-  const categories = ["Crafts & Decor", "Food & Tea", "Apparel & Textiles", "Kitchen & Home", "General"];
+  const categories = [
+    "Crafts & Decor",
+    "Food & Tea",
+    "Apparel & Textiles",
+    "Kitchen & Home",
+    "General",
+  ];
 
   // Parse initial images if editing
   useEffect(() => {
@@ -103,9 +147,12 @@ export default function ProductForm({ initialProduct, shippingFee, packagingFee,
     setErrors(newErrors);
   };
 
-  const handleInputChange = (field: string, value: string, setter: (val: string) => void) => {
+  const handleInputChange = (
+    field: string,
+    value: string,
+    setter: (val: string) => void
+  ) => {
     setter(value);
-    // Clear error immediately when typing (non-intrusive UX)
     if (errors[field]) {
       const newErrors = { ...errors };
       delete newErrors[field];
@@ -113,10 +160,100 @@ export default function ProductForm({ initialProduct, shippingFee, packagingFee,
     }
   };
 
+  // Image Upload Logic
+  const uploadSingleFile = async (file: File) => {
+    const tempId = Math.random().toString(36).substring(2, 9);
+    const previewUrl = URL.createObjectURL(file);
+
+    const uploadItem: UploadingState = {
+      id: tempId,
+      fileName: file.name,
+      previewUrl,
+      status: "uploading",
+    };
+
+    setUploadingFiles((prev) => [...prev, uploadItem]);
+    setImageError("");
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to upload image.");
+      }
+
+      // Append saved uploaded URL to images
+      setImages((prev) => [...prev, data.url]);
+
+      // Remove from uploading queue
+      setUploadingFiles((prev) => prev.filter((item) => item.id !== tempId));
+    } catch (err: any) {
+      setUploadingFiles((prev) =>
+        prev.map((item) =>
+          item.id === tempId
+            ? { ...item, status: "error", errorMessage: err.message || "Upload failed" }
+            : item
+        )
+      );
+    }
+  };
+
+  const handleFilesSelected = async (fileList: FileList | null) => {
+    if (!fileList || fileList.length === 0) return;
+
+    const files = Array.from(fileList);
+    const validImageFiles = files.filter((f) => f.type.startsWith("image/"));
+
+    if (validImageFiles.length === 0) {
+      setImageError("Please select valid image files (JPG, PNG, WebP).");
+      return;
+    }
+
+    for (const file of validImageFiles) {
+      if (file.size > 10 * 1024 * 1024) {
+        setImageError(`"${file.name}" exceeds the 10MB limit.`);
+        continue;
+      }
+      await uploadSingleFile(file);
+    }
+
+    // Reset inputs
+    if (cameraInputRef.current) cameraInputRef.current.value = "";
+    if (galleryInputRef.current) galleryInputRef.current.value = "";
+  };
+
+  // Drag & Drop Handlers
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files) {
+      await handleFilesSelected(e.dataTransfer.files);
+    }
+  };
+
+  // Manual URL Add
   const handleAddImageUrl = () => {
     if (!newImageUrl.trim()) return;
-    if (!newImageUrl.startsWith("http://") && !newImageUrl.startsWith("https://")) {
-      setImageError("Please enter a valid URL starting with http:// or https://");
+    if (!newImageUrl.startsWith("http://") && !newImageUrl.startsWith("https://") && !newImageUrl.startsWith("/")) {
+      setImageError("Please enter a valid URL starting with https://, http://, or /uploads/");
       return;
     }
 
@@ -129,13 +266,25 @@ export default function ProductForm({ initialProduct, shippingFee, packagingFee,
     setImages(images.filter((_, idx) => idx !== indexToRemove));
   };
 
+  const handleSetCoverImage = (indexToCover: number) => {
+    if (indexToCover === 0) return;
+    const updated = [...images];
+    const [selected] = updated.splice(indexToCover, 1);
+    updated.unshift(selected);
+    setImages(updated);
+  };
+
+  const handleDismissUploadError = (id: string) => {
+    setUploadingFiles((prev) => prev.filter((item) => item.id !== id));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Trigger validation on all fields
     const newErrors: Record<string, string> = {};
     if (!name.trim()) newErrors.name = "Product name is required.";
-    
+
     const parsedPrice = parseFloat(basePriceStr);
     if (basePriceStr === "" || isNaN(parsedPrice)) {
       newErrors.basePrice = "Please enter a valid base price.";
@@ -152,7 +301,6 @@ export default function ProductForm({ initialProduct, shippingFee, packagingFee,
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      // Scroll to the first error
       const firstErrorKey = Object.keys(newErrors)[0];
       const element = document.getElementById(firstErrorKey);
       if (element) {
@@ -189,7 +337,10 @@ export default function ProductForm({ initialProduct, shippingFee, packagingFee,
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6 max-w-md mx-auto w-full pb-24 px-4">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-6 max-w-md mx-auto w-full pb-28 px-4"
+    >
       {submitError && (
         <div className="flex items-center gap-3 p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-lg text-red-600 dark:text-red-400 text-sm">
           <AlertCircle className="h-5 w-5 shrink-0" />
@@ -210,7 +361,7 @@ export default function ProductForm({ initialProduct, shippingFee, packagingFee,
           onChange={(e) => handleInputChange("name", e.target.value, setName)}
           onBlur={() => validateField("name", name)}
           className={`input-primary w-full ${errors.name ? "border-red-500 focus:box-shadow-red" : ""}`}
-          placeholder="e.g. Handmade Bamboo Basket"
+          placeholder="e.g. Handcrafted Ceramic Teapot"
           disabled={isPending}
           required
         />
@@ -233,7 +384,7 @@ export default function ProductForm({ initialProduct, shippingFee, packagingFee,
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="input-primary w-full min-h-[100px] py-3 resize-y"
-          placeholder="Describe the craft details, materials used, etc..."
+          placeholder="Describe the craft details, materials used, artisan origin..."
           disabled={isPending}
         />
       </div>
@@ -333,7 +484,7 @@ export default function ProductForm({ initialProduct, shippingFee, packagingFee,
               </div>
             </div>
           </div>
-          
+
           <div className="text-[10px] text-text-secondary leading-relaxed bg-white dark:bg-zinc-950 p-2.5 rounded-md border border-border-light">
             💡 **Transparency Notice**: The buyer checkout runs in USD. You will receive the full base price of **{basePrice.toLocaleString()} VND** upon delivery, and Kialna will manage shipping and packaging from our District 1 Hub.
           </div>
@@ -366,38 +517,117 @@ export default function ProductForm({ initialProduct, shippingFee, packagingFee,
         )}
       </div>
 
-      {/* Image Gallery & URL Addition */}
+      {/* Enhanced Image Management Section */}
       <div className="flex flex-col gap-3">
-        <label className="text-sm font-semibold text-text-primary">
-          Product Images
-        </label>
-
-        {/* URL Inputs */}
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <input
-              type="url"
-              value={newImageUrl}
-              onChange={(e) => {
-                setNewImageUrl(e.target.value);
-                setImageError("");
-              }}
-              className={`input-primary w-full pl-10 text-sm ${imageError ? "border-red-500" : ""}`}
-              placeholder="Paste Image URL (https://...)"
-              disabled={isPending}
-            />
-            <ImageIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary" />
-          </div>
+        <div className="flex justify-between items-center">
+          <label className="text-sm font-semibold text-text-primary">
+            Product Photos {images.length > 0 && <span className="text-xs text-text-secondary font-normal">({images.length})</span>}
+          </label>
           <button
             type="button"
-            onClick={handleAddImageUrl}
-            className="btn-primary min-w-[48px] px-3 flex items-center justify-center shrink-0"
-            disabled={isPending}
+            onClick={() => setShowUrlInput(!showUrlInput)}
+            className="text-xs font-medium text-brand-primary flex items-center gap-1 hover:underline cursor-pointer"
           >
-            <Plus className="h-5 w-5" />
+            <LinkIcon className="h-3 w-3" />
+            {showUrlInput ? "Hide URL Input" : "Add by URL"}
           </button>
         </div>
 
+        {/* Hidden Camera & Gallery File Inputs */}
+        <input
+          type="file"
+          ref={cameraInputRef}
+          accept="image/*"
+          capture="environment"
+          className="hidden"
+          onChange={(e) => handleFilesSelected(e.target.files)}
+        />
+        <input
+          type="file"
+          ref={galleryInputRef}
+          accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
+          multiple
+          className="hidden"
+          onChange={(e) => handleFilesSelected(e.target.files)}
+        />
+
+        {/* Mobile-Friendly Upload Action Cards */}
+        <div className="grid grid-cols-2 gap-2">
+          {/* Direct Camera Button (Optimized for Mobile Artisans) */}
+          <button
+            type="button"
+            onClick={() => cameraInputRef.current?.click()}
+            disabled={isPending}
+            className="flex flex-col items-center justify-center p-3.5 rounded-xl border border-brand-primary/20 bg-blue-50/50 hover:bg-blue-50 dark:bg-blue-950/20 dark:hover:bg-blue-950/30 transition-all text-brand-primary cursor-pointer active:scale-98"
+          >
+            <div className="p-2 bg-brand-primary text-white rounded-full mb-1.5 shadow-sm">
+              <Camera className="h-5 w-5" />
+            </div>
+            <span className="text-xs font-bold">Take Photo</span>
+            <span className="text-[10px] text-text-secondary">Instant mobile capture</span>
+          </button>
+
+          {/* Device Gallery / File Picker */}
+          <button
+            type="button"
+            onClick={() => galleryInputRef.current?.click()}
+            disabled={isPending}
+            className="flex flex-col items-center justify-center p-3.5 rounded-xl border border-border-light bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 transition-all text-text-primary cursor-pointer active:scale-98"
+          >
+            <div className="p-2 bg-zinc-200 dark:bg-zinc-700 text-text-primary rounded-full mb-1.5 shadow-sm">
+              <UploadCloud className="h-5 w-5" />
+            </div>
+            <span className="text-xs font-bold">Upload Files</span>
+            <span className="text-[10px] text-text-secondary">Select from device</span>
+          </button>
+        </div>
+
+        {/* Drag & Drop Dropzone */}
+        <div
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          onClick={() => galleryInputRef.current?.click()}
+          className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all ${
+            isDragging
+              ? "border-brand-primary bg-blue-50/40 dark:bg-blue-950/20"
+              : "border-border-light hover:border-zinc-400 bg-zinc-50/40 dark:bg-zinc-900/40"
+          }`}
+        >
+          <p className="text-xs text-text-secondary">
+            Drag & drop craft images here, or click to browse. Max 10MB per photo.
+          </p>
+        </div>
+
+        {/* Fallback Manual URL Input Toggle */}
+        {showUrlInput && (
+          <div className="flex gap-2 animate-in fade-in duration-150">
+            <div className="relative flex-1">
+              <input
+                type="url"
+                value={newImageUrl}
+                onChange={(e) => {
+                  setNewImageUrl(e.target.value);
+                  setImageError("");
+                }}
+                className={`input-primary w-full pl-11 text-sm ${imageError ? "border-red-500" : ""}`}
+                placeholder="Paste Image URL (https://...)"
+                disabled={isPending}
+              />
+              <ImageIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
+            </div>
+            <button
+              type="button"
+              onClick={handleAddImageUrl}
+              className="btn-primary min-w-[48px] px-3 flex items-center justify-center shrink-0"
+              disabled={isPending}
+            >
+              <Plus className="h-5 w-5" />
+            </button>
+          </div>
+        )}
+
+        {/* Image Error Alert */}
         {imageError && (
           <span className="text-xs font-semibold text-red-500 flex items-center gap-1">
             <AlertCircle className="h-3.5 w-3.5" />
@@ -405,35 +635,103 @@ export default function ProductForm({ initialProduct, shippingFee, packagingFee,
           </span>
         )}
 
-        {/* Image Grid Preview */}
-        {images.length > 0 ? (
-          <div className="grid grid-cols-3 gap-2 mt-1">
-            {images.map((url, idx) => (
-              <div key={idx} className="relative aspect-square border border-border-light rounded-lg overflow-hidden group bg-zinc-100">
+        {/* Active Uploading Spinners */}
+        {uploadingFiles.length > 0 && (
+          <div className="space-y-2 mt-1">
+            {uploadingFiles.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center gap-3 p-2.5 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 rounded-lg"
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={url}
-                  alt={`Preview ${idx + 1}`}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    // Fallback for broken image URLs
-                    e.currentTarget.src = "/file.svg";
-                  }}
+                  src={item.previewUrl}
+                  alt={item.fileName}
+                  className="w-10 h-10 object-cover rounded-md border border-border-light shrink-0"
                 />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveImage(idx)}
-                  className="absolute top-1 right-1 p-1 bg-red-600 hover:bg-red-700 text-white rounded-full transition-colors cursor-pointer shadow-md"
-                  title="Remove Image"
-                >
-                  <Trash2 className="h-3 w-3" />
-                </button>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-text-primary truncate">{item.fileName}</p>
+                  {item.status === "uploading" ? (
+                    <span className="text-[10px] text-brand-primary flex items-center gap-1 font-medium">
+                      <Loader2 className="h-3 w-3 animate-spin" /> Uploading to server...
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-red-500 font-medium">
+                      {item.errorMessage || "Upload failed"}
+                    </span>
+                  )}
+                </div>
+                {item.status === "error" && (
+                  <button
+                    type="button"
+                    onClick={() => handleDismissUploadError(item.id)}
+                    className="text-xs text-red-500 hover:text-red-700 px-2 py-1"
+                  >
+                    Dismiss
+                  </button>
+                )}
               </div>
             ))}
           </div>
+        )}
+
+        {/* Image Grid with Cover Badge and Reorder Actions */}
+        {images.length > 0 ? (
+          <div className="grid grid-cols-3 gap-2.5 mt-2">
+            {images.map((url, idx) => {
+              const isCover = idx === 0;
+              return (
+                <div
+                  key={idx}
+                  className={`relative aspect-square border rounded-xl overflow-hidden group bg-zinc-100 dark:bg-zinc-800 ${
+                    isCover ? "border-brand-primary ring-2 ring-brand-primary/30" : "border-border-light"
+                  }`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={url}
+                    alt={`Product photo ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = "/file.svg";
+                    }}
+                  />
+
+                  {/* Cover Badge */}
+                  {isCover && (
+                    <div className="absolute top-1.5 left-1.5 bg-brand-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow flex items-center gap-0.5">
+                      <Star className="h-2.5 w-2.5 fill-current" /> Cover
+                    </div>
+                  )}
+
+                  {/* Actions Overlay */}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-1">
+                    {!isCover && (
+                      <button
+                        type="button"
+                        onClick={() => handleSetCoverImage(idx)}
+                        className="p-1.5 bg-white/90 hover:bg-white text-zinc-900 rounded-full text-xs shadow-md transition-transform hover:scale-105"
+                        title="Set as Cover photo"
+                      >
+                        <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(idx)}
+                      className="p-1.5 bg-red-600 hover:bg-red-700 text-white rounded-full text-xs shadow-md transition-transform hover:scale-105"
+                      title="Delete photo"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         ) : (
-          <div className="text-center p-6 border-2 border-dashed border-border-light rounded-lg text-text-secondary text-xs bg-zinc-50/50">
-            No images added. A default placeholder will be assigned on submission.
+          <div className="text-center p-6 border border-dashed border-border-light rounded-xl text-text-secondary text-xs bg-zinc-50/50">
+            No photos added yet. Use the camera or upload buttons above.
           </div>
         )}
       </div>
@@ -444,7 +742,7 @@ export default function ProductForm({ initialProduct, shippingFee, packagingFee,
           Listing Status
         </label>
         <div className="flex gap-4">
-          <label className="flex items-center gap-2 cursor-pointer text-sm">
+          <label className="flex items-center gap-2 cursor-pointer text-sm font-medium">
             <input
               type="radio"
               name="status"
@@ -456,7 +754,7 @@ export default function ProductForm({ initialProduct, shippingFee, packagingFee,
             />
             <span>Active (Ready for Sale)</span>
           </label>
-          <label className="flex items-center gap-2 cursor-pointer text-sm">
+          <label className="flex items-center gap-2 cursor-pointer text-sm font-medium">
             <input
               type="radio"
               name="status"
@@ -474,8 +772,8 @@ export default function ProductForm({ initialProduct, shippingFee, packagingFee,
       {/* Submit Button */}
       <button
         type="submit"
-        className="btn-primary w-full mt-4 flex items-center justify-center gap-2 font-bold min-h-[48px]"
-        disabled={isPending}
+        className="btn-primary w-full mt-4 flex items-center justify-center gap-2 font-bold min-h-[48px] cursor-pointer shadow-lg active:scale-98 transition-all"
+        disabled={isPending || uploadingFiles.some((f) => f.status === "uploading")}
       >
         {isPending ? (
           <>

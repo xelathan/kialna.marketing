@@ -1,5 +1,12 @@
 const { PrismaClient } = require("@prisma/client");
+const crypto = require("node:crypto");
 const prisma = new PrismaClient();
+
+function hashPasswordSync(password) {
+  const salt = crypto.randomBytes(16).toString("hex");
+  const derivedKey = crypto.scryptSync(password, salt, 64);
+  return `${salt}:${derivedKey.toString("hex")}`;
+}
 
 async function main() {
   console.log("Seeding database...");
@@ -11,6 +18,8 @@ async function main() {
   await prisma.fee.deleteMany({});
   await prisma.user.deleteMany({});
 
+  const defaultPasswordHash = hashPasswordSync("password123");
+
   // 2. Create Users
   const seller = await prisma.user.create({
     data: {
@@ -19,6 +28,7 @@ async function main() {
       email: "seller@kialna.shop",
       phone: "0901234567",
       address: "123 Le Loi, District 1, Ho Chi Minh City, Vietnam",
+      passwordHash: defaultPasswordHash,
     },
   });
 
@@ -29,6 +39,7 @@ async function main() {
       email: "buyer@kialna.shop",
       phone: "+15551234567",
       address: "456 Broadway, New York, NY 10012, USA",
+      passwordHash: defaultPasswordHash,
     },
   });
 
@@ -39,10 +50,11 @@ async function main() {
       email: "admin@kialna.shop",
       phone: "02838290000",
       address: "789 Nguyen Hue, District 1, Ho Chi Minh City, Vietnam",
+      passwordHash: defaultPasswordHash,
     },
   });
 
-  console.log("Created users:", {
+  console.log("Created users with password 'password123':", {
     sellerId: seller.id,
     buyerId: buyer.id,
     adminId: admin.id,
