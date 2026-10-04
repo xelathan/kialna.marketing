@@ -47,11 +47,11 @@ export default function RoleSwitcher({ currentUser }: RoleSwitcherProps) {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-50">
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2.5 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-border-light shadow-xl rounded-full text-xs font-semibold hover:bg-white dark:hover:bg-zinc-900 transition-all cursor-pointer text-text-primary"
+        className="flex items-center gap-2 px-3.5 py-2 md:px-4 md:py-2.5 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-border-light shadow-xl rounded-full text-xs font-semibold hover:bg-white dark:hover:bg-zinc-900 transition-all cursor-pointer text-text-primary"
       >
         <div className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-primary opacity-75"></span>

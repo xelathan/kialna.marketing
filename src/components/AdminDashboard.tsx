@@ -203,121 +203,127 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F9FAFB] dark:bg-zinc-950 font-sans max-w-md mx-auto relative border-x border-border-light shadow-xl pb-24">
+    <div className="flex flex-col min-h-screen bg-[#F9FAFB] dark:bg-zinc-950 font-sans pb-12">
       {/* 1. Top Navigation Bar */}
-      <header className="sticky top-0 z-30 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-border-light px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="bg-emerald-600 p-1.5 rounded-lg text-white">
-            <Shield className="h-5 w-5" />
+      <header className="sticky top-0 z-30 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-border-light px-4 sm:px-6 lg:px-8 py-3.5">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5">
+            <div className="bg-emerald-600 p-1.5 rounded-lg text-white">
+              <Shield className="h-5 w-5" />
+            </div>
+            <div>
+              <h1 className="text-base font-bold text-text-primary">Kialna Admin Hub</h1>
+              <p className="text-[10px] text-text-secondary leading-none">District 1 Logistics & Global Hub</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-base font-bold text-text-primary">Kialna Admin Hub</h1>
-            <p className="text-[10px] text-text-secondary leading-none">District 1 Logistics & Global Hub</p>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsFeeModalOpen(true)}
+              className="p-2 text-text-secondary hover:text-brand-primary hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-semibold"
+              title="Configure Platform Fees"
+            >
+              <Settings className="h-4.5 w-4.5" />
+              <span className="hidden sm:inline">Fee Settings</span>
+            </button>
+
+            <button
+              onClick={async () => {
+                const { signOut } = await import("@/app/actions/auth");
+                await signOut();
+                window.location.href = "/login";
+              }}
+              className="p-2 text-text-secondary hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-full transition-colors cursor-pointer"
+              title="Sign Out"
+              aria-label="Sign Out"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
           </div>
-        </div>
-
-        <div className="flex items-center gap-1">
-          <button
-            onClick={async () => {
-              const { signOut } = await import("@/app/actions/auth");
-              await signOut();
-              window.location.href = "/login";
-            }}
-            className="p-2 text-text-secondary hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-full transition-colors cursor-pointer"
-            title="Sign Out"
-            aria-label="Sign Out"
-          >
-            <LogOut className="h-4 w-4" />
-          </button>
-
-          <button
-            onClick={() => setIsFeeModalOpen(true)}
-            className="p-2 text-text-secondary hover:text-brand-primary hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors cursor-pointer"
-            title="Configure Platform Fees"
-          >
-            <Settings className="h-5 w-5" />
-          </button>
         </div>
       </header>
 
       {/* 2. Main Canvas */}
-      <main className="flex-1 p-4 flex flex-col gap-5 overflow-y-auto">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 md:py-8 flex flex-col gap-6">
         {/* Logistics Overview Metrics Grid */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="card-primary p-3.5 flex flex-col gap-1 bg-white dark:bg-zinc-900 border-l-4 border-l-brand-primary">
-            <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 sm:gap-5">
+          <div className="card-primary p-4 flex flex-col gap-1 bg-white dark:bg-zinc-900 border-l-4 border-l-brand-primary rounded-xl">
+            <span className="text-[10px] sm:text-xs font-bold text-text-secondary uppercase tracking-wider">
               Total Orders
             </span>
-            <span className="text-2xl font-bold text-text-primary">{totalOrdersCount}</span>
+            <span className="text-xl sm:text-2xl font-bold text-text-primary">{totalOrdersCount}</span>
           </div>
 
-          <div className="card-primary p-3.5 flex flex-col gap-1 bg-white dark:bg-zinc-900 border-l-4 border-l-amber-500">
-            <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">
+          <div className="card-primary p-4 flex flex-col gap-1 bg-white dark:bg-zinc-900 border-l-4 border-l-amber-500 rounded-xl">
+            <span className="text-[10px] sm:text-xs font-bold text-text-secondary uppercase tracking-wider">
               Action Needed
             </span>
-            <span className="text-2xl font-bold text-amber-600">{readyCount}</span>
+            <span className="text-xl sm:text-2xl font-bold text-amber-600">{readyCount}</span>
           </div>
 
-          <div className="card-primary p-3.5 flex flex-col gap-1 bg-white dark:bg-zinc-900 border-l-4 border-l-purple-500">
-            <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">
+          <div className="card-primary p-4 flex flex-col gap-1 bg-white dark:bg-zinc-900 border-l-4 border-l-purple-500 rounded-xl">
+            <span className="text-[10px] sm:text-xs font-bold text-text-secondary uppercase tracking-wider">
               In Hub Packaging
             </span>
-            <span className="text-2xl font-bold text-purple-600">{hubPackagingCount}</span>
+            <span className="text-xl sm:text-2xl font-bold text-purple-600">{hubPackagingCount}</span>
           </div>
 
-          <div className="card-primary p-3.5 flex flex-col gap-1 bg-white dark:bg-zinc-900 border-l-4 border-l-emerald-500">
-            <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">
+          <div className="card-primary p-4 flex flex-col gap-1 bg-white dark:bg-zinc-900 border-l-4 border-l-emerald-500 rounded-xl">
+            <span className="text-[10px] sm:text-xs font-bold text-text-secondary uppercase tracking-wider">
               Shipped / Transit
             </span>
-            <span className="text-2xl font-bold text-emerald-600">{shippedCount}</span>
+            <span className="text-xl sm:text-2xl font-bold text-emerald-600">{shippedCount}</span>
           </div>
         </div>
 
         {/* Logistics Revenue Banner */}
-        <div className="card-primary p-4 bg-gradient-to-tr from-emerald-700 to-teal-900 text-white rounded-xl shadow-md flex justify-between items-center relative overflow-hidden">
-          <div className="relative z-10 flex flex-col gap-0.5">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-200">
+        <div className="card-primary p-5 sm:p-6 bg-gradient-to-tr from-emerald-700 to-teal-900 text-white rounded-2xl shadow-md flex justify-between items-center relative overflow-hidden">
+          <div className="relative z-10 flex flex-col gap-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-200">
               Platform Logistics Fees Collected
             </span>
-            <div className="flex items-baseline gap-2">
-              <span className="text-xl font-bold">${totalLogisticsRevenueUSD.toFixed(2)} USD</span>
-              <span className="text-xs text-emerald-200">({totalLogisticsRevenueVND.toLocaleString()} VND)</span>
+            <div className="flex items-baseline gap-2.5">
+              <span className="text-2xl sm:text-3xl font-extrabold">${totalLogisticsRevenueUSD.toFixed(2)} USD</span>
+              <span className="text-xs sm:text-sm text-emerald-200">({totalLogisticsRevenueVND.toLocaleString()} VND)</span>
             </div>
           </div>
-          <Truck className="h-12 w-12 text-white/15 absolute right-2 bottom-1" />
+          <Truck className="h-16 w-16 text-white/15 absolute right-4 bottom-2" />
         </div>
 
-        {/* Search Input */}
-        <div className="relative">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search Order ID, Buyer, or Craftsman..."
-            className="input-primary w-full pl-11 text-xs"
-          />
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
+        {/* Search and Pipeline Filter Bar */}
+        <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
+          {/* Search Input */}
+          <div className="relative flex-1 md:max-w-md">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search Order ID, Buyer, or Craftsman..."
+              className="input-primary w-full pl-11 text-xs"
+            />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
+          </div>
+
+          {/* Pipeline Stage Slider Tabs */}
+          <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none text-xs sm:flex-wrap">
+            {["All", ...PIPELINE_STAGES].map((stage) => (
+              <button
+                key={stage}
+                onClick={() => setFilterStage(stage)}
+                className={`px-3.5 py-1.5 rounded-lg font-semibold whitespace-nowrap cursor-pointer transition-all border ${
+                  filterStage === stage
+                    ? "bg-emerald-600 border-emerald-600 text-white font-bold"
+                    : "bg-white dark:bg-zinc-900 border-border-light text-text-secondary hover:text-text-primary"
+                }`}
+              >
+                {stage}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Pipeline Stage Slider Tabs */}
-        <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none text-xs">
-          {["All", ...PIPELINE_STAGES].map((stage) => (
-            <button
-              key={stage}
-              onClick={() => setFilterStage(stage)}
-              className={`px-3 py-1.5 rounded-lg font-semibold whitespace-nowrap cursor-pointer transition-all border ${
-                filterStage === stage
-                  ? "bg-emerald-600 border-emerald-600 text-white font-bold"
-                  : "bg-white dark:bg-zinc-900 border-border-light text-text-secondary hover:text-text-primary"
-              }`}
-            >
-              {stage}
-            </button>
-          ))}
-        </div>
-
-        {/* Orders Pipeline List */}
-        <div className="flex flex-col gap-3.5">
+        {/* Orders Pipeline Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
           {filteredOrders.length > 0 ? (
             filteredOrders.map((o) => {
               const isActioning = actioningOrderId === o.id && isPending;
@@ -426,8 +432,8 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
 
       {/* 3. Detailed Logistics Manifest Modal */}
       {selectedOrder && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] flex items-end justify-center animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-zinc-900 w-full max-w-md rounded-t-2xl max-h-[85vh] overflow-y-auto flex flex-col animate-in slide-in-from-bottom duration-300 relative">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] flex items-end md:items-center justify-center p-0 md:p-6 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-zinc-900 w-full max-w-md md:max-w-2xl rounded-t-2xl md:rounded-2xl max-h-[85vh] md:max-h-[90vh] overflow-y-auto flex flex-col animate-in slide-in-from-bottom md:zoom-in-95 duration-300 relative shadow-2xl">
             {/* Header */}
             <div className="px-5 py-4 border-b border-border-light flex items-center justify-between shrink-0">
               <div>
@@ -586,7 +592,7 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
       {/* 4. Platform Fee Configuration Modal */}
       {isFeeModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-zinc-900 w-full max-w-sm rounded-2xl p-5 flex flex-col gap-4 shadow-2xl border border-border-light">
+          <div className="bg-white dark:bg-zinc-900 w-full max-w-sm md:max-w-md rounded-2xl p-6 flex flex-col gap-4 shadow-2xl border border-border-light">
             <div className="flex justify-between items-center border-b border-border-light pb-3">
               <div className="flex items-center gap-2">
                 <Settings className="h-5 w-5 text-brand-primary" />

@@ -193,100 +193,133 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F9FAFB] dark:bg-zinc-950 font-sans max-w-md mx-auto relative border-x border-border-light shadow-xl pb-24">
+    <div className="flex flex-col min-h-screen bg-[#F9FAFB] dark:bg-zinc-950 font-sans pb-20 md:pb-8">
       {/* 1. Header */}
-      <header className="sticky top-0 z-30 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-border-light px-4 py-3.5 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Compass className="h-5 w-5 text-brand-primary" />
-          <div>
-            <h1 className="text-base font-bold text-text-primary tracking-tight">Kialna Shop</h1>
-            <p className="text-[10px] text-text-secondary leading-none">Vietnam Craft Market</p>
+      <header className="sticky top-0 z-30 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-border-light px-4 sm:px-6 lg:px-8 py-3.5">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5 shrink-0">
+            <div className="bg-brand-primary p-1.5 rounded-lg text-white">
+              <Compass className="h-5 w-5" />
+            </div>
+            <div>
+              <h1 className="text-base font-bold text-text-primary tracking-tight">Kialna Shop</h1>
+              <p className="text-[10px] text-text-secondary leading-none">Vietnam Craft Market</p>
+            </div>
           </div>
-        </div>
 
-        <div className="flex items-center gap-2">
-          {/* User Sign Out Button */}
-          <button
-            onClick={async () => {
-              const { signOut } = await import("@/app/actions/auth");
-              await signOut();
-              window.location.href = "/login";
-            }}
-            className="p-2 text-text-secondary hover:text-red-500 transition-colors hover:bg-red-50 dark:hover:bg-red-950/20 rounded-full cursor-pointer"
-            title="Sign Out"
-            aria-label="Sign Out"
-          >
-            <LogOut className="h-4 w-4" />
-          </button>
+          {/* Desktop Navigation Switcher */}
+          <div className="hidden md:flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-xl">
+            <button
+              onClick={() => setActiveView("browse")}
+              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                activeView === "browse"
+                  ? "bg-white dark:bg-zinc-900 text-brand-primary shadow-sm"
+                  : "text-text-secondary hover:text-text-primary"
+              }`}
+            >
+              <Compass className="h-4 w-4" />
+              <span>Explore Crafts</span>
+            </button>
+            <button
+              onClick={() => setActiveView("orders")}
+              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                activeView === "orders"
+                  ? "bg-white dark:bg-zinc-900 text-brand-primary shadow-sm"
+                  : "text-text-secondary hover:text-text-primary"
+              }`}
+            >
+              <Clock className="h-4 w-4" />
+              <span>My Orders</span>
+            </button>
+          </div>
 
-          {/* Cart Icon Badge */}
-          <button
-            onClick={() => setIsCartOpen(true)}
-            className="relative p-2 text-text-secondary hover:text-brand-primary transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full cursor-pointer"
-            aria-label="View shopping cart"
-          >
-            <ShoppingBag className="h-5 w-5" />
-            {cart.length > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 bg-brand-primary text-white text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center border border-white">
-                {cart.reduce((sum, item) => sum + item.quantity, 0)}
-              </span>
-            )}
-          </button>
+          <div className="flex items-center gap-2">
+            {/* User Sign Out Button */}
+            <button
+              onClick={async () => {
+                const { signOut } = await import("@/app/actions/auth");
+                await signOut();
+                window.location.href = "/login";
+              }}
+              className="p-2 text-text-secondary hover:text-red-500 transition-colors hover:bg-red-50 dark:hover:bg-red-950/20 rounded-full cursor-pointer"
+              title="Sign Out"
+              aria-label="Sign Out"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+
+            {/* Cart Icon Badge */}
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="relative p-2 text-text-secondary hover:text-brand-primary transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full cursor-pointer"
+              aria-label="View shopping cart"
+            >
+              <ShoppingBag className="h-5 w-5" />
+              {cart.length > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-brand-primary text-white text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center border border-white">
+                  {cart.reduce((sum, item) => sum + item.quantity, 0)}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
       </header>
 
       {/* 2. Main Canvas */}
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 md:py-8">
         {/* VIEW A: BROWSE */}
         {activeView === "browse" && (
-          <div className="p-4 flex flex-col gap-5 animate-in fade-in duration-200">
+          <div className="flex flex-col gap-6 animate-in fade-in duration-200">
             {/* Promo Banner */}
-            <div className="relative rounded-2xl overflow-hidden bg-gradient-to-tr from-blue-600 to-indigo-800 text-white p-5 shadow-md">
-              <div className="relative z-10 flex flex-col gap-1.5">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-200 flex items-center gap-1">
-                  <Sparkles className="h-3 w-3" /> Guaranteed Authentic
+            <div className="relative rounded-2xl overflow-hidden bg-gradient-to-tr from-blue-600 to-indigo-800 text-white p-6 sm:p-8 md:p-10 shadow-md">
+              <div className="relative z-10 flex flex-col gap-2 max-w-2xl">
+                <span className="text-xs font-bold uppercase tracking-wider text-blue-200 flex items-center gap-1.5">
+                  <Sparkles className="h-3.5 w-3.5" /> Guaranteed Authentic
                 </span>
-                <h2 className="text-lg font-bold leading-tight">Vietnamese Masterpieces</h2>
-                <p className="text-[11px] text-blue-100 leading-relaxed max-w-[260px]">
-                  Traditional textiles, organic tea, and home decor sourced directly from local craftsmen. Flat international shipping.
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold leading-tight">Vietnamese Masterpieces</h2>
+                <p className="text-xs sm:text-sm text-blue-100 leading-relaxed">
+                  Traditional textiles, organic tea, and home decor sourced directly from local craftsmen. Flat international shipping from Saigon District 1 Hub.
                 </p>
               </div>
               <div className="absolute right-0 bottom-0 translate-y-6 translate-x-4 opacity-10 pointer-events-none">
-                <Compass className="h-44 w-44" />
+                <Compass className="h-56 w-56 md:h-72 md:w-72" />
               </div>
             </div>
 
-            {/* Search Input */}
-            <div className="relative">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search premium crafts..."
-                className="input-primary w-full pl-11 text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
-              />
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
-            </div>
+            {/* Search & Categories Bar */}
+            <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
+              {/* Search Input */}
+              <div className="relative flex-1 md:max-w-md">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search premium crafts..."
+                  className="input-primary w-full pl-11 text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
+              </div>
 
-            {/* Categories Slider */}
-            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap cursor-pointer transition-all border ${
-                    selectedCategory === cat
-                      ? "bg-brand-primary border-brand-primary text-white font-bold"
-                      : "bg-white dark:bg-zinc-900 border-border-light text-text-secondary hover:text-text-primary"
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
+              {/* Categories Slider */}
+              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none sm:flex-wrap">
+                {categories.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap cursor-pointer transition-all border ${
+                      selectedCategory === cat
+                        ? "bg-brand-primary border-brand-primary text-white font-bold"
+                        : "bg-white dark:bg-zinc-900 border-border-light text-text-secondary hover:text-text-primary"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Products Grid */}
-            <div className="grid grid-cols-2 gap-3.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-5 lg:gap-6">
               {filteredProducts.length > 0 ? (
                 filteredProducts.map((p) => {
                   let imageList = [];
@@ -304,7 +337,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                         setSelectedProduct(p);
                         setDetailQuantity(1);
                       }}
-                      className="card-primary overflow-hidden flex flex-col bg-white dark:bg-zinc-900 hover:shadow-md transition-all cursor-pointer group"
+                      className="card-primary rounded-xl overflow-hidden flex flex-col bg-white dark:bg-zinc-900 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer group"
                     >
                       {/* Thumbnail container */}
                       <div className="aspect-square bg-zinc-50 border-b border-border-light overflow-hidden relative">
@@ -332,18 +365,18 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                       </div>
 
                       {/* Info */}
-                      <div className="p-3 flex flex-col gap-1 flex-1">
-                        <span className="text-[9px] text-text-secondary uppercase font-semibold tracking-wider">
+                      <div className="p-3 sm:p-4 flex flex-col gap-1.5 flex-1">
+                        <span className="text-[9px] sm:text-[10px] text-text-secondary uppercase font-semibold tracking-wider">
                           {p.category}
                         </span>
-                        <h3 className="text-xs font-bold text-text-primary line-clamp-2 leading-tight flex-1">
+                        <h3 className="text-xs sm:text-sm font-bold text-text-primary line-clamp-2 leading-tight flex-1">
                           {p.name}
                         </h3>
                         <div className="mt-1 flex flex-col">
-                          <span className="text-xs font-bold text-brand-primary leading-tight">
+                          <span className="text-xs sm:text-sm font-bold text-brand-primary leading-tight">
                             ${(p.basePrice / EXCHANGE_RATE).toFixed(2)} USD
                           </span>
-                          <span className="text-[9px] text-text-secondary leading-none mt-0.5">
+                          <span className="text-[9px] sm:text-[10px] text-text-secondary leading-none mt-0.5">
                             {p.basePrice.toLocaleString()} VND
                           </span>
                         </div>
@@ -352,9 +385,9 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                   );
                 })
               ) : (
-                <div className="col-span-2 card-primary p-8 text-center flex flex-col items-center gap-2 bg-white dark:bg-zinc-900 border-2 border-dashed border-border-light">
+                <div className="col-span-2 sm:col-span-3 lg:col-span-4 card-primary p-8 sm:p-12 text-center flex flex-col items-center gap-2 bg-white dark:bg-zinc-900 border-2 border-dashed border-border-light rounded-2xl">
                   <ShoppingBag className="h-10 w-10 text-text-secondary opacity-50" />
-                  <h3 className="text-sm font-semibold text-text-primary">No products found</h3>
+                  <h3 className="text-sm sm:text-base font-semibold text-text-primary">No products found</h3>
                   <p className="text-xs text-text-secondary">
                     Try refining your search query or selecting a different category.
                   </p>
@@ -366,8 +399,8 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
 
         {/* VIEW B: ORDER HISTORY */}
         {activeView === "orders" && (
-          <div className="p-4 flex flex-col gap-4 animate-in fade-in duration-200">
-            <h2 className="text-sm font-bold text-text-primary uppercase tracking-wider border-b border-border-light pb-2">
+          <div className="flex flex-col gap-5 animate-in fade-in duration-200">
+            <h2 className="text-base font-bold text-text-primary uppercase tracking-wider border-b border-border-light pb-3">
               Your Purchase History
             </h2>
 
@@ -381,7 +414,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                 {ordersError}
               </div>
             ) : orders.length > 0 ? (
-              <div className="flex flex-col gap-3.5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
                 {orders.map((o) => (
                   <div
                     key={o.id}
@@ -488,12 +521,12 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
 
       {/* 3. Product Details Modal Dialog */}
       {selectedProduct && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] flex items-end justify-center animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] flex items-end md:items-center justify-center p-0 md:p-6 animate-in fade-in duration-200">
           {/* Modal Container */}
-          <div className="bg-white dark:bg-zinc-900 w-full max-w-md rounded-t-2xl max-h-[85vh] overflow-y-auto flex flex-col animate-in slide-in-from-bottom duration-300 relative">
+          <div className="bg-white dark:bg-zinc-900 w-full max-w-md md:max-w-4xl rounded-t-2xl md:rounded-2xl max-h-[85vh] md:max-h-[90vh] overflow-hidden flex flex-col md:flex-row animate-in slide-in-from-bottom md:zoom-in-95 duration-300 relative shadow-2xl">
             
             {/* Header image cover */}
-            <div className="relative aspect-video bg-zinc-100 shrink-0">
+            <div className="relative aspect-video md:aspect-auto md:w-1/2 bg-zinc-100 shrink-0 md:min-h-[400px]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={JSON.parse(selectedProduct.images)[0] || "/file.svg"}
@@ -505,7 +538,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
               />
               <button
                 onClick={() => setSelectedProduct(null)}
-                className="absolute top-4 right-4 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors cursor-pointer shadow-md border border-white/10"
+                className="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors cursor-pointer shadow-md border border-white/10"
                 aria-label="Close details"
               >
                 <X className="h-4 w-4" />
@@ -513,7 +546,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
             </div>
 
             {/* Content info */}
-            <div className="p-5 flex flex-col gap-4 flex-1">
+            <div className="p-5 md:p-8 flex flex-col gap-4 flex-1 overflow-y-auto">
               <div>
                 <span className="text-[10px] font-bold text-brand-primary uppercase tracking-wider">
                   {selectedProduct.category}
@@ -638,9 +671,9 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
 
       {/* 4. Sliding Cart Drawer Panel */}
       {isCartOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] flex items-end justify-center animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] flex items-end md:items-stretch md:justify-end animate-in fade-in duration-200">
           {/* Drawer container */}
-          <div className="bg-white dark:bg-zinc-900 w-full max-w-md rounded-t-2xl max-h-[85vh] flex flex-col animate-in slide-in-from-bottom duration-300 relative shadow-2xl">
+          <div className="bg-white dark:bg-zinc-900 w-full max-w-md md:w-[420px] md:max-w-none md:h-full rounded-t-2xl md:rounded-l-2xl md:rounded-r-none max-h-[85vh] md:max-h-full flex flex-col animate-in slide-in-from-bottom md:slide-in-from-right duration-300 relative shadow-2xl">
             
             {/* Header */}
             <div className="px-5 py-4 border-b border-border-light flex items-center justify-between shrink-0">
@@ -800,9 +833,9 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
 
       {/* 5. Checkout Delivery Details Overlay Dialog */}
       {isCheckingOut && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] flex items-end justify-center animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] flex items-end md:items-center justify-center p-0 md:p-6 animate-in fade-in duration-200">
           {/* Modal Container */}
-          <div className="bg-white dark:bg-zinc-900 w-full max-w-md rounded-t-2xl max-h-[85vh] overflow-y-auto flex flex-col animate-in slide-in-from-bottom duration-300 relative">
+          <div className="bg-white dark:bg-zinc-900 w-full max-w-md md:max-w-lg rounded-t-2xl md:rounded-2xl max-h-[85vh] md:max-h-[90vh] overflow-y-auto flex flex-col animate-in slide-in-from-bottom md:zoom-in-95 duration-300 relative shadow-2xl">
             {/* Header */}
             <div className="px-5 py-4 border-b border-border-light flex items-center justify-between shrink-0">
               <h2 className="text-base font-bold text-text-primary">Delivery Checkout Details</h2>
@@ -965,8 +998,8 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
         </div>
       )}
 
-      {/* 7. Bottom Navigation Bar */}
-      <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-t border-border-light grid grid-cols-2 py-2.5 z-40 px-2 shadow-inner">
+      {/* 7. Bottom Navigation Bar (Mobile only) */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 w-full bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-t border-border-light grid grid-cols-2 py-2.5 z-40 px-2 shadow-inner">
         <button
           onClick={() => setActiveView("browse")}
           className={`flex flex-col items-center gap-1 py-1 cursor-pointer transition-all ${

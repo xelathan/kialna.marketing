@@ -23,6 +23,7 @@ import {
   AlertTriangle,
   ArrowRight,
   TrendingUp,
+  LogOut,
 } from "lucide-react";
 
 interface SellerDashboardProps {
@@ -95,86 +96,144 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F9FAFB] dark:bg-zinc-950 font-sans max-w-md mx-auto relative border-x border-border-light shadow-xl">
+    <div className="flex flex-col min-h-screen bg-[#F9FAFB] dark:bg-zinc-950 font-sans pb-20 md:pb-8">
       {/* Top Header */}
-      <header className="sticky top-0 z-30 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-border-light px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="bg-brand-primary p-1.5 rounded-lg text-white">
-            <ShoppingBag className="h-5 w-5" />
+      <header className="sticky top-0 z-30 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-border-light px-4 sm:px-6 lg:px-8 py-3.5">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5 shrink-0">
+            <div className="bg-brand-primary p-1.5 rounded-lg text-white">
+              <ShoppingBag className="h-5 w-5" />
+            </div>
+            <div>
+              <h1 className="text-base font-bold text-text-primary">Kialna Seller</h1>
+              <p className="text-[10px] text-text-secondary leading-none">Craftsman Hub</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-base font-bold text-text-primary">Kialna Seller</h1>
-            <p className="text-[10px] text-text-secondary leading-none">Craftsman Hub</p>
+
+          {/* Desktop Navigation Switcher */}
+          <div className="hidden md:flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-xl">
+            <button
+              onClick={() => setActiveTab("listings")}
+              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                activeTab === "listings"
+                  ? "bg-white dark:bg-zinc-900 text-brand-primary shadow-sm"
+                  : "text-text-secondary hover:text-text-primary"
+              }`}
+            >
+              <ShoppingBag className="h-4 w-4" />
+              <span>Listings ({totalListings})</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("orders")}
+              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                activeTab === "orders"
+                  ? "bg-white dark:bg-zinc-900 text-brand-primary shadow-sm"
+                  : "text-text-secondary hover:text-text-primary"
+              }`}
+            >
+              <ClipboardList className="h-4 w-4" />
+              <span>Orders ({orders.length})</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("profile")}
+              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                activeTab === "profile"
+                  ? "bg-white dark:bg-zinc-900 text-brand-primary shadow-sm"
+                  : "text-text-secondary hover:text-text-primary"
+              }`}
+            >
+              <User className="h-4 w-4" />
+              <span>Store Profile</span>
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {/* Sign Out Button */}
+            <button
+              onClick={async () => {
+                const { signOut } = await import("@/app/actions/auth");
+                await signOut();
+                window.location.href = "/login";
+              }}
+              className="p-2 text-text-secondary hover:text-red-500 transition-colors hover:bg-red-50 dark:hover:bg-red-950/20 rounded-full cursor-pointer"
+              title="Sign Out"
+              aria-label="Sign Out"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+
+            <Link
+              href="/seller/products/new"
+              className="btn-primary text-xs font-bold px-3.5 py-2 rounded-lg flex items-center gap-1.5 shadow-sm"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Add Listing</span>
+            </Link>
           </div>
         </div>
-
-        <Link
-          href="/seller/products/new"
-          className="bg-brand-primary hover:opacity-90 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1 min-h-[38px] transition-all"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Add</span>
-        </Link>
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 pb-24 overflow-y-auto">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 md:py-8">
         {/* TAB 1: LISTINGS */}
         {activeTab === "listings" && (
-          <div className="p-4 flex flex-col gap-4 animate-in fade-in duration-200">
+          <div className="flex flex-col gap-6 animate-in fade-in duration-200">
             {/* Quick Stats Grid */}
-            <div className="grid grid-cols-3 gap-3">
-              <div className="card-primary p-3 flex flex-col gap-1 bg-white dark:bg-zinc-900">
-                <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">
-                  Listings
+            <div className="grid grid-cols-3 gap-3.5 sm:gap-5">
+              <div className="card-primary p-4 flex flex-col gap-1 bg-white dark:bg-zinc-900 rounded-xl">
+                <span className="text-[10px] sm:text-xs font-bold text-text-secondary uppercase tracking-wider">
+                  Total Listings
                 </span>
-                <span className="text-xl font-bold text-text-primary">{totalListings}</span>
+                <span className="text-xl sm:text-2xl font-bold text-text-primary">{totalListings}</span>
               </div>
-              <div className="card-primary p-3 flex flex-col gap-1 bg-white dark:bg-zinc-900 border-l-4 border-l-brand-accent">
-                <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">
+              <div className="card-primary p-4 flex flex-col gap-1 bg-white dark:bg-zinc-900 border-l-4 border-l-brand-accent rounded-xl">
+                <span className="text-[10px] sm:text-xs font-bold text-text-secondary uppercase tracking-wider">
                   Active
                 </span>
-                <span className="text-xl font-bold text-brand-primary">{activeListings}</span>
+                <span className="text-xl sm:text-2xl font-bold text-brand-primary">{activeListings}</span>
               </div>
-              <div className="card-primary p-3 flex flex-col gap-1 bg-white dark:bg-zinc-900 border-l-4 border-l-red-500">
-                <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">
+              <div className="card-primary p-4 flex flex-col gap-1 bg-white dark:bg-zinc-900 border-l-4 border-l-red-500 rounded-xl">
+                <span className="text-[10px] sm:text-xs font-bold text-text-secondary uppercase tracking-wider">
                   Low Stock
                 </span>
-                <span className="text-xl font-bold text-red-500">{lowStockCount}</span>
+                <span className="text-xl sm:text-2xl font-bold text-red-500">{lowStockCount}</span>
               </div>
             </div>
 
-            {/* Search Bar */}
-            <div className="relative">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search your listings..."
-                className="input-primary w-full pl-11 text-sm"
-              />
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
+            {/* Search and Filters Bar */}
+            <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
+              {/* Search Bar */}
+              <div className="relative flex-1 md:max-w-md">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search your listings..."
+                  className="input-primary w-full pl-11 text-sm"
+                />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
+              </div>
+
+              {/* Filter Tabs Segmented Control */}
+              <div className="flex bg-zinc-100 dark:bg-zinc-900 p-1 rounded-xl text-xs font-semibold overflow-x-auto">
+                {(["all", "active", "draft", "out_of_stock"] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setFilterStatus(tab)}
+                    className={`px-3.5 py-1.5 rounded-lg capitalize transition-all cursor-pointer whitespace-nowrap ${
+                      filterStatus === tab
+                        ? "bg-white dark:bg-zinc-800 text-text-primary shadow-sm font-bold"
+                        : "text-text-secondary hover:text-text-primary"
+                    }`}
+                  >
+                    {tab === "out_of_stock" ? "Out of Stock" : tab}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* Filter Tabs Segmented Control */}
-            <div className="flex bg-zinc-100 dark:bg-zinc-900 p-1 rounded-lg text-xs font-semibold">
-              {(["all", "active", "draft", "out_of_stock"] as const).map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setFilterStatus(tab)}
-                  className={`flex-1 py-1.5 rounded-md capitalize transition-all cursor-pointer ${
-                    filterStatus === tab
-                      ? "bg-white dark:bg-zinc-800 text-text-primary shadow-sm font-bold"
-                      : "text-text-secondary hover:text-text-primary"
-                  }`}
-                >
-                  {tab === "out_of_stock" ? "Out of Stock" : tab}
-                </button>
-              ))}
-            </div>
-
-            {/* Products List */}
-            <div className="flex flex-col gap-3">
+            {/* Products Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
               {filteredProducts.length > 0 ? (
                 filteredProducts.map((p) => {
                   let imageList = [];
@@ -302,14 +361,14 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
               Orders Involving Your Products
             </h2>
 
-            <div className="flex flex-col gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
               {orders.length > 0 ? (
                 orders.map((o) => (
                   <div
                     key={o.id}
-                    className="card-primary p-4 flex flex-col gap-3 bg-white dark:bg-zinc-900"
+                    className="card-primary p-4 sm:p-5 flex flex-col gap-3 bg-white dark:bg-zinc-900 rounded-xl"
                   >
-                    <div className="flex justify-between items-start border-b border-border-light pb-2">
+                    <div className="flex justify-between items-start border-b border-border-light pb-2.5">
                       <div>
                         <span className="text-[10px] font-mono text-text-secondary">
                           ORDER ID: {o.id.substring(0, 8)}...
@@ -353,9 +412,9 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
                   </div>
                 ))
               ) : (
-                <div className="card-primary p-8 text-center flex flex-col items-center gap-2 bg-white dark:bg-zinc-900 border-2 border-dashed border-border-light">
+                <div className="col-span-full card-primary p-8 sm:p-12 text-center flex flex-col items-center gap-2 bg-white dark:bg-zinc-900 border-2 border-dashed border-border-light rounded-2xl">
                   <ClipboardList className="h-10 w-10 text-text-secondary opacity-50" />
-                  <h3 className="text-sm font-semibold text-text-primary">No orders yet</h3>
+                  <h3 className="text-sm sm:text-base font-semibold text-text-primary">No orders yet</h3>
                   <p className="text-xs text-text-secondary">
                     Your listings will show orders here when purchased by buyers.
                   </p>
@@ -367,15 +426,15 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
 
         {/* TAB 3: PROFILE */}
         {activeTab === "profile" && (
-          <div className="p-4 flex flex-col gap-6 animate-in fade-in duration-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start animate-in fade-in duration-200">
             {/* Craftsman Profile Card */}
-            <div className="card-primary p-5 bg-white dark:bg-zinc-900 flex flex-col gap-4">
+            <div className="card-primary p-5 sm:p-6 bg-white dark:bg-zinc-900 flex flex-col gap-4 rounded-2xl">
               <div className="flex items-center gap-3">
                 <div className="h-12 w-12 bg-amber-100 dark:bg-amber-950/20 text-amber-600 rounded-full flex items-center justify-center font-bold text-lg">
                   {currentUser.name.charAt(0)}
                 </div>
                 <div>
-                  <h2 className="text-base font-bold text-text-primary">{currentUser.name}</h2>
+                  <h2 className="text-base sm:text-lg font-bold text-text-primary">{currentUser.name}</h2>
                   <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/20 text-amber-600 border border-amber-200 dark:border-amber-900 uppercase">
                     Seller Account
                   </span>
@@ -424,23 +483,35 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
             </div>
 
             {/* Shipping Hub Info Card */}
-            <div className="card-primary p-4 bg-zinc-50 dark:bg-zinc-900 border border-border-light flex flex-col gap-2">
-              <h3 className="text-xs font-bold text-text-primary uppercase tracking-wider flex items-center gap-1.5">
-                <Layers className="h-4 w-4 text-brand-primary" />
-                Shipping Hub Logistics
+            <div className="card-primary p-5 sm:p-6 bg-zinc-50 dark:bg-zinc-900 border border-border-light flex flex-col gap-3 rounded-2xl">
+              <h3 className="text-xs sm:text-sm font-bold text-text-primary uppercase tracking-wider flex items-center gap-2">
+                <Layers className="h-4.5 w-4.5 text-brand-primary" />
+                Shipping Hub Logistics & Artisan Guarantee
               </h3>
               <p className="text-xs text-text-secondary leading-relaxed">
-                As a seller, you list your craft items in **VND**. When orders occur, you hand over items to
-                the **Kialna District 1 Shipping Hub** (handled in Phase 4). 
-                Buyers cover the fixed packaging fee (30,000 VND) and shipping fee (120,000 VND).
+                As a verified artisan seller, you set your craft prices directly in **VND**. When customers order, 
+                you hand over items to the **Kialna District 1 Shipping Hub** in Ho Chi Minh City.
               </p>
+              <div className="bg-white dark:bg-zinc-800 p-3.5 rounded-xl border border-border-light flex flex-col gap-1.5 text-xs">
+                <div className="flex justify-between">
+                  <span className="text-text-secondary">Domestic Custom Packaging:</span>
+                  <span className="font-semibold text-text-primary">30,000 VND (Covered by Buyer)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-text-secondary">Global International Shipping:</span>
+                  <span className="font-semibold text-text-primary">120,000 VND (Covered by Buyer)</span>
+                </div>
+                <div className="border-t border-border-light pt-1.5 mt-1 text-[11px] text-brand-primary font-medium">
+                  Artisans receive 100% of their listed base price upon fulfillment completion.
+                </div>
+              </div>
             </div>
           </div>
         )}
       </main>
 
-      {/* Persistent Mobile Bottom Navigation Bar */}
-      <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-t border-border-light grid grid-cols-3 py-2 z-40 px-2 shadow-inner">
+      {/* Persistent Mobile Bottom Navigation Bar (Mobile only) */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 w-full bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-t border-border-light grid grid-cols-3 py-2 z-40 px-2 shadow-inner">
         <button
           onClick={() => setActiveTab("listings")}
           className={`flex flex-col items-center gap-1 py-1 cursor-pointer transition-all ${

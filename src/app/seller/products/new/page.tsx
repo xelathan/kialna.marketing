@@ -18,24 +18,26 @@ export default async function NewProductPage() {
   const packagingFee = feesResult.packaging;
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F9FAFB] dark:bg-zinc-950 max-w-md mx-auto border-x border-border-light shadow-xl">
+    <div className="flex flex-col min-h-screen bg-[#F9FAFB] dark:bg-zinc-950 font-sans pb-12">
       {/* Navigation Header */}
-      <header className="sticky top-0 z-30 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-border-light px-4 py-4 flex items-center gap-3">
-        <Link
-          href="/"
-          className="p-2 text-text-secondary hover:text-text-primary hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-full transition-colors shrink-0"
-          aria-label="Go back to dashboard"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Link>
-        <div>
-          <h1 className="text-base font-bold text-text-primary">Add New Listing</h1>
-          <p className="text-[10px] text-text-secondary">Create a new Vietnamese craft product</p>
+      <header className="sticky top-0 z-30 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-border-light px-4 sm:px-6 lg:px-8 py-3.5">
+        <div className="max-w-5xl mx-auto flex items-center gap-3">
+          <Link
+            href="/"
+            className="p-2 text-text-secondary hover:text-text-primary hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors shrink-0"
+            aria-label="Go back to dashboard"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+          <div>
+            <h1 className="text-base sm:text-lg font-bold text-text-primary">Add New Listing</h1>
+            <p className="text-xs text-text-secondary">Create a new Vietnamese craft product</p>
+          </div>
         </div>
       </header>
 
       {/* Main Form Container */}
-      <main className="flex-1 py-6 overflow-y-auto">
+      <main className="flex-1 py-6 sm:py-8 overflow-y-auto">
         <ProductForm
           shippingFee={shippingFee}
           packagingFee={packagingFee}

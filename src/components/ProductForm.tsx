@@ -339,451 +339,462 @@ export default function ProductForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-6 max-w-md mx-auto w-full pb-28 px-4"
+      className="w-full max-w-5xl mx-auto pb-20 md:pb-8 px-4 sm:px-6 lg:px-8 flex flex-col gap-6"
     >
       {submitError && (
-        <div className="flex items-center gap-3 p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-lg text-red-600 dark:text-red-400 text-sm">
+        <div className="flex items-center gap-3 p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-xl text-red-600 dark:text-red-400 text-sm">
           <AlertCircle className="h-5 w-5 shrink-0" />
           <span className="font-semibold">{submitError}</span>
         </div>
       )}
 
-      {/* Product Name */}
-      <div className="flex flex-col gap-2">
-        <label htmlFor="name" className="text-sm font-semibold text-text-primary">
-          Product Name <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          value={name}
-          onChange={(e) => handleInputChange("name", e.target.value, setName)}
-          onBlur={() => validateField("name", name)}
-          className={`input-primary w-full ${errors.name ? "border-red-500 focus:box-shadow-red" : ""}`}
-          placeholder="e.g. Handcrafted Ceramic Teapot"
-          disabled={isPending}
-          required
-        />
-        {errors.name && (
-          <span className="text-xs font-semibold text-red-500 flex items-center gap-1">
-            <AlertCircle className="h-3.5 w-3.5" />
-            {errors.name}
-          </span>
-        )}
-      </div>
-
-      {/* Description */}
-      <div className="flex flex-col gap-2">
-        <label htmlFor="description" className="text-sm font-semibold text-text-primary">
-          Description
-        </label>
-        <textarea
-          id="description"
-          name="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="input-primary w-full min-h-[100px] py-3 resize-y"
-          placeholder="Describe the craft details, materials used, artisan origin..."
-          disabled={isPending}
-        />
-      </div>
-
-      {/* Category Selection */}
-      <div className="flex flex-col gap-2">
-        <label htmlFor="category" className="text-sm font-semibold text-text-primary">
-          Category
-        </label>
-        <div className="relative">
-          <select
-            id="category"
-            name="category"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="input-primary w-full bg-none appearance-none pr-10"
-            disabled={isPending}
-          >
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-text-secondary">
-            ▼
-          </div>
-        </div>
-      </div>
-
-      {/* Base Price in VND */}
-      <div className="flex flex-col gap-2">
-        <label htmlFor="basePrice" className="text-sm font-semibold text-text-primary">
-          Base Price (VND) <span className="text-red-500">*</span>
-        </label>
-        <div className="relative">
-          <input
-            type="text"
-            inputMode="numeric"
-            id="basePrice"
-            name="basePrice"
-            value={basePriceStr}
-            onChange={(e) => handleInputChange("basePrice", e.target.value, setBasePriceStr)}
-            onBlur={() => validateField("basePrice", basePriceStr)}
-            className={`input-primary w-full pr-14 ${errors.basePrice ? "border-red-500" : ""}`}
-            placeholder="e.g. 180000"
-            disabled={isPending}
-            required
-          />
-          <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-sm font-bold text-text-secondary">
-            VND
-          </div>
-        </div>
-        {errors.basePrice && (
-          <span className="text-xs font-semibold text-red-500 flex items-center gap-1">
-            <AlertCircle className="h-3.5 w-3.5" />
-            {errors.basePrice}
-          </span>
-        )}
-      </div>
-
-      {/* Price Transparency Estimator Breakdown */}
-      {basePrice > 0 && (
-        <div className="card-primary p-4 bg-zinc-50 dark:bg-zinc-900 border border-border-light flex flex-col gap-3 animate-in fade-in duration-200">
-          <div className="flex items-center gap-2 border-b border-border-light pb-2">
-            <Calculator className="h-4 w-4 text-brand-primary" />
-            <h4 className="text-xs font-bold text-text-primary uppercase tracking-wider">
-              Dynamic Pricing Breakdown
-            </h4>
-          </div>
-
-          <div className="space-y-1.5 text-sm">
-            <div className="flex justify-between">
-              <span className="text-text-secondary">Your Base Price:</span>
-              <span className="font-semibold text-text-primary">
-                {basePrice.toLocaleString()} VND
-              </span>
-            </div>
-            <div className="flex justify-between text-xs text-text-secondary">
-              <span>+ Packaging Fee:</span>
-              <span>{packagingFee.toLocaleString()} VND</span>
-            </div>
-            <div className="flex justify-between text-xs text-text-secondary">
-              <span>+ Shipping Hub Fee:</span>
-              <span>{shippingFee.toLocaleString()} VND</span>
-            </div>
-            <div className="border-t border-border-light my-2 pt-2 flex justify-between items-baseline">
-              <span className="text-sm font-bold text-text-primary">Estimated Buyer Price:</span>
-              <div className="text-right">
-                <div className="text-base font-bold text-brand-primary">
-                  {totalVND.toLocaleString()} VND
-                </div>
-                <div className="text-xs font-bold text-brand-accent flex items-center justify-end gap-0.5 mt-0.5">
-                  <DollarSign className="h-3.5 w-3.5 shrink-0" />
-                  {totalUSD.toFixed(2)} USD
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-[10px] text-text-secondary leading-relaxed bg-white dark:bg-zinc-950 p-2.5 rounded-md border border-border-light">
-            💡 **Transparency Notice**: The buyer checkout runs in USD. You will receive the full base price of **{basePrice.toLocaleString()} VND** upon delivery, and Kialna will manage shipping and packaging from our District 1 Hub.
-          </div>
-        </div>
-      )}
-
-      {/* Inventory Quantity */}
-      <div className="flex flex-col gap-2">
-        <label htmlFor="inventory" className="text-sm font-semibold text-text-primary">
-          Stock Quantity <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          inputMode="numeric"
-          id="inventory"
-          name="inventory"
-          value={inventoryStr}
-          onChange={(e) => handleInputChange("inventory", e.target.value, setInventoryStr)}
-          onBlur={() => validateField("inventory", inventoryStr)}
-          className={`input-primary w-full ${errors.inventory ? "border-red-500" : ""}`}
-          placeholder="e.g. 25"
-          disabled={isPending}
-          required
-        />
-        {errors.inventory && (
-          <span className="text-xs font-semibold text-red-500 flex items-center gap-1">
-            <AlertCircle className="h-3.5 w-3.5" />
-            {errors.inventory}
-          </span>
-        )}
-      </div>
-
-      {/* Enhanced Image Management Section */}
-      <div className="flex flex-col gap-3">
-        <div className="flex justify-between items-center">
-          <label className="text-sm font-semibold text-text-primary">
-            Product Photos {images.length > 0 && <span className="text-xs text-text-secondary font-normal">({images.length})</span>}
-          </label>
-          <button
-            type="button"
-            onClick={() => setShowUrlInput(!showUrlInput)}
-            className="text-xs font-medium text-brand-primary flex items-center gap-1 hover:underline cursor-pointer"
-          >
-            <LinkIcon className="h-3 w-3" />
-            {showUrlInput ? "Hide URL Input" : "Add by URL"}
-          </button>
-        </div>
-
-        {/* Hidden Camera & Gallery File Inputs */}
-        <input
-          type="file"
-          ref={cameraInputRef}
-          accept="image/*"
-          capture="environment"
-          className="hidden"
-          onChange={(e) => handleFilesSelected(e.target.files)}
-        />
-        <input
-          type="file"
-          ref={galleryInputRef}
-          accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
-          multiple
-          className="hidden"
-          onChange={(e) => handleFilesSelected(e.target.files)}
-        />
-
-        {/* Mobile-Friendly Upload Action Cards */}
-        <div className="grid grid-cols-2 gap-2">
-          {/* Direct Camera Button (Optimized for Mobile Artisans) */}
-          <button
-            type="button"
-            onClick={() => cameraInputRef.current?.click()}
-            disabled={isPending}
-            className="flex flex-col items-center justify-center p-3.5 rounded-xl border border-brand-primary/20 bg-blue-50/50 hover:bg-blue-50 dark:bg-blue-950/20 dark:hover:bg-blue-950/30 transition-all text-brand-primary cursor-pointer active:scale-98"
-          >
-            <div className="p-2 bg-brand-primary text-white rounded-full mb-1.5 shadow-sm">
-              <Camera className="h-5 w-5" />
-            </div>
-            <span className="text-xs font-bold">Take Photo</span>
-            <span className="text-[10px] text-text-secondary">Instant mobile capture</span>
-          </button>
-
-          {/* Device Gallery / File Picker */}
-          <button
-            type="button"
-            onClick={() => galleryInputRef.current?.click()}
-            disabled={isPending}
-            className="flex flex-col items-center justify-center p-3.5 rounded-xl border border-border-light bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 transition-all text-text-primary cursor-pointer active:scale-98"
-          >
-            <div className="p-2 bg-zinc-200 dark:bg-zinc-700 text-text-primary rounded-full mb-1.5 shadow-sm">
-              <UploadCloud className="h-5 w-5" />
-            </div>
-            <span className="text-xs font-bold">Upload Files</span>
-            <span className="text-[10px] text-text-secondary">Select from device</span>
-          </button>
-        </div>
-
-        {/* Drag & Drop Dropzone */}
-        <div
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          onClick={() => galleryInputRef.current?.click()}
-          className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all ${
-            isDragging
-              ? "border-brand-primary bg-blue-50/40 dark:bg-blue-950/20"
-              : "border-border-light hover:border-zinc-400 bg-zinc-50/40 dark:bg-zinc-900/40"
-          }`}
-        >
-          <p className="text-xs text-text-secondary">
-            Drag & drop craft images here, or click to browse. Max 10MB per photo.
-          </p>
-        </div>
-
-        {/* Fallback Manual URL Input Toggle */}
-        {showUrlInput && (
-          <div className="flex gap-2 animate-in fade-in duration-150">
-            <div className="relative flex-1">
-              <input
-                type="url"
-                value={newImageUrl}
-                onChange={(e) => {
-                  setNewImageUrl(e.target.value);
-                  setImageError("");
-                }}
-                className={`input-primary w-full pl-11 text-sm ${imageError ? "border-red-500" : ""}`}
-                placeholder="Paste Image URL (https://...)"
-                disabled={isPending}
-              />
-              <ImageIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
-            </div>
-            <button
-              type="button"
-              onClick={handleAddImageUrl}
-              className="btn-primary min-w-[48px] px-3 flex items-center justify-center shrink-0"
-              disabled={isPending}
-            >
-              <Plus className="h-5 w-5" />
-            </button>
-          </div>
-        )}
-
-        {/* Image Error Alert */}
-        {imageError && (
-          <span className="text-xs font-semibold text-red-500 flex items-center gap-1">
-            <AlertCircle className="h-3.5 w-3.5" />
-            {imageError}
-          </span>
-        )}
-
-        {/* Active Uploading Spinners */}
-        {uploadingFiles.length > 0 && (
-          <div className="space-y-2 mt-1">
-            {uploadingFiles.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center gap-3 p-2.5 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 rounded-lg"
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        {/* Left Column: Media & Listing Status (Desktop: col-span-5) */}
+        <div className="md:col-span-5 flex flex-col gap-6 order-2 md:order-1">
+          {/* Enhanced Image Management Section */}
+          <div className="card-primary p-5 bg-white dark:bg-zinc-900 rounded-2xl flex flex-col gap-3.5">
+            <div className="flex justify-between items-center border-b border-border-light pb-2.5">
+              <label className="text-sm font-semibold text-text-primary">
+                Product Photos {images.length > 0 && <span className="text-xs text-text-secondary font-normal">({images.length})</span>}
+              </label>
+              <button
+                type="button"
+                onClick={() => setShowUrlInput(!showUrlInput)}
+                className="text-xs font-medium text-brand-primary flex items-center gap-1 hover:underline cursor-pointer"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={item.previewUrl}
-                  alt={item.fileName}
-                  className="w-10 h-10 object-cover rounded-md border border-border-light shrink-0"
-                />
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-text-primary truncate">{item.fileName}</p>
-                  {item.status === "uploading" ? (
-                    <span className="text-[10px] text-brand-primary flex items-center gap-1 font-medium">
-                      <Loader2 className="h-3 w-3 animate-spin" /> Uploading to server...
-                    </span>
-                  ) : (
-                    <span className="text-[10px] text-red-500 font-medium">
-                      {item.errorMessage || "Upload failed"}
-                    </span>
-                  )}
+                <LinkIcon className="h-3 w-3" />
+                {showUrlInput ? "Hide URL Input" : "Add by URL"}
+              </button>
+            </div>
+
+            {/* Hidden Camera & Gallery File Inputs */}
+            <input
+              type="file"
+              ref={cameraInputRef}
+              accept="image/*"
+              capture="environment"
+              className="hidden"
+              onChange={(e) => handleFilesSelected(e.target.files)}
+            />
+            <input
+              type="file"
+              ref={galleryInputRef}
+              accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
+              multiple
+              className="hidden"
+              onChange={(e) => handleFilesSelected(e.target.files)}
+            />
+
+            {/* Mobile-Friendly Upload Action Cards */}
+            <div className="grid grid-cols-2 gap-2.5">
+              {/* Direct Camera Button (Optimized for Mobile Artisans) */}
+              <button
+                type="button"
+                onClick={() => cameraInputRef.current?.click()}
+                disabled={isPending}
+                className="flex flex-col items-center justify-center p-3.5 rounded-xl border border-brand-primary/20 bg-blue-50/50 hover:bg-blue-50 dark:bg-blue-950/20 dark:hover:bg-blue-950/30 transition-all text-brand-primary cursor-pointer active:scale-98"
+              >
+                <div className="p-2 bg-brand-primary text-white rounded-full mb-1.5 shadow-sm">
+                  <Camera className="h-5 w-5" />
                 </div>
-                {item.status === "error" && (
-                  <button
-                    type="button"
-                    onClick={() => handleDismissUploadError(item.id)}
-                    className="text-xs text-red-500 hover:text-red-700 px-2 py-1"
-                  >
-                    Dismiss
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+                <span className="text-xs font-bold">Take Photo</span>
+                <span className="text-[10px] text-text-secondary">Instant capture</span>
+              </button>
 
-        {/* Image Grid with Cover Badge and Reorder Actions */}
-        {images.length > 0 ? (
-          <div className="grid grid-cols-3 gap-2.5 mt-2">
-            {images.map((url, idx) => {
-              const isCover = idx === 0;
-              return (
-                <div
-                  key={idx}
-                  className={`relative aspect-square border rounded-xl overflow-hidden group bg-zinc-100 dark:bg-zinc-800 ${
-                    isCover ? "border-brand-primary ring-2 ring-brand-primary/30" : "border-border-light"
-                  }`}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={url}
-                    alt={`Product photo ${idx + 1}`}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.src = "/file.svg";
+              {/* Device Gallery / File Picker */}
+              <button
+                type="button"
+                onClick={() => galleryInputRef.current?.click()}
+                disabled={isPending}
+                className="flex flex-col items-center justify-center p-3.5 rounded-xl border border-border-light bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 transition-all text-text-primary cursor-pointer active:scale-98"
+              >
+                <div className="p-2 bg-zinc-200 dark:bg-zinc-700 text-text-primary rounded-full mb-1.5 shadow-sm">
+                  <UploadCloud className="h-5 w-5" />
+                </div>
+                <span className="text-xs font-bold">Upload Files</span>
+                <span className="text-[10px] text-text-secondary">From device</span>
+              </button>
+            </div>
+
+            {/* Drag & Drop Dropzone */}
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={() => galleryInputRef.current?.click()}
+              className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all ${
+                isDragging
+                  ? "border-brand-primary bg-blue-50/40 dark:bg-blue-950/20"
+                  : "border-border-light hover:border-zinc-400 bg-zinc-50/40 dark:bg-zinc-900/40"
+              }`}
+            >
+              <p className="text-xs text-text-secondary">
+                Drag & drop craft images here, or click to browse. Max 10MB per photo.
+              </p>
+            </div>
+
+            {/* Fallback Manual URL Input Toggle */}
+            {showUrlInput && (
+              <div className="flex gap-2 animate-in fade-in duration-150">
+                <div className="relative flex-1">
+                  <input
+                    type="url"
+                    value={newImageUrl}
+                    onChange={(e) => {
+                      setNewImageUrl(e.target.value);
+                      setImageError("");
                     }}
+                    className={`input-primary w-full pl-11 text-sm ${imageError ? "border-red-500" : ""}`}
+                    placeholder="Paste Image URL (https://...)"
+                    disabled={isPending}
                   />
+                  <ImageIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAddImageUrl}
+                  className="btn-primary min-w-[48px] px-3 flex items-center justify-center shrink-0"
+                  disabled={isPending}
+                >
+                  <Plus className="h-5 w-5" />
+                </button>
+              </div>
+            )}
 
-                  {/* Cover Badge */}
-                  {isCover && (
-                    <div className="absolute top-1.5 left-1.5 bg-brand-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow flex items-center gap-0.5">
-                      <Star className="h-2.5 w-2.5 fill-current" /> Cover
+            {/* Image Error Alert */}
+            {imageError && (
+              <span className="text-xs font-semibold text-red-500 flex items-center gap-1">
+                <AlertCircle className="h-3.5 w-3.5" />
+                {imageError}
+              </span>
+            )}
+
+            {/* Active Uploading Spinners */}
+            {uploadingFiles.length > 0 && (
+              <div className="space-y-2 mt-1">
+                {uploadingFiles.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center gap-3 p-2.5 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 rounded-lg"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={item.previewUrl}
+                      alt={item.fileName}
+                      className="w-10 h-10 object-cover rounded-md border border-border-light shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-text-primary truncate">{item.fileName}</p>
+                      {item.status === "uploading" ? (
+                        <span className="text-[10px] text-brand-primary flex items-center gap-1 font-medium">
+                          <Loader2 className="h-3 w-3 animate-spin" /> Uploading to server...
+                        </span>
+                      ) : (
+                        <span className="text-[10px] text-red-500 font-medium">
+                          {item.errorMessage || "Upload failed"}
+                        </span>
+                      )}
                     </div>
-                  )}
-
-                  {/* Actions Overlay */}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-1">
-                    {!isCover && (
+                    {item.status === "error" && (
                       <button
                         type="button"
-                        onClick={() => handleSetCoverImage(idx)}
-                        className="p-1.5 bg-white/90 hover:bg-white text-zinc-900 rounded-full text-xs shadow-md transition-transform hover:scale-105"
-                        title="Set as Cover photo"
+                        onClick={() => handleDismissUploadError(item.id)}
+                        className="text-xs text-red-500 hover:text-red-700 px-2 py-1"
                       >
-                        <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                        Dismiss
                       </button>
                     )}
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(idx)}
-                      className="p-1.5 bg-red-600 hover:bg-red-700 text-white rounded-full text-xs shadow-md transition-transform hover:scale-105"
-                      title="Delete photo"
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Image Grid with Cover Badge and Reorder Actions */}
+            {images.length > 0 ? (
+              <div className="grid grid-cols-3 gap-2.5 mt-2">
+                {images.map((url, idx) => {
+                  const isCover = idx === 0;
+                  return (
+                    <div
+                      key={idx}
+                      className={`relative aspect-square border rounded-xl overflow-hidden group bg-zinc-100 dark:bg-zinc-800 ${
+                        isCover ? "border-brand-primary ring-2 ring-brand-primary/30" : "border-border-light"
+                      }`}
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={url}
+                        alt={`Product photo ${idx + 1}`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = "/file.svg";
+                        }}
+                      />
+
+                      {/* Cover Badge */}
+                      {isCover && (
+                        <div className="absolute top-1.5 left-1.5 bg-brand-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow flex items-center gap-0.5">
+                          <Star className="h-2.5 w-2.5 fill-current" /> Cover
+                        </div>
+                      )}
+
+                      {/* Actions Overlay */}
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-1">
+                        {!isCover && (
+                          <button
+                            type="button"
+                            onClick={() => handleSetCoverImage(idx)}
+                            className="p-1.5 bg-white/90 hover:bg-white text-zinc-900 rounded-full text-xs shadow-md transition-transform hover:scale-105"
+                            title="Set as Cover photo"
+                          >
+                            <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(idx)}
+                          className="p-1.5 bg-red-600 hover:bg-red-700 text-white rounded-full text-xs shadow-md transition-transform hover:scale-105"
+                          title="Delete photo"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center p-6 border border-dashed border-border-light rounded-xl text-text-secondary text-xs bg-zinc-50/50">
+                No photos added yet. Use the camera or upload buttons above.
+              </div>
+            )}
+          </div>
+
+          {/* Listing Status */}
+          <div className="card-primary p-5 bg-white dark:bg-zinc-900 rounded-2xl flex flex-col gap-3">
+            <label className="text-sm font-semibold text-text-primary">
+              Listing Status
+            </label>
+            <div className="flex gap-4">
+              <label className="flex items-center gap-2 cursor-pointer text-sm font-medium">
+                <input
+                  type="radio"
+                  name="status"
+                  value="active"
+                  checked={status === "active"}
+                  onChange={() => setStatus("active")}
+                  className="h-4 w-4 accent-brand-primary"
+                  disabled={isPending}
+                />
+                <span>Active (Ready for Sale)</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer text-sm font-medium">
+                <input
+                  type="radio"
+                  name="status"
+                  value="draft"
+                  checked={status === "draft"}
+                  onChange={() => setStatus("draft")}
+                  className="h-4 w-4 accent-brand-primary"
+                  disabled={isPending}
+                />
+                <span>Draft</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Details & Pricing (Desktop: col-span-7) */}
+        <div className="md:col-span-7 flex flex-col gap-5 order-1 md:order-2 card-primary p-6 sm:p-7 bg-white dark:bg-zinc-900 rounded-2xl shadow-sm">
+          {/* Product Name */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="name" className="text-sm font-semibold text-text-primary">
+              Product Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={name}
+              onChange={(e) => handleInputChange("name", e.target.value, setName)}
+              onBlur={() => validateField("name", name)}
+              className={`input-primary w-full ${errors.name ? "border-red-500 focus:box-shadow-red" : ""}`}
+              placeholder="e.g. Handcrafted Ceramic Teapot"
+              disabled={isPending}
+              required
+            />
+            {errors.name && (
+              <span className="text-xs font-semibold text-red-500 flex items-center gap-1">
+                <AlertCircle className="h-3.5 w-3.5" />
+                {errors.name}
+              </span>
+            )}
+          </div>
+
+          {/* Category Selection */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="category" className="text-sm font-semibold text-text-primary">
+              Category
+            </label>
+            <div className="relative">
+              <select
+                id="category"
+                name="category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="input-primary w-full bg-none appearance-none pr-10"
+                disabled={isPending}
+              >
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-text-secondary">
+                ▼
+              </div>
+            </div>
+          </div>
+
+          {/* Description */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="description" className="text-sm font-semibold text-text-primary">
+              Description
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="input-primary w-full min-h-[120px] py-3 resize-y"
+              placeholder="Describe the craft details, materials used, artisan origin..."
+              disabled={isPending}
+            />
+          </div>
+
+          {/* Grid for Inventory & Base Price */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Inventory Quantity */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="inventory" className="text-sm font-semibold text-text-primary">
+                Stock Quantity <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                inputMode="numeric"
+                id="inventory"
+                name="inventory"
+                value={inventoryStr}
+                onChange={(e) => handleInputChange("inventory", e.target.value, setInventoryStr)}
+                onBlur={() => validateField("inventory", inventoryStr)}
+                className={`input-primary w-full ${errors.inventory ? "border-red-500" : ""}`}
+                placeholder="e.g. 25"
+                disabled={isPending}
+                required
+              />
+              {errors.inventory && (
+                <span className="text-xs font-semibold text-red-500 flex items-center gap-1">
+                  <AlertCircle className="h-3.5 w-3.5" />
+                  {errors.inventory}
+                </span>
+              )}
+            </div>
+
+            {/* Base Price in VND */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="basePrice" className="text-sm font-semibold text-text-primary">
+                Base Price (VND) <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  id="basePrice"
+                  name="basePrice"
+                  value={basePriceStr}
+                  onChange={(e) => handleInputChange("basePrice", e.target.value, setBasePriceStr)}
+                  onBlur={() => validateField("basePrice", basePriceStr)}
+                  className={`input-primary w-full pr-14 ${errors.basePrice ? "border-red-500" : ""}`}
+                  placeholder="e.g. 180000"
+                  disabled={isPending}
+                  required
+                />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-sm font-bold text-text-secondary">
+                  VND
+                </div>
+              </div>
+              {errors.basePrice && (
+                <span className="text-xs font-semibold text-red-500 flex items-center gap-1">
+                  <AlertCircle className="h-3.5 w-3.5" />
+                  {errors.basePrice}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Price Transparency Estimator Breakdown */}
+          {basePrice > 0 && (
+            <div className="card-primary p-4 bg-zinc-50 dark:bg-zinc-950 border border-border-light flex flex-col gap-3 rounded-xl animate-in fade-in duration-200">
+              <div className="flex items-center gap-2 border-b border-border-light pb-2">
+                <Calculator className="h-4 w-4 text-brand-primary" />
+                <h4 className="text-xs font-bold text-text-primary uppercase tracking-wider">
+                  Dynamic Pricing Breakdown
+                </h4>
+              </div>
+
+              <div className="space-y-1.5 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-text-secondary">Your Base Price:</span>
+                  <span className="font-semibold text-text-primary">
+                    {basePrice.toLocaleString()} VND
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs text-text-secondary">
+                  <span>+ Packaging Fee:</span>
+                  <span>{packagingFee.toLocaleString()} VND</span>
+                </div>
+                <div className="flex justify-between text-xs text-text-secondary">
+                  <span>+ Shipping Hub Fee:</span>
+                  <span>{shippingFee.toLocaleString()} VND</span>
+                </div>
+                <div className="border-t border-border-light my-2 pt-2 flex justify-between items-baseline">
+                  <span className="text-sm font-bold text-text-primary">Estimated Buyer Price:</span>
+                  <div className="text-right">
+                    <div className="text-base font-bold text-brand-primary">
+                      {totalVND.toLocaleString()} VND
+                    </div>
+                    <div className="text-xs font-bold text-brand-accent flex items-center justify-end gap-0.5 mt-0.5">
+                      <DollarSign className="h-3.5 w-3.5 shrink-0" />
+                      {totalUSD.toFixed(2)} USD
+                    </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="text-center p-6 border border-dashed border-border-light rounded-xl text-text-secondary text-xs bg-zinc-50/50">
-            No photos added yet. Use the camera or upload buttons above.
-          </div>
-        )}
-      </div>
+              </div>
 
-      {/* Listing Status */}
-      <div className="flex flex-col gap-3">
-        <label className="text-sm font-semibold text-text-primary">
-          Listing Status
-        </label>
-        <div className="flex gap-4">
-          <label className="flex items-center gap-2 cursor-pointer text-sm font-medium">
-            <input
-              type="radio"
-              name="status"
-              value="active"
-              checked={status === "active"}
-              onChange={() => setStatus("active")}
-              className="h-4 w-4 accent-brand-primary"
-              disabled={isPending}
-            />
-            <span>Active (Ready for Sale)</span>
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer text-sm font-medium">
-            <input
-              type="radio"
-              name="status"
-              value="draft"
-              checked={status === "draft"}
-              onChange={() => setStatus("draft")}
-              className="h-4 w-4 accent-brand-primary"
-              disabled={isPending}
-            />
-            <span>Draft</span>
-          </label>
+              <div className="text-[10px] text-text-secondary leading-relaxed bg-white dark:bg-zinc-900 p-2.5 rounded-lg border border-border-light">
+                💡 **Transparency Notice**: The buyer checkout runs in USD. You will receive the full base price of **{basePrice.toLocaleString()} VND** upon delivery, and Kialna will manage shipping and packaging from our District 1 Hub.
+              </div>
+            </div>
+          )}
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="btn-primary w-full mt-2 flex items-center justify-center gap-2 font-bold min-h-[48px] cursor-pointer shadow-lg active:scale-98 transition-all text-sm"
+            disabled={isPending || uploadingFiles.some((f) => f.status === "uploading")}
+          >
+            {isPending ? (
+              <>
+                <RefreshCw className="h-5 w-5 animate-spin" />
+                <span>Saving Product...</span>
+              </>
+            ) : (
+              <span>{initialProduct ? "Update Listing" : "Create Listing"}</span>
+            )}
+          </button>
         </div>
       </div>
-
-      {/* Submit Button */}
-      <button
-        type="submit"
-        className="btn-primary w-full mt-4 flex items-center justify-center gap-2 font-bold min-h-[48px] cursor-pointer shadow-lg active:scale-98 transition-all"
-        disabled={isPending || uploadingFiles.some((f) => f.status === "uploading")}
-      >
-        {isPending ? (
-          <>
-            <RefreshCw className="h-5 w-5 animate-spin" />
-            <span>Saving Product...</span>
-          </>
-        ) : (
-          <span>{initialProduct ? "Update Listing" : "Create Listing"}</span>
-        )}
-      </button>
     </form>
   );
 }
