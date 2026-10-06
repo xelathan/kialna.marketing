@@ -63,6 +63,29 @@ Kialna is an international marketplace connecting Vietnamese artisans and crafts
 * Fixed CSS layer priority in `src/app/globals.css` (`@layer components`) to prevent input padding collapse.
 * Updated all text inputs across search, forms, and modals with `pl-11` and `pointer-events-none` on icons to eliminate placeholder overlap.
 
+### Phase 8: Multi-Device Responsive Transformation
+* Freed entire application from artificial `max-w-md` mobile frame.
+* Implemented fluid multi-column responsive grids across Mobile, Tablet, and Desktop:
+  * 4-column artisan catalog on desktop, 3-column on tablet, 2-column on mobile.
+  * Desktop top navigation headers with tab switchers paired with mobile bottom navigation bars.
+  * Split 2-column artisan studio for product creation and editing.
+  * Side-sliding cart drawer and wide centered dialog modals on desktop.
+
+### Phase 9: Stripe Payment Gateway Integration
+* Installed official `stripe`, `@stripe/stripe-js`, and `@stripe/react-stripe-js` SDKs.
+* Updated Prisma schema (`Order` model) with `paymentStatus`, `stripeSessionId`, `stripePaymentIntentId`, and recipient delivery fields.
+* Created Stripe singleton (`src/lib/stripe.ts`) and client-side loader (`src/lib/stripe-client.ts`).
+* **In-Portal Embedded Payment Flow (Stripe Elements)**:
+  * Implemented `createPaymentIntent` and `confirmPaymentIntentOrder` in `src/app/actions/orders.ts`.
+  * Created `EmbeddedStripeCheckout.tsx` rendering embedded `<PaymentElement />` with 256-bit encryption.
+  * 2-Step In-Portal Checkout in `BuyerDashboard.tsx` (`Step 1: Delivery Details` $\rightarrow$ `Step 2: Embedded Card Payment`).
+  * Direct client confirmation via `stripe.confirmPayment({ redirect: "if_required" })` with in-app confirmation modal—buyers never leave Kialna.
+* **External Hosted Checkout Flow (Stripe Checkout)**:
+  * Transparent itemized line items (Artisan Base Price + Packaging Hub Fee + Shipping Hub Fee).
+  * Webhook route (`src/app/api/webhooks/stripe/route.ts`).
+  * Dedicated confirmation (`/checkout/success`) and cancellation (`/checkout/cancel`) pages.
+* Added Sandbox Test Card helper badge directly in the in-portal checkout UI.
+
 ---
 
 ## 3. Seed Accounts & Credentials
@@ -74,6 +97,29 @@ The seed script creates the following default accounts (password: `password123`)
 | **Seller** | Nguyen Van A | `seller@kialna.shop` | `password123` | Artisan catalog & camera uploads |
 | **Buyer** | John Doe | `buyer@kialna.shop` | `password123` | Marketplace browsing, cart, and orders |
 | **Admin** | Kialna Shipping Hub | `admin@kialna.shop` | `password123` | Logistics pipeline & fee management |
+
+---
+
+## 3.1 Stripe Sandbox Test Cards
+
+Use these official test cards on the Stripe Hosted Checkout page:
+
+### Standard Successful Payments
+
+| Brand | Card Number | Expiry | CVC | Billing Postal Code |
+| :--- | :--- | :--- | :--- | :--- |
+| **Visa (Default)** | `4242 4242 4242 4242` | Any future date (e.g. `12/30`) | `123` | `90210` or any ZIP |
+| **Mastercard** | `5555 5555 5555 4444` | Any future date (e.g. `12/30`) | `123` | `90210` or any ZIP |
+| **American Express** | `3782 8224 6310 005` | Any future date (e.g. `12/30`) | `1234` | `90210` or any ZIP |
+
+### Payment Edge Cases & Failure Testing
+
+| Test Scenario | Card Number | Expiry | CVC | Expected Result |
+| :--- | :--- | :--- | :--- | :--- |
+| **Declined (Generic)** | `4000 0000 0000 0002` | `12/30` | `123` | Card declined prompt |
+| **Insufficient Funds** | `4000 0000 0000 9995` | `12/30` | `123` | Insufficient funds error |
+| **Expired Card** | `4000 0000 0000 0069` | `12/30` | `123` | Expired card validation error |
+| **3D Secure Challenge** | `4000 0000 0000 3063` | `12/30` | `123` | Prompts OTP/SMS modal challenge |
 
 ---
 

@@ -59,10 +59,10 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-bg-primary font-sans flex flex-col justify-center items-center p-4">
-      <div className="w-full max-w-md bg-white dark:bg-zinc-900 border border-border-light rounded-2xl shadow-xl p-6 sm:p-8 flex flex-col gap-6">
+      <div className="w-full max-w-md bg-white border border-border-light rounded-[32px] shadow-xl p-6 sm:p-8 flex flex-col gap-6">
         {/* Brand Header */}
         <div className="text-center flex flex-col items-center gap-2">
-          <div className="w-12 h-12 rounded-2xl bg-brand-primary text-white flex items-center justify-center shadow-md">
+          <div className="w-12 h-12 rounded-full bg-ink-deep text-white flex items-center justify-center shadow-sm">
             <Compass className="h-6 w-6" />
           </div>
           <h1 className="text-2xl font-bold text-text-primary tracking-tight">
@@ -75,7 +75,7 @@ export default function LoginPage() {
 
         {/* Error message */}
         {error && (
-          <div className="flex items-center gap-2.5 p-3.5 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-xl text-red-600 dark:text-red-400 text-xs font-semibold">
+          <div className="flex items-center gap-2.5 p-3.5 bg-red-50 border border-red-200 rounded-2xl text-red-600 text-xs font-semibold">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -91,11 +91,11 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="input-primary w-full pl-11 text-sm"
+                className="input-primary w-full pl-11 rounded-full text-sm"
                 disabled={isPending}
                 required
               />
-              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
             </div>
           </div>
 
@@ -110,17 +110,17 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="input-primary w-full pl-11 text-sm"
+                className="input-primary w-full pl-11 rounded-full text-sm"
                 disabled={isPending}
               />
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
             </div>
           </div>
 
           <button
             type="submit"
             disabled={isPending}
-            className="btn-primary w-full mt-2 flex items-center justify-center gap-2 font-bold min-h-[48px] cursor-pointer shadow-md active:scale-98 transition-all"
+            className="btn-primary w-full mt-2 flex items-center justify-center gap-2 font-bold min-h-[48px] cursor-pointer shadow-sm active:scale-98 transition-all"
           >
             {isPending && !isDemoPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -148,9 +148,9 @@ export default function LoginPage() {
             type="button"
             onClick={() => handleDemoLogin("seller")}
             disabled={isPending}
-            className="flex flex-col items-center justify-center p-3 rounded-xl border border-border-light hover:border-brand-primary bg-zinc-50 hover:bg-blue-50/50 dark:bg-zinc-800 dark:hover:bg-zinc-700/50 text-center transition-all cursor-pointer group"
+            className="flex flex-col items-center justify-center p-3 rounded-[20px] border border-border-light hover:border-brand-primary bg-bg-surface-soft hover:bg-white text-center transition-all cursor-pointer group"
           >
-            <div className="p-2 bg-blue-100 dark:bg-blue-900/40 text-brand-primary rounded-lg mb-1 group-hover:scale-105 transition-transform">
+            <div className="p-2 bg-blue-100 text-brand-primary rounded-full mb-1 group-hover:scale-105 transition-transform">
               <Store className="h-4 w-4" />
             </div>
             <span className="text-xs font-bold text-text-primary">Seller</span>
@@ -161,9 +161,9 @@ export default function LoginPage() {
             type="button"
             onClick={() => handleDemoLogin("buyer")}
             disabled={isPending}
-            className="flex flex-col items-center justify-center p-3 rounded-xl border border-border-light hover:border-brand-primary bg-zinc-50 hover:bg-blue-50/50 dark:bg-zinc-800 dark:hover:bg-zinc-700/50 text-center transition-all cursor-pointer group"
+            className="flex flex-col items-center justify-center p-3 rounded-[20px] border border-border-light hover:border-brand-primary bg-bg-surface-soft hover:bg-white text-center transition-all cursor-pointer group"
           >
-            <div className="p-2 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 rounded-lg mb-1 group-hover:scale-105 transition-transform">
+            <div className="p-2 bg-emerald-100 text-emerald-600 rounded-full mb-1 group-hover:scale-105 transition-transform">
               <ShoppingBag className="h-4 w-4" />
             </div>
             <span className="text-xs font-bold text-text-primary">Buyer</span>
@@ -174,9 +174,9 @@ export default function LoginPage() {
             type="button"
             onClick={() => handleDemoLogin("admin")}
             disabled={isPending}
-            className="flex flex-col items-center justify-center p-3 rounded-xl border border-border-light hover:border-brand-primary bg-zinc-50 hover:bg-blue-50/50 dark:bg-zinc-800 dark:hover:bg-zinc-700/50 text-center transition-all cursor-pointer group"
+            className="flex flex-col items-center justify-center p-3 rounded-[20px] border border-border-light hover:border-brand-primary bg-bg-surface-soft hover:bg-white text-center transition-all cursor-pointer group"
           >
-            <div className="p-2 bg-purple-100 dark:bg-purple-900/40 text-purple-600 rounded-lg mb-1 group-hover:scale-105 transition-transform">
+            <div className="p-2 bg-zinc-200 text-ink-deep rounded-full mb-1 group-hover:scale-105 transition-transform">
               <Shield className="h-4 w-4" />
             </div>
             <span className="text-xs font-bold text-text-primary">Admin</span>

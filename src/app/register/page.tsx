@@ -67,10 +67,10 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-bg-primary font-sans flex flex-col justify-center items-center p-4 py-12">
-      <div className="w-full max-w-md bg-white dark:bg-zinc-900 border border-border-light rounded-2xl shadow-xl p-6 sm:p-8 flex flex-col gap-6">
+      <div className="w-full max-w-md bg-white border border-border-light rounded-[32px] shadow-xl p-6 sm:p-8 flex flex-col gap-6">
         {/* Brand Header */}
         <div className="text-center flex flex-col items-center gap-2">
-          <div className="w-12 h-12 rounded-2xl bg-brand-primary text-white flex items-center justify-center shadow-md">
+          <div className="w-12 h-12 rounded-full bg-ink-deep text-white flex items-center justify-center shadow-sm">
             <Compass className="h-6 w-6" />
           </div>
           <h1 className="text-2xl font-bold text-text-primary tracking-tight">
@@ -83,7 +83,7 @@ export default function RegisterPage() {
 
         {/* Error Notification */}
         {error && (
-          <div className="flex items-center gap-2.5 p-3.5 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-xl text-red-600 dark:text-red-400 text-xs font-semibold">
+          <div className="flex items-center gap-2.5 p-3.5 bg-red-50 border border-red-200 rounded-2xl text-red-600 text-xs font-semibold">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -96,10 +96,10 @@ export default function RegisterPage() {
             <button
               type="button"
               onClick={() => setRole("buyer")}
-              className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer ${
+              className={`flex flex-col items-center justify-center p-3 rounded-[20px] border transition-all cursor-pointer ${
                 role === "buyer"
-                  ? "border-brand-primary bg-blue-50/60 dark:bg-blue-950/40 text-brand-primary ring-1 ring-brand-primary"
-                  : "border-border-light bg-zinc-50 dark:bg-zinc-800 text-text-secondary hover:text-text-primary"
+                  ? "border-brand-primary bg-blue-50/70 text-brand-primary ring-1 ring-brand-primary"
+                  : "border-border-light bg-bg-surface-soft text-text-secondary hover:text-text-primary"
               }`}
             >
               <ShoppingBag className="h-5 w-5 mb-1" />
@@ -110,10 +110,10 @@ export default function RegisterPage() {
             <button
               type="button"
               onClick={() => setRole("seller")}
-              className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer ${
+              className={`flex flex-col items-center justify-center p-3 rounded-[20px] border transition-all cursor-pointer ${
                 role === "seller"
-                  ? "border-brand-primary bg-blue-50/60 dark:bg-blue-950/40 text-brand-primary ring-1 ring-brand-primary"
-                  : "border-border-light bg-zinc-50 dark:bg-zinc-800 text-text-secondary hover:text-text-primary"
+                  ? "border-brand-primary bg-blue-50/70 text-brand-primary ring-1 ring-brand-primary"
+                  : "border-border-light bg-bg-surface-soft text-text-secondary hover:text-text-primary"
               }`}
             >
               <Store className="h-5 w-5 mb-1" />
@@ -135,11 +135,11 @@ export default function RegisterPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Linh Nguyen or Sarah Jenkins"
-                className="input-primary w-full pl-11 text-sm"
+                className="input-primary w-full pl-11 rounded-full text-sm"
                 disabled={isPending}
                 required
               />
-              <UserIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
+              <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
             </div>
           </div>
 
@@ -153,11 +153,11 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@example.com"
-                className="input-primary w-full pl-11 text-sm"
+                className="input-primary w-full pl-11 rounded-full text-sm"
                 disabled={isPending}
                 required
               />
-              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
             </div>
           </div>
 
@@ -171,11 +171,11 @@ export default function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Minimum 6 characters"
-                className="input-primary w-full pl-11 text-sm"
+                className="input-primary w-full pl-11 rounded-full text-sm"
                 disabled={isPending}
                 required
               />
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
             </div>
           </div>
 
@@ -189,10 +189,10 @@ export default function RegisterPage() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder={role === "seller" ? "0901234567" : "+1 (555) 000-0000"}
-                className="input-primary w-full pl-11 text-sm"
+                className="input-primary w-full pl-11 rounded-full text-sm"
                 disabled={isPending}
               />
-              <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
+              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
             </div>
           </div>
 
@@ -211,17 +211,17 @@ export default function RegisterPage() {
                     ? "e.g. 123 Le Loi, District 1, Ho Chi Minh City"
                     : "e.g. 123 Main St, Austin, TX, USA"
                 }
-                className="input-primary w-full pl-11 text-sm"
+                className="input-primary w-full pl-11 rounded-full text-sm"
                 disabled={isPending}
               />
-              <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
             </div>
           </div>
 
           <button
             type="submit"
             disabled={isPending}
-            className="btn-primary w-full mt-2 flex items-center justify-center gap-2 font-bold min-h-[48px] cursor-pointer shadow-md active:scale-98 transition-all"
+            className="btn-primary w-full mt-2 flex items-center justify-center gap-2 font-bold min-h-[48px] cursor-pointer shadow-sm active:scale-98 transition-all"
           >
             {isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />

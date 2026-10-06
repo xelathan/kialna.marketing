@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { createOrder, getBuyerOrders } from "@/app/actions/orders";
+import { createOrder, createStripeCheckoutSession, createPaymentIntent, getBuyerOrders } from "@/app/actions/orders";
 import RoleSwitcher from "./RoleSwitcher";
+import EmbeddedStripeCheckout from "./EmbeddedStripeCheckout";
 import {
   Search,
   Compass,
@@ -25,6 +26,7 @@ import {
   ChevronRight,
   Sparkles,
   LogOut,
+  CreditCard,
 } from "lucide-react";
 
 interface BuyerDashboardProps {
@@ -158,7 +160,98 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
   const cartTotalVND = cartSubtotalVND + cartShippingVND + cartPackagingVND;
   const cartTotalUSD = cartTotalVND / EXCHANGE_RATE;
 
-  // Checkout submission
+  const [checkoutStep, setCheckoutStep] = useState<"details" | "payment">("details");
+  const [paymentIntentData, setPaymentIntentData] = useState<{
+    clientSecret: string;
+    orderId: string;
+    amountUSD: number;
+  } | null>(null);
+  const [isPreparingPayment, setIsPreparingPayment] = useState(false);
+  const [isStripeRedirecting, setIsStripeRedirecting] = useState(false);
+
+  // In-Portal Embedded Payment initialization
+  const handleStartInPortalPayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!checkoutName.trim() || !checkoutAddress.trim() || !checkoutPhone.trim()) {
+      setSubmitError("Please fill in all delivery details.");
+      return;
+    }
+
+    setSubmitError("");
+    setIsPreparingPayment(true);
+
+    try {
+      const payloadItems = cart.map((item) => ({
+        productId: item.product.id,
+        quantity: item.quantity,
+      }));
+
+      const payloadInfo = {
+        name: checkoutName,
+        address: checkoutAddress,
+        phone: checkoutPhone,
+      };
+
+      const result = await createPaymentIntent(payloadItems, payloadInfo);
+      if (result.success && result.clientSecret && result.orderId) {
+        setPaymentIntentData({
+          clientSecret: result.clientSecret,
+          orderId: result.orderId,
+          amountUSD: result.amountUSD || cartTotalUSD,
+        });
+        setCheckoutStep("payment");
+      } else {
+        setSubmitError(result.error || "Failed to initialize embedded checkout.");
+      }
+    } catch (err: any) {
+      setSubmitError(err.message || "An unexpected error occurred.");
+    } finally {
+      setIsPreparingPayment(false);
+    }
+  };
+
+  // Stripe Checkout redirection
+  const handleStripeCheckout = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!checkoutName.trim() || !checkoutAddress.trim() || !checkoutPhone.trim()) {
+      setSubmitError("Please fill in all delivery details.");
+      return;
+    }
+
+    setSubmitError("");
+    setIsStripeRedirecting(true);
+
+    try {
+      const payloadItems = cart.map((item) => ({
+        productId: item.product.id,
+        quantity: item.quantity,
+      }));
+
+      const payloadInfo = {
+        name: checkoutName,
+        address: checkoutAddress,
+        phone: checkoutPhone,
+      };
+
+      const result = await createStripeCheckoutSession(
+        payloadItems,
+        payloadInfo,
+        window.location.origin
+      );
+
+      if (result.success && result.checkoutUrl) {
+        window.location.href = result.checkoutUrl;
+      } else {
+        setSubmitError(result.error || "Failed to initiate Stripe checkout.");
+        setIsStripeRedirecting(false);
+      }
+    } catch (err: any) {
+      setSubmitError(err.message || "An unexpected error occurred.");
+      setIsStripeRedirecting(false);
+    }
+  };
+
+  // Direct simulated checkout (Quick sandbox fallback)
   const handleCheckout = (e: React.FormEvent) => {
     e.preventDefault();
     if (!checkoutName.trim() || !checkoutAddress.trim() || !checkoutPhone.trim()) {
@@ -193,47 +286,47 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F9FAFB] dark:bg-zinc-950 font-sans pb-20 md:pb-8">
+    <div className="flex flex-col min-h-screen bg-white dark:bg-zinc-950 font-sans pb-20 md:pb-8 text-text-primary">
       {/* 1. Header */}
-      <header className="sticky top-0 z-30 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-border-light px-4 sm:px-6 lg:px-8 py-3.5">
+      <header className="sticky top-0 z-30 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-b border-border-light px-4 sm:px-6 lg:px-8 py-3.5">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5 shrink-0">
-            <div className="bg-brand-primary p-1.5 rounded-lg text-white">
-              <Compass className="h-5 w-5" />
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="bg-ink p-2 rounded-full text-white shadow-sm flex items-center justify-center">
+              <Compass className="h-4 w-4" />
             </div>
             <div>
-              <h1 className="text-base font-bold text-text-primary tracking-tight">Kialna Shop</h1>
-              <p className="text-[10px] text-text-secondary leading-none">Vietnam Craft Market</p>
+              <h1 className="text-base font-bold text-ink tracking-tight leading-tight">Kialna Shop</h1>
+              <p className="text-[10px] text-text-secondary font-medium tracking-wide leading-none">Saigon Craft Market</p>
             </div>
           </div>
 
-          {/* Desktop Navigation Switcher */}
-          <div className="hidden md:flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-xl">
+          {/* Desktop Navigation Switcher (Meta Pill Group) */}
+          <div className="hidden md:flex items-center gap-1 bg-surface-soft p-1 rounded-full border border-border-light">
             <button
               onClick={() => setActiveView("browse")}
-              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                 activeView === "browse"
-                  ? "bg-white dark:bg-zinc-900 text-brand-primary shadow-sm"
-                  : "text-text-secondary hover:text-text-primary"
+                  ? "bg-ink text-white shadow-sm"
+                  : "text-text-secondary hover:text-ink hover:bg-white/60"
               }`}
             >
-              <Compass className="h-4 w-4" />
+              <Compass className="h-3.5 w-3.5" />
               <span>Explore Crafts</span>
             </button>
             <button
               onClick={() => setActiveView("orders")}
-              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                 activeView === "orders"
-                  ? "bg-white dark:bg-zinc-900 text-brand-primary shadow-sm"
-                  : "text-text-secondary hover:text-text-primary"
+                  ? "bg-ink text-white shadow-sm"
+                  : "text-text-secondary hover:text-ink hover:bg-white/60"
               }`}
             >
-              <Clock className="h-4 w-4" />
+              <Clock className="h-3.5 w-3.5" />
               <span>My Orders</span>
             </button>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             {/* User Sign Out Button */}
             <button
               onClick={async () => {
@@ -241,22 +334,22 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                 await signOut();
                 window.location.href = "/login";
               }}
-              className="p-2 text-text-secondary hover:text-red-500 transition-colors hover:bg-red-50 dark:hover:bg-red-950/20 rounded-full cursor-pointer"
+              className="p-2 text-text-secondary hover:text-ink transition-colors hover:bg-surface-soft rounded-full cursor-pointer"
               title="Sign Out"
               aria-label="Sign Out"
             >
               <LogOut className="h-4 w-4" />
             </button>
 
-            {/* Cart Icon Badge */}
+            {/* Cart Icon Pill */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative p-2 text-text-secondary hover:text-brand-primary transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full cursor-pointer"
+              className="relative p-2.5 text-ink hover:text-brand-primary transition-colors hover:bg-surface-soft rounded-full cursor-pointer border border-border-light"
               aria-label="View shopping cart"
             >
-              <ShoppingBag className="h-5 w-5" />
+              <ShoppingBag className="h-4.5 w-4.5" />
               {cart.length > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 bg-brand-primary text-white text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center border border-white">
+                <span className="absolute -top-1 -right-1 bg-brand-primary text-white text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
                   {cart.reduce((sum, item) => sum + item.quantity, 0)}
                 </span>
               )}
@@ -266,50 +359,52 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
       </header>
 
       {/* 2. Main Canvas */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 md:py-8">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         {/* VIEW A: BROWSE */}
         {activeView === "browse" && (
-          <div className="flex flex-col gap-6 animate-in fade-in duration-200">
-            {/* Promo Banner */}
-            <div className="relative rounded-2xl overflow-hidden bg-gradient-to-tr from-blue-600 to-indigo-800 text-white p-6 sm:p-8 md:p-10 shadow-md">
-              <div className="relative z-10 flex flex-col gap-2 max-w-2xl">
-                <span className="text-xs font-bold uppercase tracking-wider text-blue-200 flex items-center gap-1.5">
-                  <Sparkles className="h-3.5 w-3.5" /> Guaranteed Authentic
+          <div className="flex flex-col gap-8 animate-in fade-in duration-200">
+            {/* Meta Dark Promo Strip */}
+            <div className="card-promo-strip p-8 sm:p-10 md:p-12 text-white shadow-xl relative overflow-hidden">
+              <div className="relative z-10 flex flex-col gap-3 max-w-2xl">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-white/90 text-[11px] font-semibold tracking-wide backdrop-blur-sm border border-white/15 w-fit">
+                  <Sparkles className="h-3 w-3 text-white" /> Guaranteed Authentic Vietnam Crafts
                 </span>
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold leading-tight">Vietnamese Masterpieces</h2>
-                <p className="text-xs sm:text-sm text-blue-100 leading-relaxed">
-                  Traditional textiles, organic tea, and home decor sourced directly from local craftsmen. Flat international shipping from Saigon District 1 Hub.
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight">
+                  Artisanal Treasures from Vietnam
+                </h2>
+                <p className="text-xs sm:text-sm text-white/70 leading-relaxed font-normal max-w-xl">
+                  Hand-thrown ceramics, indigenous silk textiles, and highland organic teas sourced directly from Vietnamese master craftsmen. Packed and dispatched via District 1 Saigon Hub.
                 </p>
               </div>
-              <div className="absolute right-0 bottom-0 translate-y-6 translate-x-4 opacity-10 pointer-events-none">
-                <Compass className="h-56 w-56 md:h-72 md:w-72" />
+              <div className="absolute right-0 bottom-0 translate-y-12 translate-x-8 opacity-10 pointer-events-none">
+                <Compass className="h-64 w-64 md:h-80 md:w-80 text-white" />
               </div>
             </div>
 
-            {/* Search & Categories Bar */}
-            <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
-              {/* Search Input */}
+            {/* Search & Categories Bar (Meta Pill Controls) */}
+            <div className="flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
+              {/* Search Pill Input */}
               <div className="relative flex-1 md:max-w-md">
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search premium crafts..."
-                  className="input-primary w-full pl-11 text-sm focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
+                  placeholder="Search artisanal crafts..."
+                  className="search-pill w-full pl-11 text-xs focus:bg-white transition-all outline-none"
                 />
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
               </div>
 
-              {/* Categories Slider */}
+              {/* Categories Pills */}
               <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none sm:flex-wrap">
                 {categories.map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap cursor-pointer transition-all border ${
+                    className={`cursor-pointer transition-all ${
                       selectedCategory === cat
-                        ? "bg-brand-primary border-brand-primary text-white font-bold"
-                        : "bg-white dark:bg-zinc-900 border-border-light text-text-secondary hover:text-text-primary"
+                        ? "btn-pill-tab-active"
+                        : "btn-pill-tab"
                     }`}
                   >
                     {cat}
@@ -319,7 +414,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
             </div>
 
             {/* Products Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-5 lg:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
               {filteredProducts.length > 0 ? (
                 filteredProducts.map((p) => {
                   let imageList = [];
@@ -337,10 +432,10 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                         setSelectedProduct(p);
                         setDetailQuantity(1);
                       }}
-                      className="card-primary rounded-xl overflow-hidden flex flex-col bg-white dark:bg-zinc-900 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer group"
+                      className="card-product group cursor-pointer"
                     >
-                      {/* Thumbnail container */}
-                      <div className="aspect-square bg-zinc-50 border-b border-border-light overflow-hidden relative">
+                      {/* Thumbnail container on Soft Surface */}
+                      <div className="aspect-square bg-surface-soft overflow-hidden relative border-b border-border-light">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={imageUrl}
@@ -352,31 +447,31 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                         />
                         {/* Out of Stock overlay */}
                         {isOutOfStock ? (
-                          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                            <span className="text-[10px] uppercase font-bold tracking-wider text-white bg-red-600 px-2 py-0.5 rounded shadow">
+                          <div className="absolute inset-0 bg-black/50 flex items-center justify-center backdrop-blur-[1px]">
+                            <span className="text-[10px] uppercase font-bold tracking-wider text-white bg-red-600 px-2.5 py-0.5 rounded-full shadow-sm">
                               Out of Stock
                             </span>
                           </div>
                         ) : isLowStock ? (
-                          <span className="absolute top-2 left-2 text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500 text-white shadow leading-none uppercase">
+                          <span className="absolute top-2.5 left-2.5 text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-500 text-white shadow-sm leading-none uppercase tracking-wide">
                             Only {p.inventory} left
                           </span>
                         ) : null}
                       </div>
 
                       {/* Info */}
-                      <div className="p-3 sm:p-4 flex flex-col gap-1.5 flex-1">
-                        <span className="text-[9px] sm:text-[10px] text-text-secondary uppercase font-semibold tracking-wider">
+                      <div className="p-4 sm:p-5 flex flex-col gap-2 flex-1">
+                        <span className="text-[10px] text-text-secondary uppercase font-semibold tracking-wider">
                           {p.category}
                         </span>
-                        <h3 className="text-xs sm:text-sm font-bold text-text-primary line-clamp-2 leading-tight flex-1">
+                        <h3 className="text-sm font-bold text-ink line-clamp-2 leading-snug group-hover:text-brand-primary transition-colors flex-1">
                           {p.name}
                         </h3>
-                        <div className="mt-1 flex flex-col">
-                          <span className="text-xs sm:text-sm font-bold text-brand-primary leading-tight">
+                        <div className="mt-1 flex flex-col pt-1">
+                          <span className="text-sm sm:text-base font-bold text-brand-primary tracking-tight">
                             ${(p.basePrice / EXCHANGE_RATE).toFixed(2)} USD
                           </span>
-                          <span className="text-[9px] sm:text-[10px] text-text-secondary leading-none mt-0.5">
+                          <span className="text-[10px] text-text-secondary font-medium leading-none mt-0.5">
                             {p.basePrice.toLocaleString()} VND
                           </span>
                         </div>
@@ -385,11 +480,13 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                   );
                 })
               ) : (
-                <div className="col-span-2 sm:col-span-3 lg:col-span-4 card-primary p-8 sm:p-12 text-center flex flex-col items-center gap-2 bg-white dark:bg-zinc-900 border-2 border-dashed border-border-light rounded-2xl">
-                  <ShoppingBag className="h-10 w-10 text-text-secondary opacity-50" />
-                  <h3 className="text-sm sm:text-base font-semibold text-text-primary">No products found</h3>
-                  <p className="text-xs text-text-secondary">
-                    Try refining your search query or selecting a different category.
+                <div className="col-span-2 sm:col-span-3 lg:col-span-4 p-12 text-center flex flex-col items-center gap-3 bg-white border-2 border-dashed border-border-light rounded-[32px]">
+                  <div className="h-12 w-12 rounded-full bg-surface-soft flex items-center justify-center text-text-secondary">
+                    <ShoppingBag className="h-6 w-6 opacity-60" />
+                  </div>
+                  <h3 className="text-base font-bold text-ink">No crafts found</h3>
+                  <p className="text-xs text-text-secondary max-w-sm">
+                    Try refining your search keyword or selecting a different category filter above.
                   </p>
                 </div>
               )}
@@ -399,34 +496,39 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
 
         {/* VIEW B: ORDER HISTORY */}
         {activeView === "orders" && (
-          <div className="flex flex-col gap-5 animate-in fade-in duration-200">
-            <h2 className="text-base font-bold text-text-primary uppercase tracking-wider border-b border-border-light pb-3">
-              Your Purchase History
-            </h2>
+          <div className="flex flex-col gap-6 animate-in fade-in duration-200">
+            <div className="border-b border-border-light pb-4">
+              <h2 className="text-xl font-bold text-ink tracking-tight">
+                Your Order Receipts
+              </h2>
+              <p className="text-xs text-text-secondary mt-0.5">
+                Past verified shipments and logistics manifests dispatched from Saigon Hub.
+              </p>
+            </div>
 
             {isOrdersLoading ? (
-              <div className="flex flex-col items-center justify-center p-12 text-text-secondary gap-3">
+              <div className="flex flex-col items-center justify-center p-16 text-text-secondary gap-3">
                 <Loader2 className="h-8 w-8 animate-spin text-brand-primary" />
-                <span className="text-xs">Fetching your receipts...</span>
+                <span className="text-xs font-medium">Fetching verified receipts...</span>
               </div>
             ) : ordersError ? (
-              <div className="card-primary p-4 border-red-200 dark:border-red-900 bg-red-50/20 text-center text-xs text-red-600 dark:text-red-400">
+              <div className="p-4 border border-red-200 bg-red-50/40 rounded-2xl text-center text-xs text-red-600 font-medium">
                 {ordersError}
               </div>
             ) : orders.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-6">
                 {orders.map((o) => (
                   <div
                     key={o.id}
-                    className="card-primary p-4 flex flex-col gap-3.5 bg-white dark:bg-zinc-900 shadow-sm"
+                    className="card-product rounded-[24px] p-5 sm:p-6 flex flex-col gap-4 bg-white border border-border-light shadow-sm"
                   >
                     {/* Header */}
-                    <div className="flex justify-between items-start border-b border-border-light pb-2">
-                      <div className="flex flex-col gap-0.5">
-                        <span className="text-[9px] font-mono text-text-secondary">
+                    <div className="flex justify-between items-start border-b border-border-light pb-3">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-[10px] font-mono text-text-secondary font-semibold">
                           ORDER: {o.id.substring(0, 8).toUpperCase()}...
                         </span>
-                        <span className="text-[10px] text-text-secondary">
+                        <span className="text-[11px] text-text-secondary">
                           {new Date(o.createdAt).toLocaleDateString("en-US", {
                             year: "numeric",
                             month: "short",
@@ -434,24 +536,24 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                           })}
                         </span>
                       </div>
-                      <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/20 text-brand-primary border border-blue-200 dark:border-blue-900 uppercase">
+                      <span className="text-[10px] font-bold px-3 py-1 rounded-full bg-surface-soft text-ink border border-border-light uppercase tracking-wide">
                         {o.status}
                       </span>
                     </div>
 
                     {/* Items */}
-                    <div className="space-y-2">
+                    <div className="space-y-2.5">
                       {o.items.map((item: any, idx: number) => (
                         <div key={idx} className="flex gap-2 items-center text-xs justify-between">
-                          <span className="text-text-primary font-medium line-clamp-1 flex-1">
+                          <span className="text-ink font-semibold line-clamp-1 flex-1">
                             {item.product.name}
                             <span className="text-text-secondary ml-1.5 font-bold">x{item.quantity}</span>
                           </span>
                           <div className="flex flex-col items-end shrink-0">
-                            <span className="font-semibold text-text-primary">
+                            <span className="font-bold text-ink">
                               ${((item.sellerPriceAtPurchase * item.quantity) / EXCHANGE_RATE).toFixed(2)} USD
                             </span>
-                            <span className="text-[9px] text-text-secondary leading-none">
+                            <span className="text-[10px] text-text-secondary leading-none">
                               {(item.sellerPriceAtPurchase * item.quantity).toLocaleString()} VND
                             </span>
                           </div>
@@ -460,26 +562,26 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                     </div>
 
                     {/* Fees Breakdown */}
-                    <div className="bg-zinc-50 dark:bg-zinc-950 p-2.5 rounded-lg border border-border-light text-[10px] text-text-secondary flex flex-col gap-1">
+                    <div className="bg-surface-soft p-3.5 rounded-2xl border border-border-light text-[11px] text-text-secondary flex flex-col gap-1.5">
                       <div className="flex justify-between">
                         <span>Packaging Fee:</span>
-                        <span>
+                        <span className="font-medium text-ink">
                           ${(o.items.reduce((acc: number, item: any) => acc + item.packagingFeeAtPurchase * item.quantity, 0) / EXCHANGE_RATE).toFixed(2)} USD
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span>International Shipping:</span>
-                        <span>
+                        <span className="font-medium text-ink">
                           ${(o.items.reduce((acc: number, item: any) => acc + item.shippingFeeAtPurchase * item.quantity, 0) / EXCHANGE_RATE).toFixed(2)} USD
                         </span>
                       </div>
                     </div>
 
                     {/* Paid Receipt Total */}
-                    <div className="flex justify-between items-baseline pt-1">
-                      <span className="text-[10px] font-bold text-text-primary uppercase">Total Paid</span>
+                    <div className="flex justify-between items-baseline pt-2 border-t border-border-light">
+                      <span className="text-xs font-bold text-ink uppercase tracking-wider">Total Paid</span>
                       <div className="text-right">
-                        <span className="text-xs font-bold text-brand-primary">
+                        <span className="text-base font-bold text-brand-primary">
                           ${o.totalPaid.toFixed(2)} USD
                         </span>
                         <div className="text-[10px] text-text-secondary leading-none mt-0.5">
@@ -501,15 +603,17 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                 ))}
               </div>
             ) : (
-              <div className="card-primary p-8 text-center flex flex-col items-center gap-2 bg-white dark:bg-zinc-900 border-2 border-dashed border-border-light">
-                <Clock className="h-10 w-10 text-text-secondary opacity-50" />
-                <h3 className="text-sm font-semibold text-text-primary">No orders found</h3>
-                <p className="text-xs text-text-secondary">
-                  Your purchase history will show up here after completing checkouts.
+              <div className="p-12 text-center flex flex-col items-center gap-3 bg-white border-2 border-dashed border-border-light rounded-[32px]">
+                <div className="h-12 w-12 rounded-full bg-surface-soft flex items-center justify-center text-text-secondary">
+                  <Clock className="h-6 w-6 opacity-60" />
+                </div>
+                <h3 className="text-base font-bold text-ink">No purchases found</h3>
+                <p className="text-xs text-text-secondary max-w-sm">
+                  Your purchase history and live fulfillment receipts will show up here after checkout.
                 </p>
                 <button
                   onClick={() => setActiveView("browse")}
-                  className="btn-primary text-xs mt-2"
+                  className="btn-primary text-xs mt-3 cursor-pointer"
                 >
                   Explore Crafts
                 </button>
@@ -519,14 +623,13 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
         )}
       </main>
 
-      {/* 3. Product Details Modal Dialog */}
+      {/* 3. Product Details Modal Dialog (Meta Rounded-32 Card) */}
       {selectedProduct && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] flex items-end md:items-center justify-center p-0 md:p-6 animate-in fade-in duration-200">
-          {/* Modal Container */}
-          <div className="bg-white dark:bg-zinc-900 w-full max-w-md md:max-w-4xl rounded-t-2xl md:rounded-2xl max-h-[85vh] md:max-h-[90vh] overflow-hidden flex flex-col md:flex-row animate-in slide-in-from-bottom md:zoom-in-95 duration-300 relative shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[4px] flex items-end md:items-center justify-center p-0 md:p-6 animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-md md:max-w-4xl rounded-t-[32px] md:rounded-[32px] max-h-[85vh] md:max-h-[90vh] overflow-hidden flex flex-col md:flex-row animate-in slide-in-from-bottom md:zoom-in-95 duration-300 relative shadow-2xl border border-border-light">
             
-            {/* Header image cover */}
-            <div className="relative aspect-video md:aspect-auto md:w-1/2 bg-zinc-100 shrink-0 md:min-h-[400px]">
+            {/* Header image cover on Soft Surface */}
+            <div className="relative aspect-video md:aspect-auto md:w-1/2 bg-surface-soft shrink-0 md:min-h-[420px] overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={JSON.parse(selectedProduct.images)[0] || "/file.svg"}
@@ -538,7 +641,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
               />
               <button
                 onClick={() => setSelectedProduct(null)}
-                className="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors cursor-pointer shadow-md border border-white/10"
+                className="absolute top-4 right-4 z-10 p-2.5 bg-white/90 hover:bg-white text-ink rounded-full transition-all cursor-pointer shadow-md border border-border-light"
                 aria-label="Close details"
               >
                 <X className="h-4 w-4" />
@@ -546,31 +649,31 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
             </div>
 
             {/* Content info */}
-            <div className="p-5 md:p-8 flex flex-col gap-4 flex-1 overflow-y-auto">
+            <div className="p-6 md:p-8 flex flex-col gap-5 flex-1 overflow-y-auto">
               <div>
                 <span className="text-[10px] font-bold text-brand-primary uppercase tracking-wider">
                   {selectedProduct.category}
                 </span>
-                <h2 className="text-base font-bold text-text-primary mt-0.5 leading-snug">
+                <h2 className="text-xl font-bold text-ink mt-1 leading-snug">
                   {selectedProduct.name}
                 </h2>
-                <div className="flex items-center justify-between mt-2.5">
+                <div className="flex items-center justify-between mt-3">
                   <div className="flex flex-col">
-                    <span className="text-base font-bold text-text-primary">
+                    <span className="text-xl font-bold text-brand-primary tracking-tight">
                       ${(selectedProduct.basePrice / EXCHANGE_RATE).toFixed(2)} USD
                     </span>
-                    <span className="text-[10px] text-text-secondary leading-none">
+                    <span className="text-xs text-text-secondary leading-none mt-0.5">
                       {selectedProduct.basePrice.toLocaleString()} VND
                     </span>
                   </div>
                   
                   {/* Stock status badge */}
                   {selectedProduct.inventory === 0 ? (
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900 leading-none">
+                    <span className="text-[10px] font-bold px-3 py-1 rounded-full bg-red-50 text-red-600 border border-red-200 leading-none uppercase tracking-wide">
                       Out of Stock
                     </span>
                   ) : (
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-teal-50 dark:bg-teal-950/20 text-brand-accent border border-teal-200 dark:border-teal-900 leading-none">
+                    <span className="text-[10px] font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none">
                       {selectedProduct.inventory} In Stock
                     </span>
                   )}
@@ -579,8 +682,8 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
 
               {/* Description */}
               {selectedProduct.description && (
-                <div className="flex flex-col gap-1.5 border-t border-border-light pt-3">
-                  <h3 className="text-xs font-bold text-text-primary uppercase tracking-wider">
+                <div className="flex flex-col gap-1.5 border-t border-border-light pt-4">
+                  <h3 className="text-xs font-bold text-ink uppercase tracking-wider">
                     About This Craft
                   </h3>
                   <p className="text-xs text-text-secondary leading-relaxed">
@@ -590,18 +693,18 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
               )}
 
               {/* Dynamic Price transparency breakdown panel */}
-              <div className="card-primary p-4 bg-zinc-50 dark:bg-zinc-900 border border-border-light flex flex-col gap-2.5">
-                <div className="flex items-center gap-1.5 border-b border-border-light pb-2">
-                  <Calculator className="h-3.5 w-3.5 text-brand-primary" />
-                  <h4 className="text-[10px] font-bold text-text-primary uppercase tracking-wider">
-                    Price Transparency Breakdown
+              <div className="bg-surface-soft rounded-2xl p-4 sm:p-5 border border-border-light flex flex-col gap-2.5">
+                <div className="flex items-center gap-2 border-b border-border-light pb-2.5">
+                  <Calculator className="h-4 w-4 text-brand-primary" />
+                  <h4 className="text-[11px] font-bold text-ink uppercase tracking-wider">
+                    Saigon Hub Price Transparency
                   </h4>
                 </div>
 
                 <div className="space-y-1.5 text-xs">
                   <div className="flex justify-between">
                     <span className="text-text-secondary">Base Craftsman Price:</span>
-                    <span className="font-semibold text-text-primary">
+                    <span className="font-semibold text-ink">
                       ${(selectedProduct.basePrice / EXCHANGE_RATE).toFixed(2)} USD
                     </span>
                   </div>
@@ -613,10 +716,10 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                     <span>+ fixed International Shipping:</span>
                     <span>${(FIXED_SHIPPING / EXCHANGE_RATE).toFixed(2)} USD</span>
                   </div>
-                  <div className="border-t border-border-light my-2 pt-2 flex justify-between items-baseline font-semibold">
-                    <span className="text-text-primary">Total Per Unit:</span>
+                  <div className="border-t border-border-light my-2 pt-2.5 flex justify-between items-baseline font-semibold">
+                    <span className="text-ink">Total Per Unit:</span>
                     <div className="text-right">
-                      <div className="text-sm font-bold text-brand-primary">
+                      <div className="text-base font-bold text-brand-primary">
                         ${((selectedProduct.basePrice + FIXED_SHIPPING + FIXED_PACKAGING) / EXCHANGE_RATE).toFixed(2)} USD
                       </div>
                       <div className="text-[10px] text-text-secondary mt-0.5 leading-none">
@@ -629,35 +732,35 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
 
               {/* Interactive quantity selector and Add To Cart CTA */}
               {selectedProduct.inventory > 0 && (
-                <div className="flex flex-col gap-3 pt-3 border-t border-border-light">
+                <div className="flex flex-col gap-3 pt-4 border-t border-border-light">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-text-primary">Select Quantity</span>
-                    <div className="flex items-center border border-border-light rounded-lg overflow-hidden bg-white dark:bg-zinc-950">
+                    <span className="text-xs font-bold text-ink">Select Quantity</span>
+                    <div className="flex items-center border border-border-light rounded-full overflow-hidden bg-white p-0.5">
                       <button
                         onClick={() => setDetailQuantity(Math.max(1, detailQuantity - 1))}
                         disabled={detailQuantity <= 1}
-                        className="p-2 text-text-secondary hover:text-text-primary hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors shrink-0 disabled:opacity-30 cursor-pointer"
+                        className="p-1.5 text-text-secondary hover:text-ink hover:bg-surface-soft rounded-full transition-colors shrink-0 disabled:opacity-30 cursor-pointer"
                         aria-label="Decrease quantity"
                       >
-                        <Minus className="h-4 w-4" />
+                        <Minus className="h-3.5 w-3.5" />
                       </button>
-                      <span className="px-4 text-sm font-bold text-text-primary text-center min-w-[40px]">
+                      <span className="px-4 text-xs font-bold text-ink text-center min-w-[36px]">
                         {detailQuantity}
                       </span>
                       <button
                         onClick={() => setDetailQuantity(Math.min(selectedProduct.inventory, detailQuantity + 1))}
                         disabled={detailQuantity >= selectedProduct.inventory}
-                        className="p-2 text-text-secondary hover:text-text-primary hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors shrink-0 disabled:opacity-30 cursor-pointer"
+                        className="p-1.5 text-text-secondary hover:text-ink hover:bg-surface-soft rounded-full transition-colors shrink-0 disabled:opacity-30 cursor-pointer"
                         aria-label="Increase quantity"
                       >
-                        <Plus className="h-4 w-4" />
+                        <Plus className="h-3.5 w-3.5" />
                       </button>
                     </div>
                   </div>
 
                   <button
                     onClick={() => addToCart(selectedProduct, detailQuantity)}
-                    className="btn-primary w-full flex items-center justify-center gap-2 font-bold min-h-[48px] shadow-md mt-1"
+                    className="btn-primary w-full flex items-center justify-center gap-2 font-bold min-h-[50px] shadow-lg shadow-brand-primary/20 rounded-full cursor-pointer mt-1"
                   >
                     <ShoppingBag className="h-4 w-4" />
                     <span>Add to Cart — ${(((selectedProduct.basePrice + FIXED_SHIPPING + FIXED_PACKAGING) * detailQuantity) / EXCHANGE_RATE).toFixed(2)} USD</span>
@@ -669,21 +772,22 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
         </div>
       )}
 
-      {/* 4. Sliding Cart Drawer Panel */}
+      {/* 4. Sliding Cart Drawer Panel (Meta Rounded-32 Card) */}
       {isCartOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] flex items-end md:items-stretch md:justify-end animate-in fade-in duration-200">
-          {/* Drawer container */}
-          <div className="bg-white dark:bg-zinc-900 w-full max-w-md md:w-[420px] md:max-w-none md:h-full rounded-t-2xl md:rounded-l-2xl md:rounded-r-none max-h-[85vh] md:max-h-full flex flex-col animate-in slide-in-from-bottom md:slide-in-from-right duration-300 relative shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[4px] flex items-end md:items-stretch md:justify-end animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-md md:w-[440px] md:max-w-none md:h-full rounded-t-[32px] md:rounded-l-[32px] md:rounded-r-none max-h-[85vh] md:max-h-full flex flex-col animate-in slide-in-from-bottom md:slide-in-from-right duration-300 relative shadow-2xl border-l border-border-light">
             
             {/* Header */}
-            <div className="px-5 py-4 border-b border-border-light flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-2">
-                <ShoppingBag className="h-5 w-5 text-brand-primary" />
-                <h2 className="text-base font-bold text-text-primary">Shopping Cart</h2>
+            <div className="px-6 py-5 border-b border-border-light flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="p-1.5 rounded-full bg-brand-primary/10 text-brand-primary">
+                  <ShoppingBag className="h-4.5 w-4.5" />
+                </div>
+                <h2 className="text-base font-bold text-ink">Shopping Cart</h2>
               </div>
               <button
                 onClick={() => setIsCartOpen(false)}
-                className="p-1 text-text-secondary hover:text-text-primary hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-full cursor-pointer"
+                className="p-1.5 text-text-secondary hover:text-ink hover:bg-surface-soft rounded-full cursor-pointer transition-colors"
                 aria-label="Close cart"
               >
                 <X className="h-5 w-5" />
@@ -691,7 +795,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
             </div>
 
             {/* List */}
-            <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
+            <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-3.5">
               {cart.length > 0 ? (
                 cart.map((item) => {
                   let imageList = [];
@@ -703,10 +807,10 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                   return (
                     <div
                       key={item.product.id}
-                      className="card-primary p-3 flex gap-3 items-center bg-white dark:bg-zinc-900 border border-border-light relative"
+                      className="p-3.5 flex gap-3.5 items-center bg-surface-soft/60 rounded-2xl border border-border-light relative"
                     >
                       {/* Image */}
-                      <div className="h-14 w-14 rounded-lg overflow-hidden border border-border-light shrink-0 bg-zinc-50">
+                      <div className="h-16 w-16 rounded-xl overflow-hidden border border-border-light shrink-0 bg-white">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={imageUrl}
@@ -720,14 +824,14 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
 
                       {/* Info */}
                       <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-                        <h4 className="text-xs font-bold text-text-primary truncate pr-2">
+                        <h4 className="text-xs font-bold text-ink truncate pr-2">
                           {item.product.name}
                         </h4>
-                        <span className="text-[9px] text-text-secondary uppercase font-semibold">
+                        <span className="text-[10px] text-text-secondary uppercase font-semibold">
                           {item.product.category}
                         </span>
                         <div className="flex flex-col mt-1">
-                          <span className="text-xs font-bold text-text-primary">
+                          <span className="text-xs font-bold text-brand-primary">
                             ${(item.product.basePrice / EXCHANGE_RATE).toFixed(2)} USD
                           </span>
                           <span className="text-[9px] text-text-secondary">
@@ -737,33 +841,33 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                       </div>
 
                       {/* Control Panel */}
-                      <div className="flex flex-col gap-2 items-end shrink-0 border-l border-border-light pl-3.5">
+                      <div className="flex flex-col gap-2 items-end shrink-0 pl-2">
                         <button
                           onClick={() => removeFromCart(item.product.id)}
-                          className="text-text-secondary hover:text-red-500 p-0.5 transition-colors cursor-pointer"
+                          className="text-text-secondary hover:text-red-500 p-1 transition-colors cursor-pointer"
                           title="Remove item"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-3.5 w-3.5" />
                         </button>
                         
                         {/* Selector */}
-                        <div className="flex items-center border border-border-light rounded bg-zinc-50 dark:bg-zinc-950 overflow-hidden text-xs">
+                        <div className="flex items-center border border-border-light rounded-full bg-white overflow-hidden text-xs p-0.5">
                           <button
                             onClick={() => updateCartQty(item.product.id, -1)}
-                            className="p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-text-secondary shrink-0 cursor-pointer"
+                            className="p-1 hover:bg-surface-soft text-text-secondary rounded-full shrink-0 cursor-pointer"
                             aria-label="Decrease"
                           >
-                            <Minus className="h-3.5 w-3.5" />
+                            <Minus className="h-3 w-3" />
                           </button>
-                          <span className="px-2 font-bold text-text-primary text-center min-w-[20px]">
+                          <span className="px-2 font-bold text-ink text-center min-w-[20px]">
                             {item.quantity}
                           </span>
                           <button
                             onClick={() => updateCartQty(item.product.id, 1)}
-                            className="p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-text-secondary shrink-0 cursor-pointer"
+                            className="p-1 hover:bg-surface-soft text-text-secondary rounded-full shrink-0 cursor-pointer"
                             aria-label="Increase"
                           >
-                            <Plus className="h-3.5 w-3.5" />
+                            <Plus className="h-3 w-3" />
                           </button>
                         </div>
                       </div>
@@ -772,9 +876,9 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                 })
               ) : (
                 <div className="flex flex-col items-center justify-center p-12 text-text-secondary gap-3">
-                  <ShoppingBag className="h-12 w-12 text-text-secondary opacity-40" />
-                  <h3 className="text-sm font-semibold text-text-primary">Your cart is empty</h3>
-                  <p className="text-xs text-text-secondary text-center">
+                  <ShoppingBag className="h-12 w-12 text-text-secondary opacity-30" />
+                  <h3 className="text-sm font-semibold text-ink">Your cart is empty</h3>
+                  <p className="text-xs text-text-secondary text-center max-w-xs">
                     Browse the crafts catalog and add traditional craft goods to purchase.
                   </p>
                 </div>
@@ -783,34 +887,34 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
 
             {/* Footer Summary details */}
             {cart.length > 0 && (
-              <div className="p-5 border-t border-border-light bg-zinc-50 dark:bg-zinc-900 shrink-0 flex flex-col gap-3.5">
+              <div className="p-6 border-t border-border-light bg-surface-soft/40 shrink-0 flex flex-col gap-4">
                 {/* Cost Breakdown */}
                 <div className="space-y-1.5 text-xs text-text-secondary">
                   <div className="flex justify-between">
                     <span>Items Subtotal:</span>
-                    <span className="text-text-primary font-medium">
+                    <span className="text-ink font-semibold">
                       ${(cartSubtotalVND / EXCHANGE_RATE).toFixed(2)} USD
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span>Packaging Fees:</span>
-                    <span className="text-text-primary font-medium">
+                    <span className="text-ink font-semibold">
                       ${(cartPackagingVND / EXCHANGE_RATE).toFixed(2)} USD
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span>International Shipping:</span>
-                    <span className="text-text-primary font-medium">
+                    <span className="text-ink font-semibold">
                       ${(cartShippingVND / EXCHANGE_RATE).toFixed(2)} USD
                     </span>
                   </div>
-                  <div className="border-t border-border-light my-2 pt-2 flex justify-between items-baseline">
-                    <span className="text-sm font-bold text-text-primary">Order Total:</span>
+                  <div className="border-t border-border-light my-2 pt-2.5 flex justify-between items-baseline">
+                    <span className="text-sm font-bold text-ink">Order Total:</span>
                     <div className="text-right">
-                      <div className="text-base font-bold text-brand-primary">
+                      <div className="text-lg font-bold text-brand-primary">
                         ${cartTotalUSD.toFixed(2)} USD
                       </div>
-                      <div className="text-xs text-text-secondary leading-none mt-0.5">
+                      <div className="text-xs text-text-secondary leading-none mt-0.5 font-medium">
                         {cartTotalVND.toLocaleString()} VND
                       </div>
                     </div>
@@ -820,7 +924,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                 {/* Checkout trigger */}
                 <button
                   onClick={() => setIsCheckingOut(true)}
-                  className="btn-primary w-full flex items-center justify-center gap-2 font-bold min-h-[48px] shadow-md"
+                  className="btn-primary w-full flex items-center justify-center gap-2 font-bold min-h-[50px] shadow-lg shadow-brand-primary/20 rounded-full cursor-pointer"
                 >
                   <span>Proceed to Delivery Checkout</span>
                   <ChevronRight className="h-4 w-4" />
@@ -831,156 +935,249 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
         </div>
       )}
 
-      {/* 5. Checkout Delivery Details Overlay Dialog */}
+      {/* 5. Checkout Delivery Details Overlay Dialog (Meta Rounded-32 Card) */}
       {isCheckingOut && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] flex items-end md:items-center justify-center p-0 md:p-6 animate-in fade-in duration-200">
-          {/* Modal Container */}
-          <div className="bg-white dark:bg-zinc-900 w-full max-w-md md:max-w-lg rounded-t-2xl md:rounded-2xl max-h-[85vh] md:max-h-[90vh] overflow-y-auto flex flex-col animate-in slide-in-from-bottom md:zoom-in-95 duration-300 relative shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[4px] flex items-end md:items-center justify-center p-0 md:p-6 animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-md md:max-w-lg rounded-t-[32px] md:rounded-[32px] max-h-[90vh] overflow-y-auto flex flex-col animate-in slide-in-from-bottom md:zoom-in-95 duration-300 relative shadow-2xl border border-border-light">
             {/* Header */}
-            <div className="px-5 py-4 border-b border-border-light flex items-center justify-between shrink-0">
-              <h2 className="text-base font-bold text-text-primary">Delivery Checkout Details</h2>
+            <div className="px-6 py-5 border-b border-border-light flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2.5">
+                <h2 className="text-base font-bold text-ink">
+                  {checkoutStep === "details" ? "Delivery Details" : "Secure Card Payment"}
+                </h2>
+                <span className="text-[10px] font-bold text-ink bg-surface-soft border border-border-light px-2.5 py-0.5 rounded-full">
+                  {checkoutStep === "details" ? "Step 1 of 2" : "Step 2 of 2"}
+                </span>
+              </div>
               <button
-                onClick={() => setIsCheckingOut(false)}
-                className="p-1 text-text-secondary hover:text-text-primary hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-full cursor-pointer"
+                onClick={() => {
+                  setIsCheckingOut(false);
+                  setCheckoutStep("details");
+                  setPaymentIntentData(null);
+                }}
+                className="p-1.5 text-text-secondary hover:text-ink hover:bg-surface-soft rounded-full cursor-pointer transition-colors"
                 aria-label="Close checkout"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            {/* Checkout Form */}
-            <form onSubmit={handleCheckout} className="p-5 flex flex-col gap-4">
-              {submitError && (
-                <div className="flex items-center gap-3 p-3.5 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-lg text-red-600 dark:text-red-400 text-xs">
-                  <AlertCircle className="h-4.5 w-4.5 shrink-0" />
-                  <span className="font-semibold">{submitError}</span>
-                </div>
-              )}
+            {checkoutStep === "details" ? (
+              /* STEP 1: Delivery Details Form */
+              <form onSubmit={handleStartInPortalPayment} className="p-6 flex flex-col gap-4">
+                {submitError && (
+                  <div className="flex items-center gap-3 p-3.5 bg-red-50 border border-red-200 rounded-2xl text-red-600 text-xs font-semibold">
+                    <AlertCircle className="h-4 w-4 shrink-0" />
+                    <span>{submitError}</span>
+                  </div>
+                )}
 
-              {/* Order total header summary card */}
-              <div className="bg-zinc-50 dark:bg-zinc-950 border border-border-light rounded-xl p-4 flex justify-between items-baseline shrink-0">
-                <span className="text-xs text-text-secondary">Amount Due:</span>
-                <div className="text-right">
-                  <span className="text-sm font-bold text-text-primary">
-                    ${cartTotalUSD.toFixed(2)} USD
-                  </span>
-                  <div className="text-[10px] text-text-secondary mt-0.5 leading-none text-right">
-                    {cartTotalVND.toLocaleString()} VND
+                {/* Order total header summary card */}
+                <div className="bg-surface-soft border border-border-light rounded-2xl p-4 flex justify-between items-baseline shrink-0">
+                  <span className="text-xs text-text-secondary font-medium">Amount Due:</span>
+                  <div className="text-right">
+                    <span className="text-base font-bold text-brand-primary">
+                      ${cartTotalUSD.toFixed(2)} USD
+                    </span>
+                    <div className="text-[10px] text-text-secondary mt-0.5 leading-none text-right">
+                      {cartTotalVND.toLocaleString()} VND
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Name */}
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="checkoutName" className="text-xs font-semibold text-text-primary">
-                  Recipient Full Name <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    id="checkoutName"
-                    value={checkoutName}
-                    onChange={(e) => setCheckoutName(e.target.value)}
-                    className="input-primary w-full pl-11 text-xs min-h-[44px]"
-                    placeholder="e.g. John Doe"
-                    disabled={isPending}
-                    required
-                  />
-                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
+                {/* Name */}
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="checkoutName" className="text-xs font-semibold text-ink">
+                    Recipient Full Name <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="checkoutName"
+                      value={checkoutName}
+                      onChange={(e) => setCheckoutName(e.target.value)}
+                      className="input-primary w-full pl-11 text-xs min-h-[46px] rounded-xl"
+                      placeholder="e.g. John Doe"
+                      disabled={isPreparingPayment || isPending}
+                      required
+                    />
+                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
+                  </div>
                 </div>
-              </div>
 
-              {/* Phone */}
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="checkoutPhone" className="text-xs font-semibold text-text-primary">
-                  Delivery Phone Number <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="tel"
-                    id="checkoutPhone"
-                    value={checkoutPhone}
-                    onChange={(e) => setCheckoutPhone(e.target.value)}
-                    className="input-primary w-full pl-11 text-xs min-h-[44px]"
-                    placeholder="e.g. +1 555-123-4567"
-                    disabled={isPending}
-                    required
-                  />
-                  <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
+                {/* Phone */}
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="checkoutPhone" className="text-xs font-semibold text-ink">
+                    Delivery Phone Number <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="tel"
+                      id="checkoutPhone"
+                      value={checkoutPhone}
+                      onChange={(e) => setCheckoutPhone(e.target.value)}
+                      className="input-primary w-full pl-11 text-xs min-h-[46px] rounded-xl"
+                      placeholder="e.g. +1 555-123-4567"
+                      disabled={isPreparingPayment || isPending}
+                      required
+                    />
+                    <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
+                  </div>
                 </div>
-              </div>
 
-              {/* Shipping Address */}
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="checkoutAddress" className="text-xs font-semibold text-text-primary">
-                  International Shipping Address <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <textarea
-                    id="checkoutAddress"
-                    value={checkoutAddress}
-                    onChange={(e) => setCheckoutAddress(e.target.value)}
-                    className="input-primary w-full pl-11 text-xs min-h-[80px] py-2.5 resize-none"
-                    placeholder="e.g. 456 Broadway, New York, NY 10012, USA"
-                    disabled={isPending}
-                    required
-                  />
-                  <MapPin className="absolute left-3.5 top-3.5 h-4 w-4 text-text-secondary pointer-events-none" />
+                {/* Shipping Address */}
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="checkoutAddress" className="text-xs font-semibold text-ink">
+                    International Shipping Address <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <textarea
+                      id="checkoutAddress"
+                      value={checkoutAddress}
+                      onChange={(e) => setCheckoutAddress(e.target.value)}
+                      className="input-primary w-full pl-11 text-xs min-h-[85px] py-3 rounded-xl resize-none"
+                      placeholder="e.g. 456 Broadway, New York, NY 10012, USA"
+                      disabled={isPreparingPayment || isPending}
+                      required
+                    />
+                    <MapPin className="absolute left-3.5 top-3.5 h-4 w-4 text-text-secondary pointer-events-none" />
+                  </div>
                 </div>
-              </div>
 
-              <div className="text-[10px] text-text-secondary bg-zinc-50 dark:bg-zinc-950 p-3 rounded-lg border border-border-light leading-relaxed">
-                💡 **Checkout Exchange Note**: Your card will be billed in USD for international custom packaging and fast global logistics fulfillment from the Kialna District 1 Shipping Hub.
-              </div>
+                <div className="text-[11px] text-text-secondary bg-surface-soft p-3.5 rounded-2xl border border-border-light flex flex-col gap-1 leading-relaxed">
+                  <div>
+                    💡 <strong>Saigon Hub Delivery Notice</strong>: Billed in USD for guaranteed export packaging and expedited air courier from District 1 Saigon.
+                  </div>
+                </div>
 
-              {/* Submit Checkout */}
-              <button
-                type="submit"
-                className="btn-primary w-full flex items-center justify-center gap-2 font-bold min-h-[48px] shadow-md mt-1"
-                disabled={isPending}
-              >
-                {isPending ? (
-                  <>
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                    <span>Processing Order Checkout...</span>
-                  </>
-                ) : (
-                  <>
-                    <Check className="h-4 w-4" />
-                    <span>Authorise Checkout (${cartTotalUSD.toFixed(2)} USD)</span>
-                  </>
+                {/* Payment Action Buttons */}
+                <div className="flex flex-col gap-2.5 mt-2">
+                  {/* Primary: In-Portal Embedded Payment */}
+                  <button
+                    type="submit"
+                    className="btn-primary w-full flex items-center justify-center gap-2 font-bold min-h-[50px] shadow-lg shadow-brand-primary/20 rounded-full cursor-pointer active:scale-98 transition-all"
+                    disabled={isPreparingPayment || isPending}
+                  >
+                    {isPreparingPayment ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span>Preparing In-Portal Payment...</span>
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard className="h-4 w-4" />
+                        <span>Pay in App with Card (${cartTotalUSD.toFixed(2)} USD)</span>
+                      </>
+                    )}
+                  </button>
+
+                  <div className="flex items-center justify-between gap-2.5 pt-1">
+                    {/* Secondary: Hosted Stripe Page */}
+                    <button
+                      type="button"
+                      onClick={handleStripeCheckout}
+                      className="btn-secondary flex-1 py-2.5 px-3 text-xs font-semibold text-center cursor-pointer rounded-full"
+                      disabled={isPreparingPayment || isStripeRedirecting}
+                    >
+                      {isStripeRedirecting ? "Redirecting..." : "Stripe Checkout ↗"}
+                    </button>
+
+                    {/* Tertiary: Instant Sandbox Demo */}
+                    <button
+                      type="button"
+                      onClick={handleCheckout}
+                      className="flex-1 py-2.5 px-3 text-xs font-semibold text-text-secondary hover:text-ink bg-surface-soft hover:bg-zinc-200/70 border border-border-light rounded-full transition-colors text-center cursor-pointer"
+                      disabled={isPreparingPayment || isPending}
+                    >
+                      Instant Bypass
+                    </button>
+                  </div>
+                </div>
+              </form>
+            ) : (
+              /* STEP 2: In-Portal Embedded Stripe Elements Form */
+              <div className="p-6 flex flex-col gap-4">
+                {/* Delivery summary badge */}
+                <div className="bg-surface-soft border border-border-light rounded-2xl p-3.5 flex items-center justify-between text-xs">
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-bold text-ink truncate">
+                      Deliver to: {checkoutName}
+                    </span>
+                    <span className="text-[10px] text-text-secondary truncate">
+                      {checkoutAddress}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setCheckoutStep("details")}
+                    className="text-[11px] text-brand-primary font-bold hover:underline shrink-0 pl-2 cursor-pointer"
+                  >
+                    Change
+                  </button>
+                </div>
+
+                {/* Amount Due Card */}
+                <div className="bg-brand-primary/5 border border-brand-primary/20 rounded-2xl p-4 flex justify-between items-baseline">
+                  <span className="text-xs font-semibold text-ink">Total to Authorise:</span>
+                  <div className="text-right">
+                    <span className="text-lg font-bold text-brand-primary">
+                      ${(paymentIntentData?.amountUSD || cartTotalUSD).toFixed(2)} USD
+                    </span>
+                    <span className="text-[10px] text-text-secondary block leading-none mt-0.5">
+                      ~ {cartTotalVND.toLocaleString()} VND
+                    </span>
+                  </div>
+                </div>
+
+                {/* Embedded Stripe Elements Component */}
+                {paymentIntentData && (
+                  <EmbeddedStripeCheckout
+                    clientSecret={paymentIntentData.clientSecret}
+                    orderId={paymentIntentData.orderId}
+                    amountUSD={paymentIntentData.amountUSD}
+                    onSuccess={(order) => {
+                      setCheckoutSuccessOrderId(order.id);
+                      setCart([]);
+                      setIsCheckingOut(false);
+                      setIsCartOpen(false);
+                      setCheckoutStep("details");
+                      setPaymentIntentData(null);
+                      router.refresh();
+                    }}
+                    onBack={() => setCheckoutStep("details")}
+                  />
                 )}
-              </button>
-            </form>
+              </div>
+            )}
           </div>
         </div>
       )}
 
-      {/* 6. Checkout Success Modal Dialog */}
+      {/* 6. Checkout Success Modal Dialog (Meta Rounded-32 Card) */}
       {checkoutSuccessOrderId && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] flex items-center justify-center p-4 animate-in fade-in duration-300">
-          <div className="bg-white dark:bg-zinc-900 w-full max-w-sm rounded-2xl p-6 flex flex-col items-center text-center gap-4 shadow-2xl border border-border-light animate-in zoom-in-95 duration-300">
-            <div className="h-12 w-12 rounded-full bg-teal-50 dark:bg-teal-950/20 text-brand-accent border border-teal-200 dark:border-teal-900 flex items-center justify-center">
-              <Check className="h-6 w-6 stroke-[3px]" />
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[4px] flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-sm rounded-[32px] p-6 sm:p-8 flex flex-col items-center text-center gap-4 shadow-2xl border border-border-light animate-in zoom-in-95 duration-300">
+            <div className="h-14 w-14 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center">
+              <Check className="h-7 w-7 stroke-[3px]" />
             </div>
             
             <div>
-              <h3 className="text-base font-bold text-text-primary">Order Placed Successfully!</h3>
-              <p className="text-xs text-text-secondary mt-1 px-2">
-                Thank you for supporting authentic Vietnamese artisans! Your order reference is:
+              <h3 className="text-lg font-bold text-ink">Order Placed Successfully!</h3>
+              <p className="text-xs text-text-secondary mt-1 px-2 leading-relaxed">
+                Thank you for supporting Vietnamese master artisans! Your order reference is:
               </p>
-              <div className="mt-2.5 font-mono text-[10px] bg-zinc-50 dark:bg-zinc-950 px-3 py-1.5 rounded border border-border-light text-text-primary select-all">
+              <div className="mt-3 font-mono text-[11px] bg-surface-soft px-3 py-1.5 rounded-full border border-border-light text-ink font-bold select-all">
                 {checkoutSuccessOrderId.toUpperCase()}
               </div>
             </div>
 
-            <div className="w-full border-t border-border-light pt-3 flex flex-col gap-2">
+            <div className="w-full border-t border-border-light pt-4 flex flex-col gap-2.5">
               <button
                 onClick={() => {
                   setCheckoutSuccessOrderId(null);
                   setActiveView("orders");
                 }}
-                className="btn-primary w-full text-xs"
+                className="btn-primary w-full text-xs font-bold py-3.5 rounded-full cursor-pointer"
               >
                 View Orders History
               </button>
@@ -989,7 +1186,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                   setCheckoutSuccessOrderId(null);
                   setActiveView("browse");
                 }}
-                className="bg-transparent hover:bg-zinc-50 dark:hover:bg-zinc-800 text-text-secondary hover:text-text-primary text-xs font-semibold py-2.5 rounded-lg border border-border-light cursor-pointer"
+                className="btn-secondary w-full text-xs font-semibold py-3 rounded-full cursor-pointer"
               >
                 Continue Shopping
               </button>
@@ -999,29 +1196,29 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
       )}
 
       {/* 7. Bottom Navigation Bar (Mobile only) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 w-full bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-t border-border-light grid grid-cols-2 py-2.5 z-40 px-2 shadow-inner">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 w-full bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-t border-border-light grid grid-cols-2 py-3 z-40 px-2">
         <button
           onClick={() => setActiveView("browse")}
-          className={`flex flex-col items-center gap-1 py-1 cursor-pointer transition-all ${
+          className={`flex flex-col items-center gap-1 cursor-pointer transition-all ${
             activeView === "browse"
-              ? "text-brand-primary font-bold scale-[1.03]"
-              : "text-text-secondary hover:text-text-primary"
+              ? "text-brand-primary font-bold"
+              : "text-text-secondary hover:text-ink"
           }`}
         >
           <Compass className="h-5 w-5" />
-          <span className="text-[10px]">Explore Crafts</span>
+          <span className="text-[10px] font-medium">Explore Crafts</span>
         </button>
 
         <button
           onClick={() => setActiveView("orders")}
-          className={`flex flex-col items-center gap-1 py-1 cursor-pointer transition-all ${
+          className={`flex flex-col items-center gap-1 cursor-pointer transition-all ${
             activeView === "orders"
-              ? "text-brand-primary font-bold scale-[1.03]"
-              : "text-text-secondary hover:text-text-primary"
+              ? "text-brand-primary font-bold"
+              : "text-text-secondary hover:text-ink"
           }`}
         >
           <Clock className="h-5 w-5" />
-          <span className="text-[10px]">My Orders</span>
+          <span className="text-[10px] font-medium">My Orders</span>
         </button>
       </nav>
 

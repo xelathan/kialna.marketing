@@ -48,14 +48,20 @@ model Fee {
 }
 
 model Order {
-  id        String      @id @default(uuid())
-  buyerId   String
-  buyer     User        @relation("BuyerOrders", fields: [buyerId], references: [id])
-  totalPaid Float       // Total paid by buyer in USD (or VND)
-  status    String      @default("Ready for Pickup") // "Ready for Pickup", "Driver Assigned", "Picked Up", "In Packaging", "Shipped", "Delivered"
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  items     OrderItem[]
+  id                    String      @id @default(uuid())
+  buyerId               String
+  buyer                 User        @relation("BuyerOrders", fields: [buyerId], references: [id])
+  totalPaid             Float       // Total paid by buyer in USD
+  status                String      @default("Ready for Pickup") // "Ready for Pickup", "Driver Assigned", "Picked Up", "In Packaging", "Shipped", "Delivered"
+  paymentStatus         String      @default("paid") // "pending", "paid", "failed"
+  stripeSessionId       String?
+  stripePaymentIntentId String?
+  deliveryName          String?
+  deliveryAddress       String?
+  deliveryPhone         String?
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+  items                 OrderItem[]
 }
 
 model OrderItem {

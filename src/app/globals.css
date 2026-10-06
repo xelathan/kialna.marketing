@@ -1,82 +1,240 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 :root {
-  --bg-primary: #F9FAFB;
+  --bg-primary: #FFFFFF;
   --bg-surface: #FFFFFF;
-  --brand-primary: #0070F3;
-  --brand-accent: #00DFA2;
-  --text-primary: #111827;
-  --text-secondary: #6B7280;
-  --border-light: #E5E7EB;
+  --bg-surface-soft: #F1F4F7;
+  --brand-primary: #0064E0; /* Meta Cobalt Blue */
+  --brand-primary-deep: #0457CB;
+  --brand-primary-soft: #0091FF;
+  --brand-accent: #31A24C; /* Meta Success Green */
+  --ink-button: #000000;
+  --ink-deep: #0A1317;
+  --text-primary: #1C1E21;
+  --text-secondary: #5D6C7B;
+  --border-light: #DEE3E9;
+  --border-hairline: #CED0D4;
+  --color-success: #31A24C;
+  --color-warning: #F7B928;
+  --color-critical: #E41E3F;
 }
 
 @theme {
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --color-bg-primary: var(--bg-primary);
   --color-bg-surface: var(--bg-surface);
+  --color-bg-surface-soft: var(--bg-surface-soft);
   --color-brand-primary: var(--brand-primary);
+  --color-brand-primary-deep: var(--brand-primary-deep);
+  --color-brand-primary-soft: var(--brand-primary-soft);
   --color-brand-accent: var(--brand-accent);
+  --color-ink-button: var(--ink-button);
+  --color-ink-deep: var(--ink-deep);
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-border-light: var(--border-light);
+  --color-border-hairline: var(--border-hairline);
   
-  --radius-lg: 8px;
+  --radius-full: 9999px;
+  --radius-xxxl: 32px;
+  --radius-xxl: 24px;
+  --radius-xl: 16px;
+  --radius-lg: 12px;
 }
 
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--font-sans);
+  letter-spacing: -0.01em;
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Custom design system utilities based on DESIGN.md */
+/* Custom Meta Commerce Design System Component Utilities */
 @layer components {
+  /* Saturated Cobalt Buy CTA Button (Pill 100px) */
   .btn-primary {
     background-color: var(--brand-primary);
     color: #ffffff;
-    border-radius: 8px;
+    border-radius: 9999px;
     min-height: 44px;
-    padding: 10px 16px;
-    font-weight: 600;
-    font-size: 15px;
+    padding: 12px 26px;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: -0.01em;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease-in-out;
+    gap: 8px;
+    transition: all 0.15s ease-in-out;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--brand-primary-deep);
+    opacity: 0.98;
+  }
+
+  .btn-primary:active {
+    transform: scale(0.98);
+  }
+
+  /* Ink Pill Marketing CTA Button */
+  .btn-ink {
+    background-color: var(--ink-button);
+    color: #ffffff;
+    border-radius: 9999px;
+    min-height: 44px;
+    padding: 12px 26px;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.15s ease-in-out;
     cursor: pointer;
     border: none;
   }
 
-  .btn-primary:hover {
-    opacity: 0.9;
+  .btn-ink:hover {
+    background-color: #242526;
   }
 
+  .btn-ink:active {
+    transform: scale(0.98);
+  }
+
+  /* Secondary Outlined Ghost Button */
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--ink-deep);
+    border: 2px solid var(--ink-deep);
+    border-radius: 9999px;
+    min-height: 44px;
+    padding: 10px 24px;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.15s ease-in-out;
+    cursor: pointer;
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--bg-surface-soft);
+  }
+
+  .btn-secondary:active {
+    transform: scale(0.98);
+  }
+
+  /* Category Navigation Pill */
+  .btn-pill-tab {
+    background-color: #ffffff;
+    color: var(--text-primary);
+    border: 1px solid var(--border-hairline);
+    border-radius: 9999px;
+    padding: 8px 18px;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: -0.01em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease-in-out;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .btn-pill-tab:hover {
+    background-color: var(--bg-surface-soft);
+  }
+
+  .btn-pill-tab-active {
+    background-color: var(--ink-deep);
+    color: #ffffff;
+    border-color: var(--ink-deep);
+    font-weight: 700;
+  }
+
+  .btn-pill-tab-active:hover {
+    background-color: var(--ink-button);
+  }
+
+  /* Standard Input Field */
   .input-primary {
-    min-height: 48px;
-    border: 1px solid var(--border-light);
-    border-radius: 8px;
+    min-height: 46px;
+    border: 1px solid var(--border-hairline);
+    border-radius: 12px;
     padding: 12px 16px;
-    font-size: 15px;
+    font-size: 14px;
     color: var(--text-primary);
     background-color: var(--bg-surface);
     outline: none;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.15s ease-in-out;
   }
 
   .input-primary:focus {
     border-color: var(--brand-primary);
-    box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.2);
+    box-shadow: 0 0 0 3px rgba(0, 100, 224, 0.12);
   }
 
+  /* Search Pill Input */
+  .search-pill {
+    min-height: 44px;
+    border: 1px solid transparent;
+    border-radius: 9999px;
+    padding: 10px 18px;
+    font-size: 14px;
+    color: var(--text-primary);
+    background-color: var(--bg-surface-soft);
+    outline: none;
+    transition: all 0.15s ease-in-out;
+  }
+
+  .search-pill:focus {
+    background-color: #ffffff;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(0, 100, 224, 0.12);
+  }
+
+  /* Standard Card (24px radius) */
   .card-primary {
     background-color: var(--bg-surface);
     border: 1px solid var(--border-light);
-    border-radius: 8px;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    border-radius: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  }
+
+  /* Product Card (Photography-first 24px-32px radius) */
+  .card-product {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: 24px;
+    overflow: hidden;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .card-product:hover {
+    border-color: var(--border-hairline);
+    box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  /* Dark Promo Strip (32px radius) */
+  .card-promo-strip {
+    background-color: var(--ink-deep);
+    color: #ffffff;
+    border-radius: 32px;
   }
 }
-

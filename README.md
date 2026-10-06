@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kialna.shop - International Vietnamese Craft Marketplace
 
-## Getting Started
+Kialna connects authentic Vietnamese artisans directly with global buyers, featuring complete fee transparency (artisan base price + District 1 hub logistics + custom packaging) and dual-currency checkout (VND catalog to USD Stripe payment).
 
-First, run the development server:
+---
+
+## Quick Start
 
 ```bash
+# 1. Install dependencies
+npm install
+
+# 2. Database Setup & Seeding
+npx prisma db push
+node prisma/seed.js
+
+# 3. Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the marketplace.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Seed Accounts (Password: `password123`)
 
-## Learn More
+| Role | Email | Password | Features |
+| :--- | :--- | :--- | :--- |
+| **Artisan / Seller** | `seller@kialna.shop` | `password123` | Mobile studio, live camera uploads, inventory management |
+| **Buyer** | `buyer@kialna.shop` | `password123` | Multi-item cart, transparent breakdown, Stripe checkout, order tracking |
+| **Hub Admin** | `admin@kialna.shop` | `password123` | District 1 Logistics Hub 6-stage dispatch pipeline, fee config |
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 💳 Stripe Sandbox Test Cards
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+When testing the **"Pay with Card via Stripe"** checkout flow:
 
-## Deploy on Vercel
+| Card Brand | Card Number | Expiration Date | CVC | Billing Postal Code |
+| :--- | :--- | :--- | :--- | :--- |
+| **Visa (Default)** | `4242 4242 4242 4242` | Any future date (e.g. `12/30`) | `123` | `90210` |
+| **Mastercard** | `5555 5555 5555 4444` | Any future date (e.g. `12/30`) | `123` | `90210` |
+| **American Express** | `3782 8224 6310 005` | Any future date (e.g. `12/30`) | `1234` | `90210` |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Edge Case / Failure Testing
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+* **Declined (Generic)**: `4000 0000 0000 0002`
+* **Insufficient Funds**: `4000 0000 0000 9995`
+* **Expired Card**: `4000 0000 0000 0069`
+* **3D Secure OTP Challenge**: `4000 0000 0000 3063`
+

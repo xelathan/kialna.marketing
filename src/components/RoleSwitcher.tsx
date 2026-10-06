@@ -21,9 +21,9 @@ export default function RoleSwitcher({ currentUser }: RoleSwitcherProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const roles = [
-    { name: "seller", label: "Seller", icon: ShoppingBag, color: "text-amber-500 bg-amber-50 dark:bg-amber-950/20" },
-    { name: "buyer", label: "Buyer", icon: User, color: "text-blue-500 bg-blue-50 dark:bg-blue-950/20" },
-    { name: "admin", label: "Admin Hub", icon: Shield, color: "text-emerald-500 bg-emerald-50 dark:bg-emerald-950/20" },
+    { name: "seller", label: "Artisan Seller", icon: ShoppingBag, color: "text-amber-600 bg-amber-50" },
+    { name: "buyer", label: "Global Buyer", icon: User, color: "text-brand-primary bg-blue-50" },
+    { name: "admin", label: "Saigon Hub Admin", icon: Shield, color: "text-ink-deep bg-zinc-100" },
   ];
 
   const handleRoleSwitch = async (roleName: string) => {
@@ -51,7 +51,7 @@ export default function RoleSwitcher({ currentUser }: RoleSwitcherProps) {
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3.5 py-2 md:px-4 md:py-2.5 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-border-light shadow-xl rounded-full text-xs font-semibold hover:bg-white dark:hover:bg-zinc-900 transition-all cursor-pointer text-text-primary"
+        className="flex items-center gap-2 px-4 py-2.5 bg-white/95 backdrop-blur-md border border-border-light shadow-lg rounded-full text-xs font-bold hover:bg-white transition-all cursor-pointer text-text-primary"
       >
         <div className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-primary opacity-75"></span>
@@ -63,16 +63,16 @@ export default function RoleSwitcher({ currentUser }: RoleSwitcherProps) {
 
       {/* Expanded Panel */}
       {isOpen && (
-        <div className="absolute bottom-14 right-0 w-80 bg-white dark:bg-zinc-900 border border-border-light rounded-2xl shadow-2xl p-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
+        <div className="absolute bottom-14 right-0 w-80 bg-white border border-border-light rounded-[28px] shadow-2xl p-5 animate-in fade-in slide-in-from-bottom-2 duration-200">
           <div className="flex justify-between items-center mb-3">
             <h3 className="text-xs font-bold text-text-secondary uppercase tracking-wider">
-              Demo Switcher & Auth
+              Quick Role Switcher
             </h3>
             {currentUser && (
               <button
                 onClick={handleSignOut}
                 disabled={isPending}
-                className="text-xs text-red-500 hover:text-red-600 font-medium flex items-center gap-1 cursor-pointer"
+                className="text-xs text-red-600 hover:text-red-700 font-semibold flex items-center gap-1 cursor-pointer"
                 title="Sign Out"
               >
                 <LogOut className="h-3 w-3" />
@@ -82,7 +82,7 @@ export default function RoleSwitcher({ currentUser }: RoleSwitcherProps) {
           </div>
 
           {/* Quick Demo Switch Options */}
-          <div className="space-y-1.5 mb-3">
+          <div className="space-y-1.5 mb-4">
             {roles.map((r) => {
               const Icon = r.icon;
               const isActive = currentUser?.role === r.name;
@@ -91,14 +91,14 @@ export default function RoleSwitcher({ currentUser }: RoleSwitcherProps) {
                   key={r.name}
                   onClick={() => handleRoleSwitch(r.name)}
                   disabled={isPending}
-                  className={`w-full flex items-center justify-between p-2.5 rounded-xl text-left transition-all border ${
+                  className={`w-full flex items-center justify-between p-3 rounded-[18px] text-left transition-all border ${
                     isActive
-                      ? "border-brand-primary bg-blue-50/30 dark:bg-blue-950/20 font-semibold"
-                      : "border-transparent hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
+                      ? "border-brand-primary bg-bg-surface-soft font-semibold"
+                      : "border-transparent hover:bg-bg-surface-soft"
                   } cursor-pointer`}
                 >
-                  <div className="flex items-center gap-2.5">
-                    <div className={`p-1.5 rounded-lg ${r.color}`}>
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-full ${r.color}`}>
                       <Icon className="h-4 w-4" />
                     </div>
                     <div>
@@ -111,7 +111,7 @@ export default function RoleSwitcher({ currentUser }: RoleSwitcherProps) {
                     </div>
                   </div>
                   {isActive && (
-                    <div className="h-2 w-2 rounded-full bg-brand-primary"></div>
+                    <div className="h-2.5 w-2.5 rounded-full bg-brand-primary"></div>
                   )}
                 </button>
               );
@@ -119,10 +119,10 @@ export default function RoleSwitcher({ currentUser }: RoleSwitcherProps) {
           </div>
 
           {/* Direct Auth Navigation */}
-          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border-light">
+          <div className="grid grid-cols-2 gap-2 pt-3 border-t border-border-light">
             <Link
               href="/login"
-              className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 text-xs font-semibold text-text-primary transition-colors text-center"
+              className="btn-secondary rounded-full !min-h-[38px] !py-2 !px-3 text-xs font-bold text-center justify-center flex items-center gap-1.5"
               onClick={() => setIsOpen(false)}
             >
               <LogIn className="h-3.5 w-3.5" />
@@ -130,7 +130,7 @@ export default function RoleSwitcher({ currentUser }: RoleSwitcherProps) {
             </Link>
             <Link
               href="/register"
-              className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-brand-primary hover:bg-blue-600 text-xs font-semibold text-white transition-colors text-center shadow-sm"
+              className="btn-primary rounded-full !min-h-[38px] !py-2 !px-3 text-xs font-bold text-center justify-center flex items-center gap-1.5"
               onClick={() => setIsOpen(false)}
             >
               <UserPlus className="h-3.5 w-3.5" />
@@ -140,7 +140,7 @@ export default function RoleSwitcher({ currentUser }: RoleSwitcherProps) {
 
           {currentUser && (
             <div className="mt-3 pt-2.5 border-t border-border-light text-[10px] text-text-secondary">
-              Active: <span className="font-mono text-text-primary">{currentUser.email}</span>
+              Active account: <span className="font-mono text-text-primary">{currentUser.email}</span>
             </div>
           )}
         </div>

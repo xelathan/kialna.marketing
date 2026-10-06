@@ -339,10 +339,10 @@ export default function ProductForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full max-w-5xl mx-auto pb-20 md:pb-8 px-4 sm:px-6 lg:px-8 flex flex-col gap-6"
+      className="w-full max-w-5xl mx-auto pb-20 md:pb-8 px-4 sm:px-6 lg:px-8 flex flex-col gap-6 text-text-primary"
     >
       {submitError && (
-        <div className="flex items-center gap-3 p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-xl text-red-600 dark:text-red-400 text-sm">
+        <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-600 text-sm">
           <AlertCircle className="h-5 w-5 shrink-0" />
           <span className="font-semibold">{submitError}</span>
         </div>
@@ -352,18 +352,18 @@ export default function ProductForm({
         {/* Left Column: Media & Listing Status (Desktop: col-span-5) */}
         <div className="md:col-span-5 flex flex-col gap-6 order-2 md:order-1">
           {/* Enhanced Image Management Section */}
-          <div className="card-primary p-5 bg-white dark:bg-zinc-900 rounded-2xl flex flex-col gap-3.5">
-            <div className="flex justify-between items-center border-b border-border-light pb-2.5">
-              <label className="text-sm font-semibold text-text-primary">
-                Product Photos {images.length > 0 && <span className="text-xs text-text-secondary font-normal">({images.length})</span>}
+          <div className="card-product rounded-[28px] p-6 bg-white border border-border-light shadow-sm flex flex-col gap-4">
+            <div className="flex justify-between items-center border-b border-border-light pb-3">
+              <label className="text-sm font-bold text-ink">
+                Craft Photos {images.length > 0 && <span className="text-xs text-text-secondary font-normal">({images.length})</span>}
               </label>
               <button
                 type="button"
                 onClick={() => setShowUrlInput(!showUrlInput)}
-                className="text-xs font-medium text-brand-primary flex items-center gap-1 hover:underline cursor-pointer"
+                className="text-xs font-semibold text-brand-primary flex items-center gap-1 hover:underline cursor-pointer"
               >
-                <LinkIcon className="h-3 w-3" />
-                {showUrlInput ? "Hide URL Input" : "Add by URL"}
+                <LinkIcon className="h-3.5 w-3.5" />
+                {showUrlInput ? "Hide URL" : "Add via URL"}
               </button>
             </div>
 
@@ -385,20 +385,20 @@ export default function ProductForm({
               onChange={(e) => handleFilesSelected(e.target.files)}
             />
 
-            {/* Mobile-Friendly Upload Action Cards */}
-            <div className="grid grid-cols-2 gap-2.5">
+            {/* Upload Action Cards (Meta Soft Cloud Surface) */}
+            <div className="grid grid-cols-2 gap-3">
               {/* Direct Camera Button (Optimized for Mobile Artisans) */}
               <button
                 type="button"
                 onClick={() => cameraInputRef.current?.click()}
                 disabled={isPending}
-                className="flex flex-col items-center justify-center p-3.5 rounded-xl border border-brand-primary/20 bg-blue-50/50 hover:bg-blue-50 dark:bg-blue-950/20 dark:hover:bg-blue-950/30 transition-all text-brand-primary cursor-pointer active:scale-98"
+                className="flex flex-col items-center justify-center p-4 rounded-2xl border border-border-light bg-surface-soft hover:bg-zinc-200/60 transition-all text-ink cursor-pointer active:scale-98"
               >
-                <div className="p-2 bg-brand-primary text-white rounded-full mb-1.5 shadow-sm">
-                  <Camera className="h-5 w-5" />
+                <div className="p-2.5 bg-brand-primary text-white rounded-full mb-1.5 shadow-sm">
+                  <Camera className="h-4.5 w-4.5" />
                 </div>
                 <span className="text-xs font-bold">Take Photo</span>
-                <span className="text-[10px] text-text-secondary">Instant capture</span>
+                <span className="text-[10px] text-text-secondary font-medium">Instant camera</span>
               </button>
 
               {/* Device Gallery / File Picker */}
@@ -406,13 +406,13 @@ export default function ProductForm({
                 type="button"
                 onClick={() => galleryInputRef.current?.click()}
                 disabled={isPending}
-                className="flex flex-col items-center justify-center p-3.5 rounded-xl border border-border-light bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 transition-all text-text-primary cursor-pointer active:scale-98"
+                className="flex flex-col items-center justify-center p-4 rounded-2xl border border-border-light bg-surface-soft hover:bg-zinc-200/60 transition-all text-ink cursor-pointer active:scale-98"
               >
-                <div className="p-2 bg-zinc-200 dark:bg-zinc-700 text-text-primary rounded-full mb-1.5 shadow-sm">
-                  <UploadCloud className="h-5 w-5" />
+                <div className="p-2.5 bg-ink text-white rounded-full mb-1.5 shadow-sm">
+                  <UploadCloud className="h-4.5 w-4.5" />
                 </div>
                 <span className="text-xs font-bold">Upload Files</span>
-                <span className="text-[10px] text-text-secondary">From device</span>
+                <span className="text-[10px] text-text-secondary font-medium">From device</span>
               </button>
             </div>
 
@@ -422,10 +422,10 @@ export default function ProductForm({
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               onClick={() => galleryInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all ${
+              className={`border-2 border-dashed rounded-2xl p-5 text-center cursor-pointer transition-all ${
                 isDragging
-                  ? "border-brand-primary bg-blue-50/40 dark:bg-blue-950/20"
-                  : "border-border-light hover:border-zinc-400 bg-zinc-50/40 dark:bg-zinc-900/40"
+                  ? "border-brand-primary bg-brand-primary/5"
+                  : "border-border-light hover:border-zinc-400 bg-surface-soft/40"
               }`}
             >
               <p className="text-xs text-text-secondary">
@@ -444,7 +444,7 @@ export default function ProductForm({
                       setNewImageUrl(e.target.value);
                       setImageError("");
                     }}
-                    className={`input-primary w-full pl-11 text-sm ${imageError ? "border-red-500" : ""}`}
+                    className={`input-primary w-full pl-11 text-xs min-h-[44px] rounded-xl ${imageError ? "border-red-500" : ""}`}
                     placeholder="Paste Image URL (https://...)"
                     disabled={isPending}
                   />
@@ -453,10 +453,10 @@ export default function ProductForm({
                 <button
                   type="button"
                   onClick={handleAddImageUrl}
-                  className="btn-primary min-w-[48px] px-3 flex items-center justify-center shrink-0"
+                  className="btn-primary min-w-[44px] px-3 flex items-center justify-center shrink-0 rounded-xl"
                   disabled={isPending}
                 >
-                  <Plus className="h-5 w-5" />
+                  <Plus className="h-4 w-4" />
                 </button>
               </div>
             )}
@@ -475,18 +475,18 @@ export default function ProductForm({
                 {uploadingFiles.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center gap-3 p-2.5 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 rounded-lg"
+                    className="flex items-center gap-3 p-3 bg-surface-soft border border-border-light rounded-xl"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={item.previewUrl}
                       alt={item.fileName}
-                      className="w-10 h-10 object-cover rounded-md border border-border-light shrink-0"
+                      className="w-10 h-10 object-cover rounded-lg border border-border-light shrink-0"
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-text-primary truncate">{item.fileName}</p>
+                      <p className="text-xs font-bold text-ink truncate">{item.fileName}</p>
                       {item.status === "uploading" ? (
-                        <span className="text-[10px] text-brand-primary flex items-center gap-1 font-medium">
+                        <span className="text-[10px] text-brand-primary flex items-center gap-1 font-semibold">
                           <Loader2 className="h-3 w-3 animate-spin" /> Uploading to server...
                         </span>
                       ) : (
@@ -499,7 +499,7 @@ export default function ProductForm({
                       <button
                         type="button"
                         onClick={() => handleDismissUploadError(item.id)}
-                        className="text-xs text-red-500 hover:text-red-700 px-2 py-1"
+                        className="text-xs text-red-500 hover:text-red-700 px-2 py-1 cursor-pointer"
                       >
                         Dismiss
                       </button>
@@ -517,7 +517,7 @@ export default function ProductForm({
                   return (
                     <div
                       key={idx}
-                      className={`relative aspect-square border rounded-xl overflow-hidden group bg-zinc-100 dark:bg-zinc-800 ${
+                      className={`relative aspect-square border rounded-2xl overflow-hidden group bg-surface-soft ${
                         isCover ? "border-brand-primary ring-2 ring-brand-primary/30" : "border-border-light"
                       }`}
                     >
@@ -533,7 +533,7 @@ export default function ProductForm({
 
                       {/* Cover Badge */}
                       {isCover && (
-                        <div className="absolute top-1.5 left-1.5 bg-brand-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow flex items-center gap-0.5">
+                        <div className="absolute top-1.5 left-1.5 bg-brand-primary text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm flex items-center gap-0.5">
                           <Star className="h-2.5 w-2.5 fill-current" /> Cover
                         </div>
                       )}
@@ -544,7 +544,7 @@ export default function ProductForm({
                           <button
                             type="button"
                             onClick={() => handleSetCoverImage(idx)}
-                            className="p-1.5 bg-white/90 hover:bg-white text-zinc-900 rounded-full text-xs shadow-md transition-transform hover:scale-105"
+                            className="p-1.5 bg-white hover:bg-white text-ink rounded-full text-xs shadow-md transition-transform hover:scale-105 cursor-pointer"
                             title="Set as Cover photo"
                           >
                             <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
@@ -553,7 +553,7 @@ export default function ProductForm({
                         <button
                           type="button"
                           onClick={() => handleRemoveImage(idx)}
-                          className="p-1.5 bg-red-600 hover:bg-red-700 text-white rounded-full text-xs shadow-md transition-transform hover:scale-105"
+                          className="p-1.5 bg-red-600 hover:bg-red-700 text-white rounded-full text-xs shadow-md transition-transform hover:scale-105 cursor-pointer"
                           title="Delete photo"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
@@ -564,38 +564,38 @@ export default function ProductForm({
                 })}
               </div>
             ) : (
-              <div className="text-center p-6 border border-dashed border-border-light rounded-xl text-text-secondary text-xs bg-zinc-50/50">
-                No photos added yet. Use the camera or upload buttons above.
+              <div className="text-center p-6 border border-dashed border-border-light rounded-2xl text-text-secondary text-xs bg-surface-soft/40">
+                No craft photos added yet. Use the camera or upload buttons above.
               </div>
             )}
           </div>
 
-          {/* Listing Status */}
-          <div className="card-primary p-5 bg-white dark:bg-zinc-900 rounded-2xl flex flex-col gap-3">
-            <label className="text-sm font-semibold text-text-primary">
+          {/* Listing Status Card */}
+          <div className="card-product rounded-[28px] p-6 bg-white border border-border-light shadow-sm flex flex-col gap-3.5">
+            <label className="text-sm font-bold text-ink">
               Listing Status
             </label>
             <div className="flex gap-4">
-              <label className="flex items-center gap-2 cursor-pointer text-sm font-medium">
+              <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-ink">
                 <input
                   type="radio"
                   name="status"
                   value="active"
                   checked={status === "active"}
                   onChange={() => setStatus("active")}
-                  className="h-4 w-4 accent-brand-primary"
+                  className="h-4 w-4 accent-brand-primary cursor-pointer"
                   disabled={isPending}
                 />
                 <span>Active (Ready for Sale)</span>
               </label>
-              <label className="flex items-center gap-2 cursor-pointer text-sm font-medium">
+              <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-text-secondary">
                 <input
                   type="radio"
                   name="status"
                   value="draft"
                   checked={status === "draft"}
                   onChange={() => setStatus("draft")}
-                  className="h-4 w-4 accent-brand-primary"
+                  className="h-4 w-4 accent-brand-primary cursor-pointer"
                   disabled={isPending}
                 />
                 <span>Draft</span>
@@ -605,10 +605,10 @@ export default function ProductForm({
         </div>
 
         {/* Right Column: Details & Pricing (Desktop: col-span-7) */}
-        <div className="md:col-span-7 flex flex-col gap-5 order-1 md:order-2 card-primary p-6 sm:p-7 bg-white dark:bg-zinc-900 rounded-2xl shadow-sm">
+        <div className="md:col-span-7 flex flex-col gap-5 order-1 md:order-2 card-product rounded-[28px] p-6 sm:p-8 bg-white border border-border-light shadow-sm">
           {/* Product Name */}
           <div className="flex flex-col gap-2">
-            <label htmlFor="name" className="text-sm font-semibold text-text-primary">
+            <label htmlFor="name" className="text-xs font-bold text-ink">
               Product Name <span className="text-red-500">*</span>
             </label>
             <input
@@ -618,7 +618,7 @@ export default function ProductForm({
               value={name}
               onChange={(e) => handleInputChange("name", e.target.value, setName)}
               onBlur={() => validateField("name", name)}
-              className={`input-primary w-full ${errors.name ? "border-red-500 focus:box-shadow-red" : ""}`}
+              className={`input-primary w-full text-xs min-h-[46px] rounded-xl ${errors.name ? "border-red-500" : ""}`}
               placeholder="e.g. Handcrafted Ceramic Teapot"
               disabled={isPending}
               required
@@ -633,7 +633,7 @@ export default function ProductForm({
 
           {/* Category Selection */}
           <div className="flex flex-col gap-2">
-            <label htmlFor="category" className="text-sm font-semibold text-text-primary">
+            <label htmlFor="category" className="text-xs font-bold text-ink">
               Category
             </label>
             <div className="relative">
@@ -642,7 +642,7 @@ export default function ProductForm({
                 name="category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="input-primary w-full bg-none appearance-none pr-10"
+                className="input-primary w-full pr-10 text-xs min-h-[46px] rounded-xl cursor-pointer"
                 disabled={isPending}
               >
                 {categories.map((cat) => (
@@ -651,15 +651,12 @@ export default function ProductForm({
                   </option>
                 ))}
               </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-text-secondary">
-                ▼
-              </div>
             </div>
           </div>
 
           {/* Description */}
           <div className="flex flex-col gap-2">
-            <label htmlFor="description" className="text-sm font-semibold text-text-primary">
+            <label htmlFor="description" className="text-xs font-bold text-ink">
               Description
             </label>
             <textarea
@@ -667,7 +664,7 @@ export default function ProductForm({
               name="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="input-primary w-full min-h-[120px] py-3 resize-y"
+              className="input-primary w-full min-h-[120px] py-3 rounded-xl resize-y text-xs"
               placeholder="Describe the craft details, materials used, artisan origin..."
               disabled={isPending}
             />
@@ -677,7 +674,7 @@ export default function ProductForm({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Inventory Quantity */}
             <div className="flex flex-col gap-2">
-              <label htmlFor="inventory" className="text-sm font-semibold text-text-primary">
+              <label htmlFor="inventory" className="text-xs font-bold text-ink">
                 Stock Quantity <span className="text-red-500">*</span>
               </label>
               <input
@@ -688,7 +685,7 @@ export default function ProductForm({
                 value={inventoryStr}
                 onChange={(e) => handleInputChange("inventory", e.target.value, setInventoryStr)}
                 onBlur={() => validateField("inventory", inventoryStr)}
-                className={`input-primary w-full ${errors.inventory ? "border-red-500" : ""}`}
+                className={`input-primary w-full text-xs min-h-[46px] rounded-xl ${errors.inventory ? "border-red-500" : ""}`}
                 placeholder="e.g. 25"
                 disabled={isPending}
                 required
@@ -703,7 +700,7 @@ export default function ProductForm({
 
             {/* Base Price in VND */}
             <div className="flex flex-col gap-2">
-              <label htmlFor="basePrice" className="text-sm font-semibold text-text-primary">
+              <label htmlFor="basePrice" className="text-xs font-bold text-ink">
                 Base Price (VND) <span className="text-red-500">*</span>
               </label>
               <div className="relative">
@@ -715,12 +712,12 @@ export default function ProductForm({
                   value={basePriceStr}
                   onChange={(e) => handleInputChange("basePrice", e.target.value, setBasePriceStr)}
                   onBlur={() => validateField("basePrice", basePriceStr)}
-                  className={`input-primary w-full pr-14 ${errors.basePrice ? "border-red-500" : ""}`}
+                  className={`input-primary w-full pr-14 text-xs min-h-[46px] rounded-xl ${errors.basePrice ? "border-red-500" : ""}`}
                   placeholder="e.g. 180000"
                   disabled={isPending}
                   required
                 />
-                <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-sm font-bold text-text-secondary">
+                <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-xs font-bold text-text-secondary">
                   VND
                 </div>
               </div>
@@ -735,45 +732,44 @@ export default function ProductForm({
 
           {/* Price Transparency Estimator Breakdown */}
           {basePrice > 0 && (
-            <div className="card-primary p-4 bg-zinc-50 dark:bg-zinc-950 border border-border-light flex flex-col gap-3 rounded-xl animate-in fade-in duration-200">
-              <div className="flex items-center gap-2 border-b border-border-light pb-2">
+            <div className="p-5 bg-surface-soft rounded-2xl border border-border-light flex flex-col gap-3 animate-in fade-in duration-200">
+              <div className="flex items-center gap-2 border-b border-border-light pb-2.5">
                 <Calculator className="h-4 w-4 text-brand-primary" />
-                <h4 className="text-xs font-bold text-text-primary uppercase tracking-wider">
-                  Dynamic Pricing Breakdown
+                <h4 className="text-xs font-bold text-ink uppercase tracking-wider">
+                  Saigon Hub Pricing Breakdown
                 </h4>
               </div>
 
-              <div className="space-y-1.5 text-sm">
+              <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between">
                   <span className="text-text-secondary">Your Base Price:</span>
-                  <span className="font-semibold text-text-primary">
+                  <span className="font-bold text-ink">
                     {basePrice.toLocaleString()} VND
                   </span>
                 </div>
-                <div className="flex justify-between text-xs text-text-secondary">
+                <div className="flex justify-between text-text-secondary">
                   <span>+ Packaging Fee:</span>
                   <span>{packagingFee.toLocaleString()} VND</span>
                 </div>
-                <div className="flex justify-between text-xs text-text-secondary">
+                <div className="flex justify-between text-text-secondary">
                   <span>+ Shipping Hub Fee:</span>
                   <span>{shippingFee.toLocaleString()} VND</span>
                 </div>
-                <div className="border-t border-border-light my-2 pt-2 flex justify-between items-baseline">
-                  <span className="text-sm font-bold text-text-primary">Estimated Buyer Price:</span>
+                <div className="border-t border-border-light my-2 pt-2.5 flex justify-between items-baseline font-semibold">
+                  <span className="text-ink">Estimated Buyer Price:</span>
                   <div className="text-right">
                     <div className="text-base font-bold text-brand-primary">
                       {totalVND.toLocaleString()} VND
                     </div>
-                    <div className="text-xs font-bold text-brand-accent flex items-center justify-end gap-0.5 mt-0.5">
-                      <DollarSign className="h-3.5 w-3.5 shrink-0" />
-                      {totalUSD.toFixed(2)} USD
+                    <div className="text-xs font-bold text-brand-primary mt-0.5">
+                      ${totalUSD.toFixed(2)} USD
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="text-[10px] text-text-secondary leading-relaxed bg-white dark:bg-zinc-900 p-2.5 rounded-lg border border-border-light">
-                💡 **Transparency Notice**: The buyer checkout runs in USD. You will receive the full base price of **{basePrice.toLocaleString()} VND** upon delivery, and Kialna will manage shipping and packaging from our District 1 Hub.
+              <div className="text-[11px] text-text-secondary leading-relaxed bg-white p-3 rounded-xl border border-border-light">
+                💡 <strong>Transparency Notice</strong>: Buyer checkout runs in USD. You will receive 100% of your base price (<strong>{basePrice.toLocaleString()} VND</strong>) upon delivery, and Kialna will handle packaging and air courier from the District 1 Hub.
               </div>
             </div>
           )}
@@ -781,12 +777,12 @@ export default function ProductForm({
           {/* Submit Button */}
           <button
             type="submit"
-            className="btn-primary w-full mt-2 flex items-center justify-center gap-2 font-bold min-h-[48px] cursor-pointer shadow-lg active:scale-98 transition-all text-sm"
+            className="btn-primary w-full mt-2 flex items-center justify-center gap-2 font-bold min-h-[50px] shadow-lg shadow-brand-primary/20 rounded-full cursor-pointer active:scale-98 transition-all text-sm"
             disabled={isPending || uploadingFiles.some((f) => f.status === "uploading")}
           >
             {isPending ? (
               <>
-                <RefreshCw className="h-5 w-5 animate-spin" />
+                <RefreshCw className="h-4 w-4 animate-spin" />
                 <span>Saving Product...</span>
               </>
             ) : (
