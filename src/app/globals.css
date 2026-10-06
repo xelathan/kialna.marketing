@@ -9,6 +9,7 @@
   --brand-primary-deep: #0457CB;
   --brand-primary-soft: #0091FF;
   --brand-accent: #31A24C; /* Meta Success Green */
+  --ink: #0A1317;
   --ink-button: #000000;
   --ink-deep: #0A1317;
   --text-primary: #1C1E21;
@@ -25,10 +26,12 @@
   --color-bg-primary: var(--bg-primary);
   --color-bg-surface: var(--bg-surface);
   --color-bg-surface-soft: var(--bg-surface-soft);
+  --color-surface-soft: var(--bg-surface-soft);
   --color-brand-primary: var(--brand-primary);
   --color-brand-primary-deep: var(--brand-primary-deep);
   --color-brand-primary-soft: var(--brand-primary-soft);
   --color-brand-accent: var(--brand-accent);
+  --color-ink: var(--ink);
   --color-ink-button: var(--ink-button);
   --color-ink-deep: var(--ink-deep);
   --color-text-primary: var(--text-primary);
@@ -154,6 +157,7 @@ body {
     transition: all 0.15s ease-in-out;
     cursor: pointer;
     white-space: nowrap;
+    box-sizing: border-box;
   }
 
   .btn-pill-tab:hover {
@@ -163,8 +167,20 @@ body {
   .btn-pill-tab-active {
     background-color: var(--ink-deep);
     color: #ffffff;
-    border-color: var(--ink-deep);
+    border: 1px solid var(--ink-deep);
+    border-radius: 9999px;
+    padding: 8px 18px;
     font-weight: 700;
+    font-size: 13px;
+    letter-spacing: -0.01em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease-in-out;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
   }
 
   .btn-pill-tab-active:hover {

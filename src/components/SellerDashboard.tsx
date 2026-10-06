@@ -101,7 +101,7 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
       <header className="sticky top-0 z-30 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-b border-border-light px-4 sm:px-6 lg:px-8 py-3.5">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 shrink-0">
-            <div className="bg-ink p-2 rounded-full text-white shadow-sm flex items-center justify-center">
+            <div className="bg-[#0a1317] p-2 rounded-full text-white shadow-sm flex items-center justify-center">
               <ShoppingBag className="h-4 w-4" />
             </div>
             <div>
@@ -114,35 +114,35 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
           <div className="hidden md:flex items-center gap-1 bg-surface-soft p-1 rounded-full border border-border-light">
             <button
               onClick={() => setActiveTab("listings")}
-              className={`px-5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-5 py-2 rounded-full text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === "listings"
-                  ? "bg-ink text-white shadow-sm"
-                  : "text-text-secondary hover:text-ink hover:bg-white/60"
+                  ? "bg-[#0a1317] text-white shadow-sm font-bold"
+                  : "text-text-secondary hover:text-[#0a1317] hover:bg-white/60"
               }`}
             >
-              <ShoppingBag className="h-3.5 w-3.5" />
+              <ShoppingBag className="h-4 w-4" />
               <span>Listings ({totalListings})</span>
             </button>
             <button
               onClick={() => setActiveTab("orders")}
-              className={`px-5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-5 py-2 rounded-full text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === "orders"
-                  ? "bg-ink text-white shadow-sm"
-                  : "text-text-secondary hover:text-ink hover:bg-white/60"
+                  ? "bg-[#0a1317] text-white shadow-sm font-bold"
+                  : "text-text-secondary hover:text-[#0a1317] hover:bg-white/60"
               }`}
             >
-              <ClipboardList className="h-3.5 w-3.5" />
+              <ClipboardList className="h-4 w-4" />
               <span>Orders ({orders.length})</span>
             </button>
             <button
               onClick={() => setActiveTab("profile")}
-              className={`px-5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-5 py-2 rounded-full text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === "profile"
-                  ? "bg-ink text-white shadow-sm"
-                  : "text-text-secondary hover:text-ink hover:bg-white/60"
+                  ? "bg-[#0a1317] text-white shadow-sm font-bold"
+                  : "text-text-secondary hover:text-[#0a1317] hover:bg-white/60"
               }`}
             >
-              <User className="h-3.5 w-3.5" />
+              <User className="h-4 w-4" />
               <span>Store Profile</span>
             </button>
           </div>
@@ -220,10 +220,10 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
                   <button
                     key={tab}
                     onClick={() => setFilterStatus(tab)}
-                    className={`cursor-pointer transition-all ${
+                    className={`inline-flex items-center justify-center px-5 py-2 rounded-full text-[13px] whitespace-nowrap transition-all cursor-pointer border ${
                       filterStatus === tab
-                        ? "btn-pill-tab-active"
-                        : "btn-pill-tab"
+                        ? "bg-[#0a1317] text-white border-[#0a1317] font-bold shadow-sm"
+                        : "bg-white text-text-primary border-border-hairline hover:bg-surface-soft font-semibold"
                     }`}
                   >
                     {tab === "out_of_stock" ? "Out of Stock" : tab.charAt(0).toUpperCase() + tab.slice(1)}

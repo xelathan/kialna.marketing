@@ -208,7 +208,7 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
       <header className="sticky top-0 z-30 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-b border-border-light px-4 sm:px-6 lg:px-8 py-3.5">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="bg-ink p-2 rounded-full text-white shadow-sm flex items-center justify-center">
+            <div className="bg-[#0a1317] p-2 rounded-full text-white shadow-sm flex items-center justify-center">
               <Shield className="h-4 w-4" />
             </div>
             <div>
@@ -310,10 +310,10 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
               <button
                 key={stage}
                 onClick={() => setFilterStage(stage)}
-                className={`cursor-pointer transition-all ${
+                className={`inline-flex items-center justify-center px-5 py-2 rounded-full text-[13px] whitespace-nowrap transition-all cursor-pointer border ${
                   filterStage === stage
-                    ? "btn-pill-tab-active"
-                    : "btn-pill-tab"
+                    ? "bg-[#0a1317] text-white border-[#0a1317] font-bold shadow-sm"
+                    : "bg-white text-text-primary border-border-hairline hover:bg-surface-soft font-semibold"
                 }`}
               >
                 {stage}
