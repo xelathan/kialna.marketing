@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/db";
-import { createSession, destroySession } from "@/lib/session";
+import { createSession, destroySession, getCurrentUser } from "@/lib/session";
 import { hashPassword, verifyPassword } from "@/lib/auth-crypto";
 import { revalidatePath } from "next/cache";
 
@@ -118,4 +118,45 @@ export async function getAllUsers() {
   return await prisma.user.findMany({
     orderBy: { role: "asc" },
   });
+}
+
+export async function updateUserProfile(data: {
+  name?: string;
+  phone?: string | null;
+  address?: string | null;
+  logo?: string | null;
+}) {
+  const user = await getCurrentUser();
+  if (!user) {
+    return { success: false, error: "Unauthorized. Please sign in." };
+  }
+
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        ...(data.name !== undefined && { name: data.name.trim() }),
+        ...(data.phone !== undefined && { phone: data.phone?.trim() || null }),
+        ...(data.address !== undefined && { address: data.address?.trim() || null }),
+        ...(data.logo !== undefined && { logo: data.logo || null }),
+      },
+    });
+
+    revalidatePath("/");
+    return {
+      success: true,
+      user: {
+        id: updatedUser.id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        phone: updatedUser.phone,
+        address: updatedUser.address,
+        logo: updatedUser.logo,
+      },
+    };
+  } catch (error: any) {
+    console.error("Profile update error:", error);
+    return { success: false, error: error.message || "Failed to update profile." };
+  }
 }

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createOrder, createStripeCheckoutSession, createPaymentIntent, getBuyerOrders } from "@/app/actions/orders";
 import RoleSwitcher from "./RoleSwitcher";
 import EmbeddedStripeCheckout from "./EmbeddedStripeCheckout";
+import UserProfileCard from "./UserProfileCard";
 import {
   Search,
   Compass,
@@ -38,12 +39,14 @@ interface BuyerDashboardProps {
     email: string;
     phone?: string | null;
     address?: string | null;
+    logo?: string | null;
   };
 }
 
 export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDashboardProps) {
   const router = useRouter();
-  const [activeView, setActiveView] = useState<"browse" | "orders">("browse");
+  const [user, setUser] = useState(currentUser);
+  const [activeView, setActiveView] = useState<"browse" | "orders" | "profile">("browse");
   
   // Products and Filtering State
   const [products] = useState(initialProducts);
@@ -291,11 +294,19 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
       <header className="sticky top-0 z-30 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-b border-border-light px-4 sm:px-6 lg:px-8 py-3.5">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 shrink-0">
-            <div className="bg-[#0a1317] p-2 rounded-full text-white shadow-sm flex items-center justify-center">
-              <Compass className="h-4 w-4" />
-            </div>
+            {user.logo ? (
+              <img
+                src={user.logo}
+                alt={user.name}
+                className="h-9 w-9 rounded-full object-cover border border-border-light shadow-sm"
+              />
+            ) : (
+              <div className="bg-[#0a1317] p-2 rounded-full text-white shadow-sm flex items-center justify-center">
+                <Compass className="h-4 w-4" />
+              </div>
+            )}
             <div>
-              <h1 className="text-base font-bold text-ink tracking-tight leading-tight">Kialna Shop</h1>
+              <h1 className="text-base font-bold text-ink tracking-tight leading-tight">{user.name || "Kialna Shop"}</h1>
               <p className="text-[10px] text-text-secondary font-medium tracking-wide leading-none">Saigon Craft Market</p>
             </div>
           </div>
@@ -323,6 +334,17 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
             >
               <Clock className="h-4 w-4" />
               <span>My Orders</span>
+            </button>
+            <button
+              onClick={() => setActiveView("profile")}
+              className={`px-5 py-2 rounded-full text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer ${
+                activeView === "profile"
+                  ? "bg-[#0a1317] text-white shadow-sm font-bold"
+                  : "text-text-secondary hover:text-[#0a1317] hover:bg-white/60"
+              }`}
+            >
+              <User className="h-4 w-4" />
+              <span>My Profile</span>
             </button>
           </div>
 
@@ -619,6 +641,73 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                 </button>
               </div>
             )}
+          </div>
+        )}
+
+        {/* VIEW 3: PROFILE */}
+        {activeView === "profile" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start animate-in fade-in duration-200">
+            <UserProfileCard
+              currentUser={user}
+              onUserUpdate={(updated) => {
+                setUser((prev) => ({ ...prev, ...updated }));
+                if (updated.name) setCheckoutName(updated.name);
+                if (updated.phone) setCheckoutPhone(updated.phone);
+                if (updated.address) setCheckoutAddress(updated.address);
+              }}
+              roleLabel="Global Buyer"
+              addressLabel="Default Shipping Delivery Address"
+              addressPlaceholder="e.g. 456 Broadway, New York, NY 10012, USA"
+              logoLabel="Buyer Profile Logo"
+            />
+
+            {/* Buyer Guarantee & Perks Card */}
+            <div className="card-product rounded-[28px] p-6 sm:p-8 bg-surface-soft/60 border border-border-light flex flex-col gap-4">
+              <h3 className="text-sm font-bold text-ink uppercase tracking-wider flex items-center gap-2">
+                <Sparkles className="h-4.5 w-4.5 text-brand-primary" />
+                International Buyer Protection
+              </h3>
+              <p className="text-xs text-text-secondary leading-relaxed">
+                Your profile logo and default address make checkout instant for any authentic handcrafted items from Saigon.
+              </p>
+              <div className="space-y-3 pt-2">
+                <div className="bg-white p-4 rounded-2xl border border-border-light flex items-start gap-3">
+                  <div className="h-7 w-7 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                    ✓
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-ink">Export Hub Authenticity Verification</div>
+                    <div className="text-[11px] text-text-secondary mt-0.5">
+                      Every order is carefully inspected and packaged at the District 1 Saigon Export Hub before international shipment.
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white p-4 rounded-2xl border border-border-light flex items-start gap-3">
+                  <div className="h-7 w-7 rounded-full bg-blue-50 text-brand-primary flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                    ✓
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-ink">Fixed VND-to-USD Exchange Guarantee</div>
+                    <div className="text-[11px] text-text-secondary mt-0.5">
+                      Guaranteed conversion rate at 25,000 VND / USD with zero surprise foreign transaction surcharges on our Stripe portal.
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white p-4 rounded-2xl border border-border-light flex items-start gap-3">
+                  <div className="h-7 w-7 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                    ✓
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-ink">Direct Artisan Royalties</div>
+                    <div className="text-[11px] text-text-secondary mt-0.5">
+                      Over 88% of craft item value goes directly to independent Vietnamese artisans and workshops.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </main>
@@ -1196,7 +1285,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
       )}
 
       {/* 7. Bottom Navigation Bar (Mobile only) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 w-full bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-t border-border-light grid grid-cols-2 py-3 z-40 px-2">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 w-full bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-t border-border-light grid grid-cols-3 py-3 z-40 px-2">
         <button
           onClick={() => setActiveView("browse")}
           className={`flex flex-col items-center gap-1 cursor-pointer transition-all ${
@@ -1220,10 +1309,22 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
           <Clock className="h-5 w-5" />
           <span className="text-[10px] font-medium">My Orders</span>
         </button>
+
+        <button
+          onClick={() => setActiveView("profile")}
+          className={`flex flex-col items-center gap-1 cursor-pointer transition-all ${
+            activeView === "profile"
+              ? "text-brand-primary font-bold"
+              : "text-text-secondary hover:text-ink"
+          }`}
+        >
+          <User className="h-5 w-5" />
+          <span className="text-[10px] font-medium">My Profile</span>
+        </button>
       </nav>
 
       {/* 8. User role testing switcher */}
-      <RoleSwitcher currentUser={currentUser} />
+      <RoleSwitcher currentUser={user} />
     </div>
   );
 }

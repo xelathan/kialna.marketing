@@ -17,9 +17,9 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 export async function POST(request: NextRequest) {
   try {
     const user = await getCurrentUser();
-    if (!user || (user.role !== "seller" && user.role !== "admin")) {
+    if (!user) {
       return NextResponse.json(
-        { success: false, error: "Unauthorized. Must be a seller or admin." },
+        { success: false, error: "Unauthorized. Please sign in to upload files." },
         { status: 401 }
       );
     }

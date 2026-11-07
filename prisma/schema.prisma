@@ -18,6 +18,7 @@ model User {
   phone           String?
   address         String?
   passwordHash    String?
+  logo            String?   // Logo or avatar image URL
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   products        Product[] @relation("SellerProducts")

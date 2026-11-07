@@ -9,6 +9,7 @@ export interface SessionUser {
   email: string;
   phone?: string | null;
   address?: string | null;
+  logo?: string | null;
 }
 
 const SESSION_COOKIE_NAME = "kialna_session_token";
@@ -64,6 +65,7 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
       email: user.email,
       phone: user.phone,
       address: user.address,
+      logo: user.logo,
     };
   } catch (error) {
     console.error("Session lookup error:", error);

@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { deleteProduct, toggleProductStatus } from "@/app/actions/products";
 import RoleSwitcher from "./RoleSwitcher";
+import UserProfileCard from "./UserProfileCard";
 import {
   ShoppingBag,
   ClipboardList,
@@ -36,10 +37,12 @@ interface SellerDashboardProps {
     email: string;
     phone?: string | null;
     address?: string | null;
+    logo?: string | null;
   };
 }
 
 export default function SellerDashboard({ initialProducts, initialOrders, currentUser }: SellerDashboardProps) {
+  const [user, setUser] = useState(currentUser);
   const [activeTab, setActiveTab] = useState<"listings" | "orders" | "profile">("listings");
   const [products, setProducts] = useState(initialProducts);
   const [orders, setOrders] = useState(initialOrders);
@@ -101,11 +104,19 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
       <header className="sticky top-0 z-30 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-b border-border-light px-4 sm:px-6 lg:px-8 py-3.5">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 shrink-0">
-            <div className="bg-[#0a1317] p-2 rounded-full text-white shadow-sm flex items-center justify-center">
-              <ShoppingBag className="h-4 w-4" />
-            </div>
+            {user.logo ? (
+              <img
+                src={user.logo}
+                alt={user.name}
+                className="h-9 w-9 rounded-full object-cover border border-border-light shadow-sm"
+              />
+            ) : (
+              <div className="bg-[#0a1317] p-2 rounded-full text-white shadow-sm flex items-center justify-center">
+                <ShoppingBag className="h-4 w-4" />
+              </div>
+            )}
             <div>
-              <h1 className="text-base font-bold text-ink tracking-tight leading-tight">Kialna Seller</h1>
+              <h1 className="text-base font-bold text-ink tracking-tight leading-tight">{user.name || "Kialna Seller"}</h1>
               <p className="text-[10px] text-text-secondary font-medium tracking-wide leading-none">Artisan Creator Studio</p>
             </div>
           </div>
@@ -438,60 +449,14 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
         {/* TAB 3: PROFILE */}
         {activeTab === "profile" && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start animate-in fade-in duration-200">
-            {/* Craftsman Profile Card */}
-            <div className="card-product rounded-[28px] p-6 sm:p-8 bg-white border border-border-light shadow-sm flex flex-col gap-5">
-              <div className="flex items-center gap-4">
-                <div className="h-14 w-14 bg-surface-soft text-ink rounded-full flex items-center justify-center font-bold text-xl border border-border-light">
-                  {currentUser.name.charAt(0)}
-                </div>
-                <div>
-                  <h2 className="text-lg font-bold text-ink">{currentUser.name}</h2>
-                  <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-surface-soft text-ink border border-border-light uppercase tracking-wide">
-                    Artisan Seller
-                  </span>
-                </div>
-              </div>
-
-              <div className="space-y-3.5 pt-4 border-t border-border-light text-xs text-text-secondary">
-                <div className="flex items-start gap-3">
-                  <Mail className="h-4 w-4 shrink-0 mt-0.5 text-text-secondary" />
-                  <div>
-                    <div className="font-bold text-ink text-[10px] uppercase tracking-wider">Email Address</div>
-                    <div className="text-text-primary">{currentUser.email}</div>
-                  </div>
-                </div>
-                {currentUser.phone && (
-                  <div className="flex items-start gap-3">
-                    <Phone className="h-4 w-4 shrink-0 mt-0.5 text-text-secondary" />
-                    <div>
-                      <div className="font-bold text-ink text-[10px] uppercase tracking-wider">Contact Phone</div>
-                      <div className="text-text-primary">{currentUser.phone}</div>
-                    </div>
-                  </div>
-                )}
-                {currentUser.address && (
-                  <div className="flex items-start gap-3">
-                    <MapPin className="h-4 w-4 shrink-0 mt-0.5 text-text-secondary" />
-                    <div>
-                      <div className="font-bold text-ink text-[10px] uppercase tracking-wider">Craft Workshop Location</div>
-                      <div className="text-text-primary">{currentUser.address}</div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Sign Out Button */}
-              <button
-                onClick={async () => {
-                  const { signOut } = await import("@/app/actions/auth");
-                  await signOut();
-                  window.location.href = "/login";
-                }}
-                className="w-full mt-2 py-3 px-4 rounded-full border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
-              >
-                Sign Out
-              </button>
-            </div>
+            <UserProfileCard
+              currentUser={user}
+              onUserUpdate={(updated) => setUser((prev) => ({ ...prev, ...updated }))}
+              roleLabel="Artisan Seller"
+              addressLabel="Craft Workshop / Pickup Location"
+              addressPlaceholder="e.g. 123 Le Loi, District 1, Ho Chi Minh City"
+              logoLabel="Artisan Workshop Logo"
+            />
 
             {/* Shipping Hub Info Card */}
             <div className="card-product rounded-[28px] p-6 sm:p-8 bg-surface-soft/60 border border-border-light flex flex-col gap-4">
@@ -554,7 +519,7 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
       </nav>
 
       {/* Inject testing RoleSwitcher widget at the bottom right */}
-      <RoleSwitcher currentUser={currentUser} />
+      <RoleSwitcher currentUser={user} />
     </div>
   );
 }
