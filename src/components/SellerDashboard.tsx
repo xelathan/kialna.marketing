@@ -162,9 +162,14 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
             {/* Sign Out Button */}
             <button
               onClick={async () => {
-                const { signOut } = await import("@/app/actions/auth");
-                await signOut();
-                window.location.href = "/login";
+                try {
+                  const { signOut } = await import("@/app/actions/auth");
+                  await signOut();
+                } catch {
+                  await fetch("/api/auth/signout", { method: "POST" });
+                } finally {
+                  window.location.href = "/login";
+                }
               }}
               className="p-2 text-text-secondary hover:text-ink transition-colors hover:bg-surface-soft rounded-full cursor-pointer"
               title="Sign Out"

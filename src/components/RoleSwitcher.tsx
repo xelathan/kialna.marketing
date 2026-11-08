@@ -41,8 +41,13 @@ export default function RoleSwitcher({ currentUser }: RoleSwitcherProps) {
 
   const handleSignOut = async () => {
     startTransition(async () => {
-      await signOut();
-      window.location.href = "/login";
+      try {
+        await signOut();
+      } catch {
+        await fetch("/api/auth/signout", { method: "POST" });
+      } finally {
+        window.location.href = "/login";
+      }
     });
   };
 

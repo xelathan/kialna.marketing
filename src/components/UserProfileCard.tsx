@@ -153,8 +153,13 @@ export default function UserProfileCard({
   };
 
   const handleSignOut = async () => {
-    await signOut();
-    window.location.href = "/login";
+    try {
+      await signOut();
+    } catch {
+      await fetch("/api/auth/signout", { method: "POST" });
+    } finally {
+      window.location.href = "/login";
+    }
   };
 
   return (
