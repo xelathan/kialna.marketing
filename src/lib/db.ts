@@ -1,7 +1,25 @@
 import { PrismaClient } from "@prisma/client";
 
+import fs from "node:fs";
+
+const getDatabaseUrl = () => {
+  if (process.env.DATABASE_URL) return process.env.DATABASE_URL;
+  const prodDb = "/home/u240125368/domains/kialna.shop/files/data/kialna.db";
+  if (fs.existsSync(prodDb)) {
+    return `file:${prodDb}`;
+  }
+  return "file:./dev.db";
+};
+
 const prismaClientSingleton = () => {
-  return new PrismaClient();
+  const url = getDatabaseUrl();
+  return new PrismaClient({
+    datasources: {
+      db: {
+        url,
+      },
+    },
+  });
 };
 
 declare global {
