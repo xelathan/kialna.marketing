@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { updateOrderStatus, updateFeeAmount } from "@/app/actions/admin";
 import RoleSwitcher from "./RoleSwitcher";
+import KialnaLogo from "./KialnaLogo";
 import {
   Shield,
   Truck,
@@ -208,9 +209,7 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
       <header className="sticky top-0 z-30 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-b border-border-light px-4 sm:px-6 lg:px-8 py-3.5">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="bg-[#0a1317] p-2 rounded-full text-white shadow-sm flex items-center justify-center">
-              <Shield className="h-4 w-4" />
-            </div>
+            <KialnaLogo size={36} />
             <div>
               <h1 className="text-base font-bold text-ink tracking-tight leading-tight">Kialna Admin Hub</h1>
               <p className="text-[10px] text-text-secondary font-medium tracking-wide leading-none">District 1 Logistics & Global Export Hub</p>

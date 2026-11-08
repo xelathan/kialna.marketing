@@ -5,6 +5,7 @@ import Link from "next/link";
 import { deleteProduct, toggleProductStatus } from "@/app/actions/products";
 import RoleSwitcher from "./RoleSwitcher";
 import UserProfileCard from "./UserProfileCard";
+import KialnaLogo from "./KialnaLogo";
 import {
   ShoppingBag,
   ClipboardList,
@@ -111,9 +112,7 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
                 className="h-9 w-9 rounded-full object-cover border border-border-light shadow-sm"
               />
             ) : (
-              <div className="bg-[#0a1317] p-2 rounded-full text-white shadow-sm flex items-center justify-center">
-                <ShoppingBag className="h-4 w-4" />
-              </div>
+              <KialnaLogo size={36} />
             )}
             <div>
               <h1 className="text-base font-bold text-ink tracking-tight leading-tight">{user.name || "Kialna Seller"}</h1>

@@ -4,8 +4,8 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signUp } from "@/app/actions/auth";
+import KialnaLogo from "@/components/KialnaLogo";
 import {
-  Compass,
   Mail,
   Lock,
   User as UserIcon,
@@ -70,9 +70,7 @@ export default function RegisterPage() {
       <div className="w-full max-w-md bg-white border border-border-light rounded-[32px] shadow-xl p-6 sm:p-8 flex flex-col gap-6">
         {/* Brand Header */}
         <div className="text-center flex flex-col items-center gap-2">
-          <div className="w-12 h-12 rounded-full bg-ink-deep text-white flex items-center justify-center shadow-sm">
-            <Compass className="h-6 w-6" />
-          </div>
+          <KialnaLogo size={52} className="mb-1" />
           <h1 className="text-2xl font-bold text-text-primary tracking-tight">
             Create an Account
           </h1>

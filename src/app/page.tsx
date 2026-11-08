@@ -6,7 +6,8 @@ import BuyerDashboard from "@/components/BuyerDashboard";
 import AdminDashboard from "@/components/AdminDashboard";
 import RoleSwitcher from "@/components/RoleSwitcher";
 import Link from "next/link";
-import { Shield, ShoppingBag, User, ArrowRight, Sparkles, Compass, Truck, Globe, CheckCircle2 } from "lucide-react";
+import KialnaLogo from "@/components/KialnaLogo";
+import { Shield, ShoppingBag, User, ArrowRight, Sparkles, Truck, Globe, CheckCircle2 } from "lucide-react";
 import prisma from "@/lib/db";
 
 export default async function Home() {
@@ -20,9 +21,7 @@ export default async function Home() {
         <header className="w-full bg-white/95 backdrop-blur-md border-b border-border-light sticky top-0 z-30">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="bg-[#0a1317] p-2 rounded-full text-white shadow-sm flex items-center justify-center">
-                <Compass className="h-4 w-4" />
-              </div>
+              <KialnaLogo size={36} />
               <div className="flex items-center gap-2">
                 <span className="text-lg font-bold text-text-primary tracking-tight">Kialna</span>
                 <span className="text-[11px] text-brand-primary font-bold px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-100">
@@ -223,7 +222,7 @@ export default async function Home() {
         <footer className="w-full border-t border-border-light bg-white py-8 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-secondary">
             <div className="flex items-center gap-2">
-              <Compass className="h-4 w-4 text-brand-primary" />
+              <KialnaLogo size={20} />
               <span>&copy; {new Date().getFullYear()} Kialna Marketplace. Inspired by Meta hardware commerce.</span>
             </div>
             <div className="flex gap-6">

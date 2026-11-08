@@ -6,6 +6,7 @@ import { createOrder, createStripeCheckoutSession, createPaymentIntent, getBuyer
 import RoleSwitcher from "./RoleSwitcher";
 import EmbeddedStripeCheckout from "./EmbeddedStripeCheckout";
 import UserProfileCard from "./UserProfileCard";
+import KialnaLogo from "./KialnaLogo";
 import {
   Search,
   Compass,
@@ -301,9 +302,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                 className="h-9 w-9 rounded-full object-cover border border-border-light shadow-sm"
               />
             ) : (
-              <div className="bg-[#0a1317] p-2 rounded-full text-white shadow-sm flex items-center justify-center">
-                <Compass className="h-4 w-4" />
-              </div>
+              <KialnaLogo size={36} />
             )}
             <div>
               <h1 className="text-base font-bold text-ink tracking-tight leading-tight">{user.name || "Kialna Shop"}</h1>
