@@ -3,11 +3,17 @@ import { PrismaClient } from "@prisma/client";
 import fs from "node:fs";
 
 const getDatabaseUrl = () => {
-  if (process.env.DATABASE_URL) return process.env.DATABASE_URL;
+  let url = process.env.DATABASE_URL?.replace(/^["']|["']$/g, "");
+  if (url && url.startsWith("file:")) {
+    process.env.DATABASE_URL = url;
+    return url;
+  }
   const prodDb = "/home/u240125368/domains/kialna.shop/files/data/kialna.db";
   if (fs.existsSync(prodDb)) {
+    process.env.DATABASE_URL = `file:${prodDb}`;
     return `file:${prodDb}`;
   }
+  process.env.DATABASE_URL = "file:./dev.db";
   return "file:./dev.db";
 };
 
