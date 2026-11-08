@@ -3,7 +3,9 @@ import { destroySession } from "@/lib/session";
 
 export async function GET(request: Request) {
   await destroySession();
-  const url = new URL("/login", request.url);
+  const host = request.headers.get("x-forwarded-host") || request.headers.get("host") || "kialna.shop";
+  const proto = request.headers.get("x-forwarded-proto") || "https";
+  const url = new URL("/login", `${proto}://${host}`);
   return NextResponse.redirect(url);
 }
 
