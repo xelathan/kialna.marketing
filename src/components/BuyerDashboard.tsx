@@ -402,8 +402,8 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                   Hand-thrown ceramics, indigenous silk textiles, and highland organic teas sourced directly from Vietnamese master craftsmen. Packed and dispatched via District 1 Saigon Hub.
                 </p>
               </div>
-              <div className="absolute right-0 bottom-0 translate-y-12 translate-x-8 opacity-10 pointer-events-none">
-                <Compass className="h-64 w-64 md:h-80 md:w-80 text-white" />
+              <div className="absolute right-0 bottom-0 translate-y-12 translate-x-8 opacity-15 pointer-events-none">
+                <KialnaLogo size={280} />
               </div>
             </div>
 

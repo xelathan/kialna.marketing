@@ -69,12 +69,12 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-bg-primary font-sans flex flex-col justify-center items-center p-4 py-12">
       <div className="w-full max-w-md bg-white border border-border-light rounded-[32px] shadow-xl p-6 sm:p-8 flex flex-col gap-6">
         {/* Brand Header */}
-        <div className="text-center flex flex-col items-center gap-2">
-          <KialnaLogo size={52} className="mb-1" />
-          <h1 className="text-2xl font-bold text-text-primary tracking-tight">
-            Create an Account
-          </h1>
-          <p className="text-xs text-text-secondary">
+        <div className="text-center flex flex-col items-center gap-1.5">
+          <KialnaLogo size={68} className="mb-1" />
+          <span className="font-black text-2xl tracking-[0.24em] uppercase bg-gradient-to-r from-sky-600 via-cyan-500 to-teal-400 bg-clip-text text-transparent ml-[0.24em]">
+            KIALNA
+          </span>
+          <p className="text-xs text-text-secondary mt-1">
             Join the Vietnamese artisanal craft marketplace
           </p>
         </div>

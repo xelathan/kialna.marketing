@@ -23,8 +23,10 @@ export default async function Home() {
             <div className="flex items-center gap-3">
               <KialnaLogo size={36} />
               <div className="flex items-center gap-2">
-                <span className="text-lg font-bold text-text-primary tracking-tight">Kialna</span>
-                <span className="text-[11px] text-brand-primary font-bold px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-100">
+                <span className="text-lg font-black tracking-[0.18em] uppercase bg-gradient-to-r from-sky-600 via-cyan-500 to-teal-400 bg-clip-text text-transparent">
+                  KIALNA
+                </span>
+                <span className="text-[11px] text-sky-700 font-bold px-2.5 py-0.5 rounded-full bg-sky-50 border border-sky-100">
                   Craft Store
                 </span>
               </div>

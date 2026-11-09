@@ -10,8 +10,9 @@ interface KialnaLogoProps {
 
 /**
  * KialnaLogo - Official brand logo for Kialna Artisanal Marketplace.
- * Combines the silhouette of an artisanal Vietnamese ceramic vessel and woven silk ribbon
- * forming a modern geometric letter 'K' with sapphire and liquid gold gradients.
+ * Featuring the Geometric Origami Paper Crane with Cerulean Breeze light color:
+ * - Faceted origami paper folds in luminous sky blue, soft mint turquoise, and crystalline accents.
+ * - Elegant luxury typography in oceanic slate with vibrant cerulean craft accents.
  */
 export default function KialnaLogo({
   className = "",
@@ -19,10 +20,13 @@ export default function KialnaLogo({
   variant = "icon",
   subtitle = false,
 }: KialnaLogoProps) {
-  // Unique IDs for SVG gradients to prevent DOM collisions
-  const gradBlueId = `kialna-grad-blue-${size}`;
-  const gradGoldId = `kialna-grad-gold-${size}`;
-  const gradStemId = `kialna-grad-stem-${size}`;
+  const skyLightId = `crane-sky-light-${size}`;
+  const skyMidId = `crane-sky-mid-${size}`;
+  const mintLightId = `crane-mint-light-${size}`;
+  const mintMidId = `crane-mint-mid-${size}`;
+  const deepSkyId = `crane-deep-sky-${size}`;
+  const iceGlowId = `crane-ice-glow-${size}`;
+  const shadowId = `crane-shadow-${size}`;
 
   const mark = (
     <svg
@@ -31,76 +35,94 @@ export default function KialnaLogo({
       viewBox="0 0 100 100"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="shrink-0 drop-shadow-sm select-none"
-      aria-label="Kialna Logo"
+      className="shrink-0 select-none transition-transform hover:scale-105 duration-200"
+      aria-label="Kialna Origami Crane Logo"
     >
       <defs>
-        {/* Deep sapphire into cobalt silk gradient */}
-        <linearGradient id={gradBlueId} x1="15" y1="15" x2="85" y2="85" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#1e3a8a" />
-          <stop offset="45%" stopColor="#2563eb" />
-          <stop offset="100%" stopColor="#38bdf8" />
+        {/* Soft crystalline sky gradients */}
+        <linearGradient id={skyLightId} x1="20%" y1="0%" x2="80%" y2="100%">
+          <stop offset="0%" stopColor="#f0f9ff" />
+          <stop offset="50%" stopColor="#e0f2fe" />
+          <stop offset="100%" stopColor="#7dd3fc" />
         </linearGradient>
 
-        {/* Radiant imperial amber into champagne gold gradient */}
-        <linearGradient id={gradGoldId} x1="30" y1="20" x2="90" y2="90" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#d97706" />
-          <stop offset="50%" stopColor="#f59e0b" />
-          <stop offset="100%" stopColor="#fbbf24" />
+        <linearGradient id={skyMidId} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#bae6fd" />
+          <stop offset="60%" stopColor="#38bdf8" />
+          <stop offset="100%" stopColor="#0284c7" />
         </linearGradient>
 
-        {/* Vertical artisan spindle spine */}
-        <linearGradient id={gradStemId} x1="20" y1="15" x2="35" y2="85" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#0f172a" />
-          <stop offset="60%" stopColor="#1e293b" />
-          <stop offset="100%" stopColor="#334155" />
+        {/* Luminous pastel mint turquoise gradients */}
+        <linearGradient id={mintLightId} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#f0fdfa" />
+          <stop offset="50%" stopColor="#ccfbf1" />
+          <stop offset="100%" stopColor="#5eead4" />
         </linearGradient>
 
-        {/* Soft shadow filter */}
-        <filter id={`shadow-${size}`} x="-10%" y="-10%" width="120%" height="120%">
-          <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.15" />
+        <linearGradient id={mintMidId} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#99f6e4" />
+          <stop offset="100%" stopColor="#14b8a6" />
+        </linearGradient>
+
+        {/* Deeper cobalt accent for fold depths */}
+        <linearGradient id={deepSkyId} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#0ea5e9" />
+          <stop offset="100%" stopColor="#0369a1" />
+        </linearGradient>
+
+        {/* Ambient bloom aura */}
+        <radialGradient id={iceGlowId} cx="50%" cy="45%" r="50%">
+          <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.18" />
+          <stop offset="70%" stopColor="#99f6e4" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+        </radialGradient>
+
+        {/* Soft elegant shadow */}
+        <filter id={shadowId} x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#0284c7" floodOpacity="0.15" />
         </filter>
       </defs>
 
-      {/* Rounded squircle subtle backdrop badge */}
-      <rect
-        x="2"
-        y="2"
-        width="96"
-        height="96"
-        rx="26"
-        className="fill-slate-900"
-      />
+      {/* Subtle ambient light glow */}
+      <circle cx="50" cy="46" r="42" fill={`url(#${iceGlowId})`} />
 
-      {/* Geometric 'K' spine: Crafted pillar with slight bevel */}
-      <path
-        d="M26 22C26 19.7909 27.7909 18 30 18H34C36.2091 18 38 19.7909 38 22V78C38 80.2091 36.2091 82 34 82H30C27.7909 82 26 80.2091 26 78V22Z"
-        fill={`url(#${gradGoldId})`}
-      />
+      {/* Origami Crane Polyhedral Facets */}
+      <g
+        filter={`url(#${shadowId})`}
+        stroke="#0284c7"
+        strokeWidth="1.15"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      >
+        {/* Rear Wing (pointing up-right) */}
+        <polygon points="49,44 89,23 63,44" fill={`url(#${mintLightId})`} strokeOpacity="0.8" />
+        <polygon points="63,44 89,23 73,49" fill={`url(#${mintMidId})`} strokeOpacity="0.8" />
 
-      {/* Upper diagonal arm: Smooth sweeping arch evoking ceramic lip & silk flutter */}
-      <path
-        d="M36 50C42 42 54 28 68 20C72 17.5 76 19 76 23.5C76 27 72 32 63 39C52 47 43 54 36 58V50Z"
-        fill={`url(#${gradBlueId})`}
-        filter={`url(#shadow-${size})`}
-      />
+        {/* Main Tall Wing - Lighted Front Face */}
+        <polygon points="37,49 39,8 49,44" fill={`url(#${skyLightId})`} strokeOpacity="0.8" />
+        {/* Main Tall Wing - Shaded Angular Crease */}
+        <polygon points="49,44 39,8 57,36" fill={`url(#${skyMidId})`} strokeOpacity="0.8" />
 
-      {/* Ceramic amphora vessel contour / lower diagonal arm sweeping down & around */}
-      <path
-        d="M38 52C48 58 60 70 70 78C73 80.5 77 79 76 75C74 67 66 58 56 50C65 44 73 34 74 25C74.5 20.5 70 19 66 21C53 28 44 42 38 52Z"
-        fill={`url(#${gradBlueId})`}
-        opacity="0.35"
-      />
+        {/* Neck & Head Formations */}
+        <polygon points="37,49 23,33 27,43" fill={`url(#deepSkyId})`} strokeOpacity="0.85" />
+        <polygon points="23,33 14,43 21,44" fill={`url(#skyLightId})`} strokeOpacity="0.85" />
+        <polygon points="14,43 21,44 27,43" fill={`url(#deepSkyId})`} strokeOpacity="0.85" />
+        <polygon points="27,43 21,44 34,54" fill={`url(#skyLightId})`} strokeOpacity="0.8" />
+        <polygon points="37,49 27,43 34,54" fill={`url(#mintLightId})`} strokeOpacity="0.8" />
 
-      {/* Lower gold ribbon sweep finishing the letter 'K' */}
-      <path
-        d="M38 48C45 56 55 68 66 79C69 82 74 81 75 77C76 72 71 63 60 54C52 47 44 43 38 48Z"
-        fill={`url(#${gradGoldId})`}
-        filter={`url(#shadow-${size})`}
-      />
+        {/* Center Saddle / Body Diamond Fold */}
+        <polygon points="34,54 37,49 45,68" fill={`url(#skyLightId})`} strokeOpacity="0.8" />
+        <polygon points="37,49 49,44 45,68" fill={`url(#mintLightId})`} strokeOpacity="0.8" />
+        <polygon points="49,44 59,53 45,68" fill={`url(#skyLightId})`} strokeOpacity="0.8" />
 
-      {/* Center artisan focal diamond knot */}
-      <circle cx="44" cy="50" r="3.5" fill="#ffffff" opacity="0.9" />
+        {/* Tail Formations (pointing down-right) */}
+        <polygon points="59,53 93,69 67,59" fill={`url(#skyMidId})`} strokeOpacity="0.8" />
+        <polygon points="45,68 67,59 93,69" fill={`url(#mintMidId})`} strokeOpacity="0.8" />
+      </g>
+
+      {/* Delicate paper highlight sparkle */}
+      <circle cx="39" cy="9" r="1.5" fill="#ffffff" opacity="0.95" />
+      <circle cx="89" cy="23" r="1.5" fill="#ffffff" opacity="0.9" />
     </svg>
   );
 
@@ -111,13 +133,23 @@ export default function KialnaLogo({
   return (
     <div className={`inline-flex items-center gap-3 ${className}`}>
       {mark}
-      <div className="flex flex-col">
-        <span className="font-extrabold tracking-tight text-text-primary text-lg sm:text-xl leading-none">
+      <div className="flex flex-col select-none">
+        <span
+          className="font-black tracking-[0.22em] uppercase leading-none bg-gradient-to-r from-sky-600 via-cyan-500 to-teal-400 bg-clip-text text-transparent"
+          style={{
+            fontSize: `${Math.max(16, Math.round(size * 0.44))}px`,
+          }}
+        >
           KIALNA
         </span>
         {subtitle && (
-          <span className="text-[9px] font-semibold tracking-wider text-text-secondary uppercase mt-0.5">
-            Artisanal Crafts
+          <span
+            className="tracking-[0.26em] uppercase text-sky-700/80 dark:text-sky-300/80 font-bold leading-tight mt-1"
+            style={{
+              fontSize: `${Math.max(9, Math.round(size * 0.17))}px`,
+            }}
+          >
+            Artisanal Marketplace
           </span>
         )}
       </div>
