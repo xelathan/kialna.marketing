@@ -9,7 +9,8 @@
     "start:standalone": "node .next/standalone/server.js",
     "db:push": "prisma db push",
     "db:seed": "node prisma/seed.js",
-    "lint": "eslint"
+    "lint": "eslint",
+    "deploy": "node scripts/deploy.mjs"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
