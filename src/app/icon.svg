@@ -1,0 +1,59 @@
+<svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="favSkyLight" x1="15%" y1="0%" x2="85%" y2="100%">
+      <stop offset="0%" stop-color="#bae6fd" />
+      <stop offset="50%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+
+    <linearGradient id="favSkyMid" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="60%" stop-color="#0369a1" />
+      <stop offset="100%" stop-color="#075985" />
+    </linearGradient>
+
+    <linearGradient id="favMintLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#99f6e4" />
+      <stop offset="50%" stop-color="#2dd4bf" />
+      <stop offset="100%" stop-color="#14b8a6" />
+    </linearGradient>
+
+    <linearGradient id="favMintMid" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#14b8a6" />
+      <stop offset="60%" stop-color="#0d9488" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </linearGradient>
+
+    <linearGradient id="favDeepSky" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="50%" stop-color="#0369a1" />
+      <stop offset="100%" stop-color="#082f49" />
+    </linearGradient>
+  </defs>
+
+  <g stroke="#075985" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round">
+    <!-- Rear Wing -->
+    <polygon points="49,44 89,23 63,44" fill="url(#favMintLight)" />
+    <polygon points="63,44 89,23 73,49" fill="url(#favMintMid)" />
+
+    <!-- Main Tall Wing -->
+    <polygon points="37,49 39,8 49,44" fill="url(#favSkyLight)" />
+    <polygon points="49,44 39,8 57,36" fill="url(#favSkyMid)" />
+
+    <!-- Neck & Head -->
+    <polygon points="37,49 23,33 27,43" fill="url(#favDeepSky)" />
+    <polygon points="23,33 14,43 21,44" fill="url(#favSkyLight)" />
+    <polygon points="14,43 21,44 27,43" fill="url(#favDeepSky)" />
+    <polygon points="27,43 21,44 34,54" fill="url(#favSkyLight)" />
+    <polygon points="37,49 27,43 34,54" fill="url(#favMintLight)" />
+
+    <!-- Center Body Fold -->
+    <polygon points="34,54 37,49 45,68" fill="url(#favSkyLight)" />
+    <polygon points="37,49 49,44 45,68" fill="url(#favMintLight)" />
+    <polygon points="49,44 59,53 45,68" fill="url(#favSkyLight)" />
+
+    <!-- Tail -->
+    <polygon points="59,53 93,69 67,59" fill="url(#favSkyMid)" />
+    <polygon points="45,68 67,59 93,69" fill="url(#favMintMid)" />
+  </g>
+</svg>

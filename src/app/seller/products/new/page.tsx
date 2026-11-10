@@ -31,7 +31,7 @@ export default async function NewProductPage() {
           </Link>
           <div>
             <h1 className="text-base sm:text-lg font-bold text-text-primary">Add New Listing</h1>
-            <p className="text-xs text-text-secondary">Create a new Vietnamese craft product</p>
+            <p className="text-xs text-text-secondary">Create a new authentic Vietnamese product listing</p>
           </div>
         </div>
       </header>

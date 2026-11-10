@@ -116,7 +116,7 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
             )}
             <div>
               <h1 className="text-base font-bold text-ink tracking-tight leading-tight">{user.name || "Kialna Seller"}</h1>
-              <p className="text-[10px] text-text-secondary font-medium tracking-wide leading-none">Artisan Creator Studio</p>
+              <p className="text-[10px] text-text-secondary font-medium tracking-wide leading-none">Vietnamese Merchant Studio</p>
             </div>
           </div>
 
@@ -126,8 +126,8 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
               onClick={() => setActiveTab("listings")}
               className={`px-5 py-2 rounded-full text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === "listings"
-                  ? "bg-[#0a1317] text-white shadow-sm font-bold"
-                  : "text-text-secondary hover:text-[#0a1317] hover:bg-white/60"
+                  ? "bg-gradient-to-r from-[#0c3e5e] to-[#0369a1] text-white shadow-sm font-bold"
+                  : "text-text-secondary hover:text-[#164e63] hover:bg-sky-50/70"
               }`}
             >
               <ShoppingBag className="h-4 w-4" />
@@ -137,8 +137,8 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
               onClick={() => setActiveTab("orders")}
               className={`px-5 py-2 rounded-full text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === "orders"
-                  ? "bg-[#0a1317] text-white shadow-sm font-bold"
-                  : "text-text-secondary hover:text-[#0a1317] hover:bg-white/60"
+                  ? "bg-gradient-to-r from-[#0c3e5e] to-[#0369a1] text-white shadow-sm font-bold"
+                  : "text-text-secondary hover:text-[#164e63] hover:bg-sky-50/70"
               }`}
             >
               <ClipboardList className="h-4 w-4" />
@@ -148,8 +148,8 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
               onClick={() => setActiveTab("profile")}
               className={`px-5 py-2 rounded-full text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === "profile"
-                  ? "bg-[#0a1317] text-white shadow-sm font-bold"
-                  : "text-text-secondary hover:text-[#0a1317] hover:bg-white/60"
+                  ? "bg-gradient-to-r from-[#0c3e5e] to-[#0369a1] text-white shadow-sm font-bold"
+                  : "text-text-secondary hover:text-[#164e63] hover:bg-sky-50/70"
               }`}
             >
               <User className="h-4 w-4" />
@@ -223,7 +223,7 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search your artisan listings..."
+                  placeholder="Search your product listings..."
                   className="search-pill w-full pl-11 text-xs focus:bg-white transition-all outline-none"
                 />
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
@@ -237,8 +237,8 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
                     onClick={() => setFilterStatus(tab)}
                     className={`inline-flex items-center justify-center px-5 py-2 rounded-full text-[13px] whitespace-nowrap transition-all cursor-pointer border ${
                       filterStatus === tab
-                        ? "bg-[#0a1317] text-white border-[#0a1317] font-bold shadow-sm"
-                        : "bg-white text-text-primary border-border-hairline hover:bg-surface-soft font-semibold"
+                        ? "bg-[#164e63] text-white border-[#164e63] font-bold shadow-sm"
+                        : "bg-white text-text-primary border-border-hairline hover:bg-sky-50/60 font-semibold"
                     }`}
                   >
                     {tab === "out_of_stock" ? "Out of Stock" : tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -360,9 +360,9 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
                   <div className="h-12 w-12 rounded-full bg-surface-soft flex items-center justify-center text-text-secondary">
                     <Package className="h-6 w-6 opacity-60" />
                   </div>
-                  <h3 className="text-base font-bold text-ink">No craft listings found</h3>
+                  <h3 className="text-base font-bold text-ink">No product listings found</h3>
                   <p className="text-xs text-text-secondary max-w-sm">
-                    Add an authentic craft product listing to start offering your handcrafted goods.
+                    Add an authentic Vietnamese product or craft listing to start offering your goods to U.S. and global buyers.
                   </p>
                   <Link href="/seller/products/new" className="btn-primary mt-2 text-xs">
                     Create a Listing
@@ -378,10 +378,10 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
           <div className="flex flex-col gap-6 animate-in fade-in duration-200">
             <div className="border-b border-border-light pb-4">
               <h2 className="text-xl font-bold text-ink tracking-tight">
-                Craft Orders & Dispatches
+                Global Orders & Dispatches
               </h2>
               <p className="text-xs text-text-secondary mt-0.5">
-                Orders containing your handcrafted items routed through the Saigon Logistics Hub.
+                Orders from U.S. and worldwide buyers routed through the Saigon Logistics Hub.
               </p>
             </div>
 
@@ -442,7 +442,7 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
                   </div>
                   <h3 className="text-base font-bold text-ink">No customer orders yet</h3>
                   <p className="text-xs text-text-secondary max-w-sm">
-                    Orders for your craft listings will appear here once purchased by buyers.
+                    Orders for your product listings will appear here once purchased by global buyers.
                   </p>
                 </div>
               )}
@@ -456,10 +456,10 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
             <UserProfileCard
               currentUser={user}
               onUserUpdate={(updated) => setUser((prev) => ({ ...prev, ...updated }))}
-              roleLabel="Artisan Seller"
-              addressLabel="Craft Workshop / Pickup Location"
+              roleLabel="Vietnamese Seller"
+              addressLabel="Store / Workshop Location (Vietnam)"
               addressPlaceholder="e.g. 123 Le Loi, District 1, Ho Chi Minh City"
-              logoLabel="Artisan Workshop Logo"
+              logoLabel="Store / Brand Logo"
             />
 
             {/* Shipping Hub Info Card */}
@@ -469,7 +469,7 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
                 Saigon District 1 Hub Logistics Guarantee
               </h3>
               <p className="text-xs text-text-secondary leading-relaxed">
-                As a verified artisan creator, you list your craft prices in <strong>VND</strong>. When customers order internationally, Kialna coordinates pickup and transfers items to the <strong>District 1 Saigon Export Hub</strong>.
+                As a verified Vietnamese seller, you list your prices in <strong>VND</strong>. When customers in the U.S. and worldwide order, Kialna coordinates local pickup and transfers items to the <strong>District 1 Saigon Export Hub</strong> for international air transit.
               </p>
               <div className="bg-white p-4 rounded-2xl border border-border-light flex flex-col gap-2 text-xs">
                 <div className="flex justify-between">
@@ -481,7 +481,7 @@ export default function SellerDashboard({ initialProducts, initialOrders, curren
                   <span className="font-semibold text-ink">120,000 VND (Covered by Buyer)</span>
                 </div>
                 <div className="border-t border-border-light pt-2 mt-1 text-[11px] text-brand-primary font-semibold">
-                  Artisans receive 100% of their listed base price upon fulfillment completion.
+                  Sellers receive 100% of their listed base price upon fulfillment completion.
                 </div>
               </div>
             </div>

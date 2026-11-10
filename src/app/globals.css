@@ -5,20 +5,20 @@
   --bg-primary: #FFFFFF;
   --bg-surface: #FFFFFF;
   --bg-surface-soft: #F1F4F7;
-  --brand-primary: #0064E0; /* Meta Cobalt Blue */
-  --brand-primary-deep: #0457CB;
-  --brand-primary-soft: #0091FF;
-  --brand-accent: #31A24C; /* Meta Success Green */
-  --ink: #0A1317;
-  --ink-button: #000000;
-  --ink-deep: #0A1317;
-  --text-primary: #1C1E21;
-  --text-secondary: #5D6C7B;
-  --border-light: #DEE3E9;
-  --border-hairline: #CED0D4;
-  --color-success: #31A24C;
-  --color-warning: #F7B928;
-  --color-critical: #E41E3F;
+  --brand-primary: #0284C7; /* Cerulean Breeze Sky 600 */
+  --brand-primary-deep: #0369A1; /* Sky 700 */
+  --brand-primary-soft: #38BDF8; /* Sky 400 */
+  --brand-accent: #0D9488; /* Mint Teal Accent */
+  --ink: #0C2B3D; /* Deep Oceanic Petroleum */
+  --ink-button: #0E3D54; /* Deep Oceanic Slate */
+  --ink-deep: #164E63; /* Matches KIALNA logo */
+  --text-primary: #0F172A;
+  --text-secondary: #52657A;
+  --border-light: #E0E7ED;
+  --border-hairline: #CBD5E1;
+  --color-success: #0D9488;
+  --color-warning: #F59E0B;
+  --color-critical: #E11D48;
 }
 
 @theme {
@@ -58,9 +58,9 @@ body {
 
 /* Custom Meta Commerce Design System Component Utilities */
 @layer components {
-  /* Saturated Cobalt Buy CTA Button (Pill 100px) */
+  /* Saturated Cerulean Buy CTA Button (Pill 100px) */
   .btn-primary {
-    background-color: var(--brand-primary);
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
     color: #ffffff;
     border-radius: 9999px;
     min-height: 44px;
@@ -72,24 +72,24 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    transition: all 0.15s ease-in-out;
+    transition: all 0.18s ease-in-out;
     cursor: pointer;
     border: none;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 14px -3px rgba(2, 132, 199, 0.4);
   }
 
   .btn-primary:hover {
-    background-color: var(--brand-primary-deep);
-    opacity: 0.98;
+    background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+    box-shadow: 0 6px 20px -3px rgba(2, 132, 199, 0.5);
   }
 
   .btn-primary:active {
     transform: scale(0.98);
   }
 
-  /* Ink Pill Marketing CTA Button */
+  /* Oceanic Ink Pill Marketing CTA Button */
   .btn-ink {
-    background-color: var(--ink-button);
+    background: linear-gradient(135deg, #0e3d54 0%, #164e63 100%);
     color: #ffffff;
     border-radius: 9999px;
     min-height: 44px;
@@ -101,13 +101,15 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    transition: all 0.15s ease-in-out;
+    transition: all 0.18s ease-in-out;
     cursor: pointer;
     border: none;
+    box-shadow: 0 4px 14px -3px rgba(14, 61, 84, 0.3);
   }
 
   .btn-ink:hover {
-    background-color: #242526;
+    background: linear-gradient(135deg, #082838 0%, #0e3d54 100%);
+    box-shadow: 0 6px 20px -3px rgba(14, 61, 84, 0.4);
   }
 
   .btn-ink:active {
@@ -117,8 +119,8 @@ body {
   /* Secondary Outlined Ghost Button */
   .btn-secondary {
     background-color: transparent;
-    color: var(--ink-deep);
-    border: 2px solid var(--ink-deep);
+    color: #164e63;
+    border: 2px solid #164e63;
     border-radius: 9999px;
     min-height: 44px;
     padding: 10px 24px;
@@ -129,12 +131,14 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    transition: all 0.15s ease-in-out;
+    transition: all 0.18s ease-in-out;
     cursor: pointer;
   }
 
   .btn-secondary:hover {
-    background-color: var(--bg-surface-soft);
+    background-color: #f0f9ff;
+    border-color: #0284c7;
+    color: #0284c7;
   }
 
   .btn-secondary:active {
@@ -247,10 +251,12 @@ body {
     transform: translateY(-2px);
   }
 
-  /* Dark Promo Strip (32px radius) */
+  /* Oceanic Cerulean Breeze Promo Strip (32px radius) */
   .card-promo-strip {
-    background-color: var(--ink-deep);
+    background: linear-gradient(135deg, #0e4c68 0%, #0369a1 40%, #0284c7 70%, #0d9488 100%);
     color: #ffffff;
     border-radius: 32px;
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    box-shadow: 0 20px 45px -12px rgba(2, 132, 199, 0.4);
   }
 }

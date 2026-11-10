@@ -71,11 +71,11 @@ export default function RegisterPage() {
         {/* Brand Header */}
         <div className="text-center flex flex-col items-center gap-1.5">
           <KialnaLogo size={68} className="mb-1" />
-          <span className="font-black text-2xl tracking-[0.24em] uppercase bg-gradient-to-r from-sky-600 via-cyan-500 to-teal-400 bg-clip-text text-transparent ml-[0.24em]">
+          <span className="font-black text-2xl tracking-[0.24em] uppercase text-[#164e63] dark:text-cyan-200 ml-[0.24em]">
             KIALNA
           </span>
           <p className="text-xs text-text-secondary mt-1">
-            Join the Vietnamese artisanal craft marketplace
+            Join the marketplace connecting Vietnamese sellers to U.S. & global buyers
           </p>
         </div>
 
@@ -96,13 +96,13 @@ export default function RegisterPage() {
               onClick={() => setRole("buyer")}
               className={`flex flex-col items-center justify-center p-3 rounded-[20px] border transition-all cursor-pointer ${
                 role === "buyer"
-                  ? "border-brand-primary bg-blue-50/70 text-brand-primary ring-1 ring-brand-primary"
+                  ? "border-brand-primary bg-sky-50/70 text-brand-primary ring-1 ring-brand-primary"
                   : "border-border-light bg-bg-surface-soft text-text-secondary hover:text-text-primary"
               }`}
             >
               <ShoppingBag className="h-5 w-5 mb-1" />
-              <span className="text-xs font-bold">Buy Crafts</span>
-              <span className="text-[10px] opacity-75">International Buyer</span>
+              <span className="text-xs font-bold">Buy Products</span>
+              <span className="text-[10px] opacity-75">U.S. & Global Buyer</span>
             </button>
 
             <button
@@ -110,13 +110,13 @@ export default function RegisterPage() {
               onClick={() => setRole("seller")}
               className={`flex flex-col items-center justify-center p-3 rounded-[20px] border transition-all cursor-pointer ${
                 role === "seller"
-                  ? "border-brand-primary bg-blue-50/70 text-brand-primary ring-1 ring-brand-primary"
+                  ? "border-brand-primary bg-sky-50/70 text-brand-primary ring-1 ring-brand-primary"
                   : "border-border-light bg-bg-surface-soft text-text-secondary hover:text-text-primary"
               }`}
             >
               <Store className="h-5 w-5 mb-1" />
-              <span className="text-xs font-bold">Sell Crafts</span>
-              <span className="text-[10px] opacity-75">Artisan / Producer</span>
+              <span className="text-xs font-bold">Sell Products</span>
+              <span className="text-[10px] opacity-75">Vietnamese Merchant</span>
             </button>
           </div>
         </div>

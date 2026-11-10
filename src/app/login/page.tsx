@@ -63,11 +63,11 @@ export default function LoginPage() {
         {/* Brand Header */}
         <div className="text-center flex flex-col items-center gap-1.5">
           <KialnaLogo size={68} className="mb-1" />
-          <span className="font-black text-2xl tracking-[0.24em] uppercase bg-gradient-to-r from-sky-600 via-cyan-500 to-teal-400 bg-clip-text text-transparent ml-[0.24em]">
+          <span className="font-black text-2xl tracking-[0.24em] uppercase text-[#164e63] dark:text-cyan-200 ml-[0.24em]">
             KIALNA
           </span>
           <p className="text-xs text-text-secondary mt-1">
-            Sign in to access your craft marketplace account
+            Sign in to access your cross-border marketplace account
           </p>
         </div>
 
@@ -148,11 +148,11 @@ export default function LoginPage() {
             disabled={isPending}
             className="flex flex-col items-center justify-center p-3 rounded-[20px] border border-border-light hover:border-brand-primary bg-bg-surface-soft hover:bg-white text-center transition-all cursor-pointer group"
           >
-            <div className="p-2 bg-blue-100 text-brand-primary rounded-full mb-1 group-hover:scale-105 transition-transform">
+            <div className="p-2 bg-sky-100 text-sky-700 rounded-full mb-1 group-hover:scale-105 transition-transform">
               <Store className="h-4 w-4" />
             </div>
             <span className="text-xs font-bold text-text-primary">Seller</span>
-            <span className="text-[10px] text-text-secondary">Artisan</span>
+            <span className="text-[10px] text-text-secondary">VN Merchant</span>
           </button>
 
           <button
@@ -161,11 +161,11 @@ export default function LoginPage() {
             disabled={isPending}
             className="flex flex-col items-center justify-center p-3 rounded-[20px] border border-border-light hover:border-brand-primary bg-bg-surface-soft hover:bg-white text-center transition-all cursor-pointer group"
           >
-            <div className="p-2 bg-emerald-100 text-emerald-600 rounded-full mb-1 group-hover:scale-105 transition-transform">
+            <div className="p-2 bg-teal-100 text-teal-700 rounded-full mb-1 group-hover:scale-105 transition-transform">
               <ShoppingBag className="h-4 w-4" />
             </div>
             <span className="text-xs font-bold text-text-primary">Buyer</span>
-            <span className="text-[10px] text-text-secondary">Customer</span>
+            <span className="text-[10px] text-text-secondary">U.S. & Global</span>
           </button>
 
           <button
@@ -174,11 +174,11 @@ export default function LoginPage() {
             disabled={isPending}
             className="flex flex-col items-center justify-center p-3 rounded-[20px] border border-border-light hover:border-brand-primary bg-bg-surface-soft hover:bg-white text-center transition-all cursor-pointer group"
           >
-            <div className="p-2 bg-zinc-200 text-ink-deep rounded-full mb-1 group-hover:scale-105 transition-transform">
+            <div className="p-2 bg-cyan-100 text-[#164e63] rounded-full mb-1 group-hover:scale-105 transition-transform">
               <Shield className="h-4 w-4" />
             </div>
             <span className="text-xs font-bold text-text-primary">Admin</span>
-            <span className="text-[10px] text-text-secondary">Logistics</span>
+            <span className="text-[10px] text-text-secondary">Saigon Hub</span>
           </button>
         </div>
 

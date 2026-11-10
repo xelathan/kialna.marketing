@@ -21,9 +21,9 @@ export default function RoleSwitcher({ currentUser }: RoleSwitcherProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const roles = [
-    { name: "seller", label: "Artisan Seller", icon: ShoppingBag, color: "text-amber-600 bg-amber-50" },
-    { name: "buyer", label: "Global Buyer", icon: User, color: "text-brand-primary bg-blue-50" },
-    { name: "admin", label: "Saigon Hub Admin", icon: Shield, color: "text-ink-deep bg-zinc-100" },
+    { name: "seller", label: "Vietnamese Seller", icon: ShoppingBag, color: "text-sky-700 bg-sky-50" },
+    { name: "buyer", label: "U.S. / Global Buyer", icon: User, color: "text-teal-700 bg-teal-50" },
+    { name: "admin", label: "Saigon Hub Admin", icon: Shield, color: "text-[#164e63] bg-cyan-50" },
   ];
 
   const handleRoleSwitch = async (roleName: string) => {

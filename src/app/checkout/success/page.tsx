@@ -59,7 +59,7 @@ function SuccessContent() {
           <Loader2 className="h-10 w-10 text-brand-primary animate-spin" />
           <h2 className="text-base font-bold text-text-primary">Confirming Stripe Payment...</h2>
           <p className="text-xs text-text-secondary">
-            Verifying your transaction with Stripe and securing craft inventory.
+            Verifying your transaction with Stripe and securing product inventory.
           </p>
         </div>
       </div>
@@ -106,7 +106,7 @@ function SuccessContent() {
             </span>
             <h1 className="text-2xl font-bold text-text-primary mt-2">Order Confirmed!</h1>
             <p className="text-xs text-text-secondary mt-1 max-w-md">
-              Thank you for supporting Vietnamese artisans. Your order has been placed in our District 1 fulfillment pipeline.
+              Thank you for supporting Vietnamese sellers and artisans. Your order has been placed in our Saigon District 1 export fulfillment pipeline.
             </p>
           </div>
 
@@ -160,7 +160,7 @@ function SuccessContent() {
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={imgUrl}
-                        alt={item.product?.name || "Craft"}
+                        alt={item.product?.name || "Product"}
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           e.currentTarget.src = "/file.svg";
@@ -169,7 +169,7 @@ function SuccessContent() {
                     </div>
                     <div className="min-w-0">
                       <p className="font-semibold text-text-primary truncate">
-                        {item.product?.name || "Craft Item"}
+                        {item.product?.name || "Vietnamese Product"}
                       </p>
                       <p className="text-[10px] text-text-secondary">
                         Qty: {item.quantity} • ${(item.sellerPriceAtPurchase / EXCHANGE_RATE).toFixed(2)} USD base

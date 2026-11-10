@@ -57,7 +57,7 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
           </Link>
           <div>
             <h1 className="text-base sm:text-lg font-bold text-text-primary">Edit Product</h1>
-            <p className="text-xs text-text-secondary">Update your craft listing details</p>
+            <p className="text-xs text-text-secondary">Update your product listing details</p>
           </div>
         </div>
       </header>

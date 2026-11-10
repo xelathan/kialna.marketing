@@ -85,9 +85,11 @@ export default function ProductForm({
   // Categories list
   const categories = [
     "Crafts & Decor",
-    "Food & Tea",
+    "Coffee & Tea",
+    "Specialty Foods",
     "Apparel & Textiles",
     "Kitchen & Home",
+    "Wellness & Lifestyle",
     "General",
   ];
 
@@ -355,7 +357,7 @@ export default function ProductForm({
           <div className="card-product rounded-[28px] p-6 bg-white border border-border-light shadow-sm flex flex-col gap-4">
             <div className="flex justify-between items-center border-b border-border-light pb-3">
               <label className="text-sm font-bold text-ink">
-                Craft Photos {images.length > 0 && <span className="text-xs text-text-secondary font-normal">({images.length})</span>}
+                Product Photos {images.length > 0 && <span className="text-xs text-text-secondary font-normal">({images.length})</span>}
               </label>
               <button
                 type="button"
@@ -387,7 +389,7 @@ export default function ProductForm({
 
             {/* Upload Action Cards (Meta Soft Cloud Surface) */}
             <div className="grid grid-cols-2 gap-3">
-              {/* Direct Camera Button (Optimized for Mobile Artisans) */}
+              {/* Direct Camera Button (Optimized for Mobile Sellers) */}
               <button
                 type="button"
                 onClick={() => cameraInputRef.current?.click()}
@@ -429,7 +431,7 @@ export default function ProductForm({
               }`}
             >
               <p className="text-xs text-text-secondary">
-                Drag & drop craft images here, or click to browse. Max 10MB per photo.
+                Drag & drop product images here, or click to browse. Max 10MB per photo.
               </p>
             </div>
 
@@ -565,7 +567,7 @@ export default function ProductForm({
               </div>
             ) : (
               <div className="text-center p-6 border border-dashed border-border-light rounded-2xl text-text-secondary text-xs bg-surface-soft/40">
-                No craft photos added yet. Use the camera or upload buttons above.
+                No product photos added yet. Use the camera or upload buttons above.
               </div>
             )}
           </div>
@@ -619,7 +621,7 @@ export default function ProductForm({
               onChange={(e) => handleInputChange("name", e.target.value, setName)}
               onBlur={() => validateField("name", name)}
               className={`input-primary w-full text-xs min-h-[46px] rounded-xl ${errors.name ? "border-red-500" : ""}`}
-              placeholder="e.g. Handcrafted Ceramic Teapot"
+              placeholder="e.g. Buon Ma Thuot Highland Coffee, Bat Trang Ceramic Set..."
               disabled={isPending}
               required
             />
@@ -665,7 +667,7 @@ export default function ProductForm({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="input-primary w-full min-h-[120px] py-3 rounded-xl resize-y text-xs"
-              placeholder="Describe the craft details, materials used, artisan origin..."
+              placeholder="Describe the product details, ingredients or materials, Vietnamese origin story..."
               disabled={isPending}
             />
           </div>
@@ -769,7 +771,7 @@ export default function ProductForm({
               </div>
 
               <div className="text-[11px] text-text-secondary leading-relaxed bg-white p-3 rounded-xl border border-border-light">
-                💡 <strong>Transparency Notice</strong>: Buyer checkout runs in USD. You will receive 100% of your base price (<strong>{basePrice.toLocaleString()} VND</strong>) upon delivery, and Kialna will handle packaging and air courier from the District 1 Hub.
+                💡 <strong>Transparency Notice</strong>: Buyer checkout runs in USD. You will receive 100% of your base price (<strong>{basePrice.toLocaleString()} VND</strong>) upon delivery, and Kialna coordinates local pickup, packaging, and air courier from the District 1 Saigon Hub directly to U.S. and global doorsteps.
               </div>
             </div>
           )}

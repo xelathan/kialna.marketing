@@ -253,8 +253,8 @@ export async function createStripeCheckoutSession(
         price_data: {
           currency: "usd",
           product_data: {
-            name: `${item.product.name} (Artisan Base Price)`,
-            description: `Handcrafted in Vietnam • ${item.basePrice.toLocaleString()} VND base`,
+            name: `${item.product.name} (Seller Base Price)`,
+            description: `Authentic Vietnamese Product • ${item.basePrice.toLocaleString()} VND base`,
           },
           unit_amount: unitCents,
         },
@@ -268,7 +268,7 @@ export async function createStripeCheckoutSession(
       price_data: {
         currency: "usd",
         product_data: {
-          name: "Custom Craft Packaging (Hub Service)",
+          name: "Custom Export Packaging (Hub Service)",
           description: `Custom bubblewrap & reinforced boxing • ${packagingFee.toLocaleString()} VND per unit`,
         },
         unit_amount: packagingUnitCents,
@@ -495,7 +495,7 @@ export async function createPaymentIntent(
         orderId: order.id,
         buyerId: user.id,
       },
-      description: `Kialna Order ${order.id} - Vietnamese Artisan Crafts & Logistics`,
+      description: `Kialna Order ${order.id} - Authentic Vietnamese Products & Logistics`,
     });
 
     await prisma.order.update({

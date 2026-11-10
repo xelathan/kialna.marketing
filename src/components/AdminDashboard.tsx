@@ -302,7 +302,7 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search Order ID, Buyer, or Artisan..."
+              placeholder="Search Order ID, Buyer, or Seller..."
               className="search-pill w-full pl-11 text-xs focus:bg-white transition-all outline-none"
             />
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
@@ -316,8 +316,8 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
                 onClick={() => setFilterStage(stage)}
                 className={`inline-flex items-center justify-center px-5 py-2 rounded-full text-[13px] whitespace-nowrap transition-all cursor-pointer border ${
                   filterStage === stage
-                    ? "bg-[#0a1317] text-white border-[#0a1317] font-bold shadow-sm"
-                    : "bg-white text-text-primary border-border-hairline hover:bg-surface-soft font-semibold"
+                    ? "bg-[#164e63] text-white border-[#164e63] font-bold shadow-sm"
+                    : "bg-white text-text-primary border-border-hairline hover:bg-sky-50/60 font-semibold"
                 }`}
               >
                 {stage}
@@ -364,7 +364,7 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
                           <span className="font-bold text-ink">x{item.quantity}</span> {item.product.name}
                         </span>
                         <span className="text-[10px] font-medium shrink-0">
-                          Artisan: {item.product.seller.name}
+                          Seller: {item.product.seller.name}
                         </span>
                       </div>
                     ))}
@@ -508,10 +508,10 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
 
               {/* Buyer & Seller Contact Profiles */}
               <div className="grid grid-cols-2 gap-3.5 text-xs">
-                {/* Craftsman Info */}
+                {/* Seller Info */}
                 <div className="p-3.5 bg-surface-soft rounded-2xl border border-border-light flex flex-col gap-1.5">
                   <span className="text-[10px] font-bold text-amber-600 uppercase flex items-center gap-1">
-                    <User className="h-3 w-3" /> Artisan / Seller
+                    <User className="h-3 w-3" /> Vietnamese Seller
                   </span>
                   <div className="font-bold text-ink">
                     {selectedOrder.items[0]?.product.seller.name}
@@ -551,7 +551,7 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
                       <span className="text-brand-primary">${((item.sellerPriceAtPurchase * item.quantity) / EXCHANGE_RATE).toFixed(2)} USD</span>
                     </div>
                     <div className="flex justify-between text-[10px] text-text-secondary">
-                      <span>Craftsman Price: {(item.sellerPriceAtPurchase * item.quantity).toLocaleString()} VND</span>
+                      <span>Seller Price: {(item.sellerPriceAtPurchase * item.quantity).toLocaleString()} VND</span>
                       <span>Fees: {((item.shippingFeeAtPurchase + item.packagingFeeAtPurchase) * item.quantity).toLocaleString()} VND</span>
                     </div>
                   </div>
@@ -565,7 +565,7 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
                   <span className="font-bold text-brand-primary">${selectedOrder.totalPaid.toFixed(2)} USD</span>
                 </div>
                 <div className="flex justify-between text-text-secondary">
-                  <span>Craftsman Payout:</span>
+                  <span>Seller Payout:</span>
                   <span className="font-semibold text-ink">
                     {(
                       selectedOrder.items.reduce(

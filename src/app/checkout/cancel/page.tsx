@@ -14,7 +14,7 @@ export default function CheckoutCancelPage() {
         <div>
           <h1 className="text-xl font-bold text-text-primary">Checkout Cancelled</h1>
           <p className="text-xs text-text-secondary mt-1.5 leading-relaxed">
-            Your card was not charged. Your artisanal craft selections are still safely waiting in your shopping cart.
+            Your card was not charged. Your authentic Vietnamese product selections are still safely waiting in your shopping cart.
           </p>
         </div>
 

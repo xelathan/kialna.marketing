@@ -306,7 +306,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
             )}
             <div>
               <h1 className="text-base font-bold text-ink tracking-tight leading-tight">{user.name || "Kialna Shop"}</h1>
-              <p className="text-[10px] text-text-secondary font-medium tracking-wide leading-none">Saigon Craft Market</p>
+              <p className="text-[10px] text-text-secondary font-medium tracking-wide leading-none">Vietnam to U.S. Marketplace</p>
             </div>
           </div>
 
@@ -316,19 +316,19 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
               onClick={() => setActiveView("browse")}
               className={`px-5 py-2 rounded-full text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer ${
                 activeView === "browse"
-                  ? "bg-[#0a1317] text-white shadow-sm font-bold"
-                  : "text-text-secondary hover:text-[#0a1317] hover:bg-white/60"
+                  ? "bg-gradient-to-r from-[#0c3e5e] to-[#0369a1] text-white shadow-sm font-bold"
+                  : "text-text-secondary hover:text-[#164e63] hover:bg-sky-50/70"
               }`}
             >
               <Compass className="h-4 w-4" />
-              <span>Explore Crafts</span>
+              <span>Explore Products</span>
             </button>
             <button
               onClick={() => setActiveView("orders")}
               className={`px-5 py-2 rounded-full text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer ${
                 activeView === "orders"
-                  ? "bg-[#0a1317] text-white shadow-sm font-bold"
-                  : "text-text-secondary hover:text-[#0a1317] hover:bg-white/60"
+                  ? "bg-gradient-to-r from-[#0c3e5e] to-[#0369a1] text-white shadow-sm font-bold"
+                  : "text-text-secondary hover:text-[#164e63] hover:bg-sky-50/70"
               }`}
             >
               <Clock className="h-4 w-4" />
@@ -338,8 +338,8 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
               onClick={() => setActiveView("profile")}
               className={`px-5 py-2 rounded-full text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer ${
                 activeView === "profile"
-                  ? "bg-[#0a1317] text-white shadow-sm font-bold"
-                  : "text-text-secondary hover:text-[#0a1317] hover:bg-white/60"
+                  ? "bg-gradient-to-r from-[#0c3e5e] to-[#0369a1] text-white shadow-sm font-bold"
+                  : "text-text-secondary hover:text-[#164e63] hover:bg-sky-50/70"
               }`}
             >
               <User className="h-4 w-4" />
@@ -393,13 +393,13 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
             <div className="card-promo-strip p-8 sm:p-10 md:p-12 text-white shadow-xl relative overflow-hidden">
               <div className="relative z-10 flex flex-col gap-3 max-w-2xl">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-white/90 text-[11px] font-semibold tracking-wide backdrop-blur-sm border border-white/15 w-fit">
-                  <Sparkles className="h-3 w-3 text-white" /> Guaranteed Authentic Vietnam Crafts
+                  <Sparkles className="h-3 w-3 text-white" /> Authentic Vietnamese Products Direct to You
                 </span>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight">
-                  Artisanal Treasures from Vietnam
+                  Authentic Vietnamese Goods & Heritage Crafts
                 </h2>
                 <p className="text-xs sm:text-sm text-white/70 leading-relaxed font-normal max-w-xl">
-                  Hand-thrown ceramics, indigenous silk textiles, and highland organic teas sourced directly from Vietnamese master craftsmen. Packed and dispatched via District 1 Saigon Hub.
+                  Specialty highland coffee, heritage ceramics, organic teas, textiles, and authentic local goods sourced directly from Vietnamese sellers and producers. Dispatched via our Saigon District 1 Hub to the U.S. & worldwide.
                 </p>
               </div>
               <div className="absolute right-0 bottom-0 translate-y-12 translate-x-8 opacity-15 pointer-events-none">
@@ -415,7 +415,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search artisanal crafts..."
+                  placeholder="Search Vietnamese products, coffee, crafts, teas..."
                   className="search-pill w-full pl-11 text-xs focus:bg-white transition-all outline-none"
                 />
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
@@ -429,8 +429,8 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                     onClick={() => setSelectedCategory(cat)}
                     className={`inline-flex items-center justify-center px-5 py-2 rounded-full text-[13px] whitespace-nowrap transition-all cursor-pointer border ${
                       selectedCategory === cat
-                        ? "bg-[#0a1317] text-white border-[#0a1317] font-bold shadow-sm"
-                        : "bg-white text-text-primary border-border-hairline hover:bg-surface-soft font-semibold"
+                        ? "bg-[#164e63] text-white border-[#164e63] font-bold shadow-sm"
+                        : "bg-white text-text-primary border-border-hairline hover:bg-sky-50/60 font-semibold"
                     }`}
                   >
                     {cat}
@@ -510,7 +510,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                   <div className="h-12 w-12 rounded-full bg-surface-soft flex items-center justify-center text-text-secondary">
                     <ShoppingBag className="h-6 w-6 opacity-60" />
                   </div>
-                  <h3 className="text-base font-bold text-ink">No crafts found</h3>
+                  <h3 className="text-base font-bold text-ink">No products found</h3>
                   <p className="text-xs text-text-secondary max-w-sm">
                     Try refining your search keyword or selecting a different category filter above.
                   </p>
@@ -641,7 +641,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                   onClick={() => setActiveView("browse")}
                   className="btn-primary text-xs mt-3 cursor-pointer"
                 >
-                  Explore Crafts
+                  Explore Products
                 </button>
               </div>
             )}
@@ -672,7 +672,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                 International Buyer Protection
               </h3>
               <p className="text-xs text-text-secondary leading-relaxed">
-                Your profile logo and default address make checkout instant for any authentic handcrafted items from Saigon.
+                Your profile logo and default address make checkout instant for authentic Vietnamese products and crafts direct from Saigon.
               </p>
               <div className="space-y-3 pt-2">
                 <div className="bg-white p-4 rounded-2xl border border-border-light flex items-start gap-3">
@@ -704,9 +704,9 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                     ✓
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-ink">Direct Artisan Royalties</div>
+                    <div className="text-xs font-bold text-ink">Direct Seller Payouts</div>
                     <div className="text-[11px] text-text-secondary mt-0.5">
-                      Over 88% of craft item value goes directly to independent Vietnamese artisans and workshops.
+                      Fair pricing directly supporting independent Vietnamese producers, merchants, and artisans.
                     </div>
                   </div>
                 </div>
@@ -777,7 +777,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
               {selectedProduct.description && (
                 <div className="flex flex-col gap-1.5 border-t border-border-light pt-4">
                   <h3 className="text-xs font-bold text-ink uppercase tracking-wider">
-                    About This Craft
+                    About This Product
                   </h3>
                   <p className="text-xs text-text-secondary leading-relaxed">
                     {selectedProduct.description}
@@ -796,7 +796,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
 
                 <div className="space-y-1.5 text-xs">
                   <div className="flex justify-between">
-                    <span className="text-text-secondary">Base Craftsman Price:</span>
+                    <span className="text-text-secondary">Seller Base Price:</span>
                     <span className="font-semibold text-ink">
                       ${(selectedProduct.basePrice / EXCHANGE_RATE).toFixed(2)} USD
                     </span>
@@ -972,7 +972,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                   <ShoppingBag className="h-12 w-12 text-text-secondary opacity-30" />
                   <h3 className="text-sm font-semibold text-ink">Your cart is empty</h3>
                   <p className="text-xs text-text-secondary text-center max-w-xs">
-                    Browse the crafts catalog and add traditional craft goods to purchase.
+                    Browse our catalog and add authentic Vietnamese products to your cart.
                   </p>
                 </div>
               )}
@@ -1257,7 +1257,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
             <div>
               <h3 className="text-lg font-bold text-ink">Order Placed Successfully!</h3>
               <p className="text-xs text-text-secondary mt-1 px-2 leading-relaxed">
-                Thank you for supporting Vietnamese master artisans! Your order reference is:
+                Thank you for supporting Vietnamese sellers and artisans! Your order reference is:
               </p>
               <div className="mt-3 font-mono text-[11px] bg-surface-soft px-3 py-1.5 rounded-full border border-border-light text-ink font-bold select-all">
                 {checkoutSuccessOrderId.toUpperCase()}
@@ -1299,7 +1299,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
           }`}
         >
           <Compass className="h-5 w-5" />
-          <span className="text-[10px] font-medium">Explore Crafts</span>
+          <span className="text-[10px] font-medium">Explore Products</span>
         </button>
 
         <button
