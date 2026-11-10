@@ -37,5 +37,8 @@
     "@typescript-eslint/typescript-estree": {
       "minimatch": "^11.0.5"
     }
+  },
+  "optionalDependencies": {
+    "@next/swc-wasm-nodejs": "^16.4.6"
   }
 }
