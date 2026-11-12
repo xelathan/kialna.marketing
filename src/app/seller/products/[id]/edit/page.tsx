@@ -56,8 +56,8 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <div>
-            <h1 className="text-base sm:text-lg font-bold text-text-primary">Edit Product</h1>
-            <p className="text-xs text-text-secondary">Update your product listing details</p>
+            <h1 className="text-base sm:text-lg font-bold text-text-primary">Chỉnh Sửa Sản Phẩm • Edit Product</h1>
+            <p className="text-xs text-text-secondary">Cập nhật thông tin sản phẩm • Update your product listing details</p>
           </div>
         </div>
       </header>

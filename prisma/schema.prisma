@@ -11,18 +11,22 @@ datasource db {
 }
 
 model User {
-  id              String    @id @default(uuid())
-  role            String    // "seller", "buyer", "admin"
-  name            String
-  email           String    @unique
-  phone           String?
-  address         String?
-  passwordHash    String?
-  logo            String?   // Logo or avatar image URL
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  products        Product[] @relation("SellerProducts")
-  orders          Order[]   @relation("BuyerOrders")
+  id                String    @id @default(uuid())
+  role              String    // "seller", "buyer", "admin"
+  name              String
+  email             String    @unique
+  phone             String?
+  address           String?
+  passwordHash      String?
+  logo              String?   // Logo or avatar image URL
+  bankName          String?   // Vietnamese bank name (e.g. Vietcombank, Techcombank, MB Bank)
+  bankAccountNumber String?   // Seller domestic bank account number
+  bankAccountName   String?   // Account holder name (e.g. NGUYEN VAN A)
+  vietQrImage       String?   // Uploaded VietQR code image URL
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  products          Product[] @relation("SellerProducts")
+  orders            Order[]   @relation("BuyerOrders")
 }
 
 model Product {
@@ -33,6 +37,7 @@ model Product {
   description String?
   category    String      @default("General")
   basePrice   Float       // Base price in VND
+  weight      Float       @default(0.5) // Product weight in kg (used by shipper to calculate shipping cost)
   inventory   Int         @default(0)
   images      String      // Store images as JSON array string: '["url1", "url2"]'
   status      String      @default("active") // "active", "draft", "out_of_stock"
@@ -43,7 +48,7 @@ model Product {
 
 model Fee {
   id            String    @id @default(uuid())
-  feeName       String    @unique // "shipping", "packaging"
+  feeName       String    @unique // "shipping" (VND per kg), "packaging" (VND per unit)
   amount        Float     // fee amount in VND
   effectiveDate DateTime  @default(now())
 }
@@ -55,6 +60,10 @@ model Order {
   totalPaid             Float       // Total paid by buyer in USD
   status                String      @default("Ready for Pickup") // "Ready for Pickup", "Driver Assigned", "Picked Up", "In Packaging", "Shipped", "Delivered"
   paymentStatus         String      @default("paid") // "pending", "paid", "failed"
+  payoutStatus          String      @default("unpaid") // "unpaid", "paid_by_hub"
+  payoutMethod          String?     // "VietQR Napas 247", "Cash on Pickup (COD)", "Weekly Bank Batch"
+  payoutRef             String?     // Bank / VietQR transaction reference ID
+  payoutAt              DateTime?   // Timestamp when Saigon Hub transferred funds to merchant
   stripeSessionId       String?
   stripePaymentIntentId String?
   deliveryName          String?
@@ -72,7 +81,8 @@ model OrderItem {
   productId                String
   product                  Product @relation(fields: [productId], references: [id])
   quantity                 Int
+  weightAtPurchase         Float   @default(0.5) // Unit weight in kg at time of purchase
   sellerPriceAtPurchase    Float
   shippingFeeAtPurchase    Float
-  packagingFeeAtPurchase    Float
+  packagingFeeAtPurchase   Float
 }

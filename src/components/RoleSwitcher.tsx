@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { switchRole, signOut } from "@/app/actions/auth";
 import { User, Shield, ShoppingBag, RefreshCw, LogOut, LogIn, UserPlus } from "lucide-react";
+import type { Language } from "./LanguageSwitcher";
 
 interface RoleSwitcherProps {
   currentUser: {
@@ -13,18 +14,40 @@ interface RoleSwitcherProps {
     name: string;
     email: string;
   } | null;
+  lang?: Language;
 }
 
-export default function RoleSwitcher({ currentUser }: RoleSwitcherProps) {
+export default function RoleSwitcher({ currentUser, lang }: RoleSwitcherProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
+  const isVi = (lang ?? (currentUser?.role === "seller" ? "vi" : "en")) === "vi";
 
   const roles = [
-    { name: "seller", label: "Vietnamese Seller", icon: ShoppingBag, color: "text-sky-700 bg-sky-50" },
-    { name: "buyer", label: "U.S. / Global Buyer", icon: User, color: "text-teal-700 bg-teal-50" },
-    { name: "admin", label: "Saigon Hub Admin", icon: Shield, color: "text-[#164e63] bg-cyan-50" },
+    {
+      name: "seller",
+      label: isVi ? "Người bán Việt Nam" : "Vietnamese Seller",
+      shortLabel: isVi ? "NGƯỜI BÁN" : "SELLER",
+      icon: ShoppingBag,
+      color: "text-sky-700 bg-sky-50",
+    },
+    {
+      name: "buyer",
+      label: isVi ? "Người mua Quốc tế (Mỹ)" : "U.S. / Global Buyer",
+      shortLabel: isVi ? "NGƯỜI MUA" : "BUYER",
+      icon: User,
+      color: "text-teal-700 bg-teal-50",
+    },
+    {
+      name: "admin",
+      label: isVi ? "Quản trị Saigon Hub" : "Saigon Hub Admin",
+      shortLabel: isVi ? "QUẢN TRỊ" : "ADMIN",
+      icon: Shield,
+      color: "text-[#164e63] bg-cyan-50",
+    },
   ];
+
+  const currentRoleObj = roles.find((r) => r.name === currentUser?.role);
 
   const handleRoleSwitch = async (roleName: string) => {
     if (currentUser?.role === roleName) return;
@@ -62,7 +85,13 @@ export default function RoleSwitcher({ currentUser }: RoleSwitcherProps) {
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-primary opacity-75"></span>
           <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-primary"></span>
         </div>
-        <span>{currentUser ? `${currentUser.role.toUpperCase()}: ${currentUser.name.split(" ")[0]}` : "Sign In / Switch"}</span>
+        <span>
+          {currentUser
+            ? `${currentRoleObj?.shortLabel || currentUser.role.toUpperCase()}: ${currentUser.name.split(" ")[0]}`
+            : isVi
+            ? "Đăng nhập / Đổi vai trò"
+            : "Sign In / Switch"}
+        </span>
         {isPending && <RefreshCw className="h-3 w-3 animate-spin text-text-secondary" />}
       </button>
 
@@ -71,17 +100,17 @@ export default function RoleSwitcher({ currentUser }: RoleSwitcherProps) {
         <div className="absolute bottom-14 right-0 w-80 bg-white border border-border-light rounded-[28px] shadow-2xl p-5 animate-in fade-in slide-in-from-bottom-2 duration-200">
           <div className="flex justify-between items-center mb-3">
             <h3 className="text-xs font-bold text-text-secondary uppercase tracking-wider">
-              Quick Role Switcher
+              {isVi ? "Chuyển đổi Vai trò Nhanh" : "Quick Role Switcher"}
             </h3>
             {currentUser && (
               <button
                 onClick={handleSignOut}
                 disabled={isPending}
                 className="text-xs text-red-600 hover:text-red-700 font-semibold flex items-center gap-1 cursor-pointer"
-                title="Sign Out"
+                title={isVi ? "Đăng xuất" : "Sign Out"}
               >
                 <LogOut className="h-3 w-3" />
-                Sign Out
+                {isVi ? "Đăng xuất" : "Sign Out"}
               </button>
             )}
           </div>
@@ -107,7 +136,7 @@ export default function RoleSwitcher({ currentUser }: RoleSwitcherProps) {
                       <Icon className="h-4 w-4" />
                     </div>
                     <div>
-                      <div className="text-xs text-text-primary capitalize font-bold">{r.label}</div>
+                      <div className="text-xs text-text-primary font-bold">{r.label}</div>
                       {isActive && (
                         <div className="text-[10px] text-text-secondary truncate max-w-[150px]">
                           {currentUser.name}
@@ -131,7 +160,7 @@ export default function RoleSwitcher({ currentUser }: RoleSwitcherProps) {
               onClick={() => setIsOpen(false)}
             >
               <LogIn className="h-3.5 w-3.5" />
-              Sign In
+              {isVi ? "Đăng nhập" : "Sign In"}
             </Link>
             <Link
               href="/register"
@@ -139,13 +168,14 @@ export default function RoleSwitcher({ currentUser }: RoleSwitcherProps) {
               onClick={() => setIsOpen(false)}
             >
               <UserPlus className="h-3.5 w-3.5" />
-              Register
+              {isVi ? "Đăng ký" : "Register"}
             </Link>
           </div>
 
           {currentUser && (
             <div className="mt-3 pt-2.5 border-t border-border-light text-[10px] text-text-secondary">
-              Active account: <span className="font-mono text-text-primary">{currentUser.email}</span>
+              {isVi ? "Tài khoản đang dùng:" : "Active account:"}{" "}
+              <span className="font-mono text-text-primary">{currentUser.email}</span>
             </div>
           )}
         </div>

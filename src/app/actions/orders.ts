@@ -55,9 +55,9 @@ export async function createOrder(
 
   try {
     const result = await prisma.$transaction(async (tx) => {
-      // 1. Fetch fees dynamically
+      // 1. Fetch fees dynamically (shipping fee is rate per kg; packaging fee is per unit)
       const fees = await tx.fee.findMany();
-      const shippingFee = fees.find((f) => f.feeName === "shipping")?.amount || 120000;
+      const shippingRatePerKg = fees.find((f) => f.feeName === "shipping")?.amount || 120000;
       const packagingFee = fees.find((f) => f.feeName === "packaging")?.amount || 30000;
 
       let totalVND = 0;
@@ -81,13 +81,17 @@ export async function createOrder(
           throw new Error(`Insufficient stock for "${product.name}". Only ${product.inventory} left.`);
         }
 
-        const itemCostVND = (product.basePrice + shippingFee + packagingFee) * item.quantity;
+        const unitWeightKg = product.weight && product.weight > 0 ? product.weight : 0.5;
+        const unitShippingFee = Math.round(shippingRatePerKg * unitWeightKg);
+        const itemCostVND = (product.basePrice + unitShippingFee + packagingFee) * item.quantity;
         totalVND += itemCostVND;
 
         verifiedItems.push({
           product,
           quantity: item.quantity,
           basePrice: product.basePrice,
+          unitWeightKg,
+          unitShippingFee,
         });
       }
 
@@ -123,8 +127,9 @@ export async function createOrder(
             orderId: order.id,
             productId: item.product.id,
             quantity: item.quantity,
+            weightAtPurchase: item.unitWeightKg,
             sellerPriceAtPurchase: item.basePrice,
-            shippingFeeAtPurchase: shippingFee,
+            shippingFeeAtPurchase: item.unitShippingFee,
             packagingFeeAtPurchase: packagingFee,
           },
         });
@@ -176,14 +181,22 @@ export async function createStripeCheckoutSession(
   }
 
   try {
-    // 1. Fetch fees
+    // 1. Fetch fees (shipping is rate per kg; packaging is per unit)
     const fees = await prisma.fee.findMany();
-    const shippingFee = fees.find((f) => f.feeName === "shipping")?.amount || 120000;
+    const shippingRatePerKg = fees.find((f) => f.feeName === "shipping")?.amount || 120000;
     const packagingFee = fees.find((f) => f.feeName === "packaging")?.amount || 30000;
 
     let totalVND = 0;
     let totalQuantity = 0;
-    const verifiedItems: { product: any; quantity: number; basePrice: number }[] = [];
+    let totalShippingVND = 0;
+    let totalWeightKg = 0;
+    const verifiedItems: {
+      product: any;
+      quantity: number;
+      basePrice: number;
+      unitWeightKg: number;
+      unitShippingFee: number;
+    }[] = [];
 
     // 2. Verify stock
     for (const item of items) {
@@ -203,14 +216,20 @@ export async function createStripeCheckoutSession(
         throw new Error(`Insufficient stock for "${product.name}". Only ${product.inventory} available.`);
       }
 
-      const itemTotalVND = (product.basePrice + shippingFee + packagingFee) * item.quantity;
+      const unitWeightKg = product.weight && product.weight > 0 ? product.weight : 0.5;
+      const unitShippingFee = Math.round(shippingRatePerKg * unitWeightKg);
+      const itemTotalVND = (product.basePrice + unitShippingFee + packagingFee) * item.quantity;
       totalVND += itemTotalVND;
       totalQuantity += item.quantity;
+      totalShippingVND += unitShippingFee * item.quantity;
+      totalWeightKg += unitWeightKg * item.quantity;
 
       verifiedItems.push({
         product,
         quantity: item.quantity,
         basePrice: product.basePrice,
+        unitWeightKg,
+        unitShippingFee,
       });
     }
 
@@ -236,8 +255,9 @@ export async function createStripeCheckoutSession(
           orderId: order.id,
           productId: item.product.id,
           quantity: item.quantity,
+          weightAtPurchase: item.unitWeightKg,
           sellerPriceAtPurchase: item.basePrice,
-          shippingFeeAtPurchase: shippingFee,
+          shippingFeeAtPurchase: item.unitShippingFee,
           packagingFeeAtPurchase: packagingFee,
         },
       });
@@ -254,7 +274,7 @@ export async function createStripeCheckoutSession(
           currency: "usd",
           product_data: {
             name: `${item.product.name} (Seller Base Price)`,
-            description: `Authentic Vietnamese Product • ${item.basePrice.toLocaleString()} VND base`,
+            description: `Authentic Vietnamese Product • ${item.unitWeightKg} kg • ${item.basePrice.toLocaleString()} VND base`,
           },
           unit_amount: unitCents,
         },
@@ -276,18 +296,18 @@ export async function createStripeCheckoutSession(
       quantity: totalQuantity,
     });
 
-    // Shipping fee line item
-    const shippingUnitCents = Math.round((shippingFee / EXCHANGE_RATE) * 100);
+    // Shipping fee line item (based on total parcel weight)
+    const shippingTotalCents = Math.round((totalShippingVND / EXCHANGE_RATE) * 100);
     lineItems.push({
       price_data: {
         currency: "usd",
         product_data: {
-          name: "District 1 International Shipping Logistics",
-          description: `Hub customs handling & international dispatch • ${shippingFee.toLocaleString()} VND per unit`,
+          name: `Saigon Hub International Air Shipping (${totalWeightKg.toFixed(2)} kg)`,
+          description: `Weight-based air freight (${shippingRatePerKg.toLocaleString()} VND/kg) • ${totalShippingVND.toLocaleString()} VND total`,
         },
-        unit_amount: shippingUnitCents,
+        unit_amount: shippingTotalCents,
       },
-      quantity: totalQuantity,
+      quantity: 1,
     });
 
     // 6. Create Stripe Checkout Session
@@ -424,11 +444,17 @@ export async function createPaymentIntent(
 
   try {
     const fees = await prisma.fee.findMany();
-    const shippingFee = fees.find((f) => f.feeName === "shipping")?.amount || 120000;
+    const shippingRatePerKg = fees.find((f) => f.feeName === "shipping")?.amount || 120000;
     const packagingFee = fees.find((f) => f.feeName === "packaging")?.amount || 30000;
 
     let totalVND = 0;
-    const verifiedItems: { product: any; quantity: number; basePrice: number }[] = [];
+    const verifiedItems: {
+      product: any;
+      quantity: number;
+      basePrice: number;
+      unitWeightKg: number;
+      unitShippingFee: number;
+    }[] = [];
 
     for (const item of items) {
       const product = await prisma.product.findUnique({
@@ -447,13 +473,17 @@ export async function createPaymentIntent(
         throw new Error(`Insufficient stock for "${product.name}". Only ${product.inventory} available.`);
       }
 
-      const itemTotalVND = (product.basePrice + shippingFee + packagingFee) * item.quantity;
+      const unitWeightKg = product.weight && product.weight > 0 ? product.weight : 0.5;
+      const unitShippingFee = Math.round(shippingRatePerKg * unitWeightKg);
+      const itemTotalVND = (product.basePrice + unitShippingFee + packagingFee) * item.quantity;
       totalVND += itemTotalVND;
 
       verifiedItems.push({
         product,
         quantity: item.quantity,
         basePrice: product.basePrice,
+        unitWeightKg,
+        unitShippingFee,
       });
     }
 
@@ -479,8 +509,9 @@ export async function createPaymentIntent(
           orderId: order.id,
           productId: item.product.id,
           quantity: item.quantity,
+          weightAtPurchase: item.unitWeightKg,
           sellerPriceAtPurchase: item.basePrice,
-          shippingFeeAtPurchase: shippingFee,
+          shippingFeeAtPurchase: item.unitShippingFee,
           packagingFeeAtPurchase: packagingFee,
         },
       });

@@ -16,7 +16,9 @@ import {
   Star,
   Link as LinkIcon,
   CheckCircle2,
+  Scale,
 } from "lucide-react";
+import LanguageToggle, { usePortalLanguage, translateCategory } from "./LanguageSwitcher";
 
 interface ProductFormProps {
   initialProduct?: {
@@ -25,6 +27,7 @@ interface ProductFormProps {
     description: string | null;
     category: string;
     basePrice: number;
+    weight?: number;
     inventory: number;
     images: string; // JSON array string
     status: string;
@@ -49,6 +52,8 @@ export default function ProductForm({
   onSave,
 }: ProductFormProps) {
   const router = useRouter();
+  const { lang, setLang } = usePortalLanguage("seller");
+  const isVi = lang === "vi";
   const [isPending, startTransition] = useTransition();
 
   // File input refs
@@ -61,6 +66,9 @@ export default function ProductForm({
   const [category, setCategory] = useState(initialProduct?.category || "Crafts & Decor");
   const [basePriceStr, setBasePriceStr] = useState(
     initialProduct ? String(initialProduct.basePrice) : ""
+  );
+  const [weightStr, setWeightStr] = useState(
+    initialProduct && initialProduct.weight ? String(initialProduct.weight) : "0.5"
   );
   const [inventoryStr, setInventoryStr] = useState(
     initialProduct ? String(initialProduct.inventory) : "0"
@@ -107,9 +115,11 @@ export default function ProductForm({
     }
   }, [initialProduct]);
 
-  // Real-time Fee Calculations
+  // Real-time Fee Calculations (shippingFee is rate per kg)
   const basePrice = parseFloat(basePriceStr) || 0;
-  const totalVND = basePrice > 0 ? basePrice + shippingFee + packagingFee : 0;
+  const weightKg = parseFloat(weightStr) > 0 ? parseFloat(weightStr) : 0.5;
+  const calculatedShippingFee = Math.round(shippingFee * weightKg);
+  const totalVND = basePrice > 0 ? basePrice + calculatedShippingFee + packagingFee : 0;
   const totalUSD = totalVND / VND_TO_USD_RATE;
 
   // Validation Logic
@@ -132,6 +142,19 @@ export default function ProductForm({
         newErrors.basePrice = "Price cannot be negative.";
       } else {
         delete newErrors.basePrice;
+      }
+    }
+
+    if (field === "weight") {
+      const parsed = parseFloat(value);
+      if (value === "" || isNaN(parsed)) {
+        newErrors.weight = "Please enter product weight in kg.";
+      } else if (parsed <= 0) {
+        newErrors.weight = "Weight must be greater than 0 kg.";
+      } else if (parsed > 50) {
+        newErrors.weight = "Max single parcel weight is 50 kg.";
+      } else {
+        delete newErrors.weight;
       }
     }
 
@@ -301,6 +324,11 @@ export default function ProductForm({
       newErrors.inventory = "Inventory cannot be negative.";
     }
 
+    const parsedWeight = parseFloat(weightStr);
+    if (weightStr === "" || isNaN(parsedWeight) || parsedWeight <= 0) {
+      newErrors.weight = "Please enter a valid weight in kg (e.g. 0.5).";
+    }
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       const firstErrorKey = Object.keys(newErrors)[0];
@@ -323,6 +351,7 @@ export default function ProductForm({
         description,
         category,
         basePrice: parseFloat(basePriceStr),
+        weight: parseFloat(weightStr),
         inventory: parseInt(inventoryStr, 10),
         images: finalImages,
         status,
@@ -343,6 +372,20 @@ export default function ProductForm({
       onSubmit={handleSubmit}
       className="w-full max-w-5xl mx-auto pb-20 md:pb-8 px-4 sm:px-6 lg:px-8 flex flex-col gap-6 text-text-primary"
     >
+      {/* Top Language Bar inside Seller Listing Form */}
+      <div className="flex items-center justify-between bg-white border border-border-light rounded-2xl px-4 py-2.5 shadow-xs">
+        <span className="text-xs font-bold text-ink">
+          {initialProduct
+            ? isVi
+              ? "Chỉnh sửa thông tin sản phẩm"
+              : "Edit Product Listing"
+            : isVi
+            ? "Đăng bán sản phẩm Việt Nam mới"
+            : "Create New Vietnamese Product Listing"}
+        </span>
+        <LanguageToggle lang={lang} onChange={setLang} />
+      </div>
+
       {submitError && (
         <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-600 text-sm">
           <AlertCircle className="h-5 w-5 shrink-0" />
@@ -357,7 +400,8 @@ export default function ProductForm({
           <div className="card-product rounded-[28px] p-6 bg-white border border-border-light shadow-sm flex flex-col gap-4">
             <div className="flex justify-between items-center border-b border-border-light pb-3">
               <label className="text-sm font-bold text-ink">
-                Product Photos {images.length > 0 && <span className="text-xs text-text-secondary font-normal">({images.length})</span>}
+                {isVi ? "Hình ảnh sản phẩm" : "Product Photos"}{" "}
+                {images.length > 0 && <span className="text-xs text-text-secondary font-normal">({images.length})</span>}
               </label>
               <button
                 type="button"
@@ -365,7 +409,7 @@ export default function ProductForm({
                 className="text-xs font-semibold text-brand-primary flex items-center gap-1 hover:underline cursor-pointer"
               >
                 <LinkIcon className="h-3.5 w-3.5" />
-                {showUrlInput ? "Hide URL" : "Add via URL"}
+                {showUrlInput ? (isVi ? "Ẩn đường dẫn" : "Hide URL") : isVi ? "Thêm bằng URL" : "Add via URL"}
               </button>
             </div>
 
@@ -399,8 +443,10 @@ export default function ProductForm({
                 <div className="p-2.5 bg-brand-primary text-white rounded-full mb-1.5 shadow-sm">
                   <Camera className="h-4.5 w-4.5" />
                 </div>
-                <span className="text-xs font-bold">Take Photo</span>
-                <span className="text-[10px] text-text-secondary font-medium">Instant camera</span>
+                <span className="text-xs font-bold">{isVi ? "Chụp ảnh" : "Take Photo"}</span>
+                <span className="text-[10px] text-text-secondary font-medium">
+                  {isVi ? "Mở máy ảnh" : "Instant camera"}
+                </span>
               </button>
 
               {/* Device Gallery / File Picker */}
@@ -413,8 +459,10 @@ export default function ProductForm({
                 <div className="p-2.5 bg-ink text-white rounded-full mb-1.5 shadow-sm">
                   <UploadCloud className="h-4.5 w-4.5" />
                 </div>
-                <span className="text-xs font-bold">Upload Files</span>
-                <span className="text-[10px] text-text-secondary font-medium">From device</span>
+                <span className="text-xs font-bold">{isVi ? "Tải ảnh lên" : "Upload Files"}</span>
+                <span className="text-[10px] text-text-secondary font-medium">
+                  {isVi ? "Từ thiết bị" : "From device"}
+                </span>
               </button>
             </div>
 
@@ -431,7 +479,9 @@ export default function ProductForm({
               }`}
             >
               <p className="text-xs text-text-secondary">
-                Drag & drop product images here, or click to browse. Max 10MB per photo.
+                {isVi
+                  ? "Kéo thả ảnh sản phẩm vào đây hoặc bấm để chọn ảnh (Tối đa 10MB/ảnh)."
+                  : "Drag & drop product images here, or click to browse. Max 10MB per photo."}
               </p>
             </div>
 
@@ -536,7 +586,7 @@ export default function ProductForm({
                       {/* Cover Badge */}
                       {isCover && (
                         <div className="absolute top-1.5 left-1.5 bg-brand-primary text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm flex items-center gap-0.5">
-                          <Star className="h-2.5 w-2.5 fill-current" /> Cover
+                          <Star className="h-2.5 w-2.5 fill-current" /> {isVi ? "Ảnh bìa" : "Cover"}
                         </div>
                       )}
 
@@ -547,7 +597,7 @@ export default function ProductForm({
                             type="button"
                             onClick={() => handleSetCoverImage(idx)}
                             className="p-1.5 bg-white hover:bg-white text-ink rounded-full text-xs shadow-md transition-transform hover:scale-105 cursor-pointer"
-                            title="Set as Cover photo"
+                            title={isVi ? "Đặt làm ảnh bìa" : "Set as Cover photo"}
                           >
                             <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
                           </button>
@@ -556,7 +606,7 @@ export default function ProductForm({
                           type="button"
                           onClick={() => handleRemoveImage(idx)}
                           className="p-1.5 bg-red-600 hover:bg-red-700 text-white rounded-full text-xs shadow-md transition-transform hover:scale-105 cursor-pointer"
-                          title="Delete photo"
+                          title={isVi ? "Xóa ảnh" : "Delete photo"}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
@@ -567,7 +617,9 @@ export default function ProductForm({
               </div>
             ) : (
               <div className="text-center p-6 border border-dashed border-border-light rounded-2xl text-text-secondary text-xs bg-surface-soft/40">
-                No product photos added yet. Use the camera or upload buttons above.
+                {isVi
+                  ? "Chưa có hình ảnh nào. Hãy dùng nút Chụp ảnh hoặc Tải ảnh lên ở trên."
+                  : "No product photos added yet. Use the camera or upload buttons above."}
               </div>
             )}
           </div>
@@ -575,7 +627,7 @@ export default function ProductForm({
           {/* Listing Status Card */}
           <div className="card-product rounded-[28px] p-6 bg-white border border-border-light shadow-sm flex flex-col gap-3.5">
             <label className="text-sm font-bold text-ink">
-              Listing Status
+              {isVi ? "Trạng thái hiển thị" : "Listing Status"}
             </label>
             <div className="flex gap-4">
               <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-ink">
@@ -588,7 +640,7 @@ export default function ProductForm({
                   className="h-4 w-4 accent-brand-primary cursor-pointer"
                   disabled={isPending}
                 />
-                <span>Active (Ready for Sale)</span>
+                <span>{isVi ? "Đang bán (Hiển thị trên sàn)" : "Active (Ready for Sale)"}</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-text-secondary">
                 <input
@@ -600,7 +652,7 @@ export default function ProductForm({
                   className="h-4 w-4 accent-brand-primary cursor-pointer"
                   disabled={isPending}
                 />
-                <span>Draft</span>
+                <span>{isVi ? "Bản nháp (Tạm ẩn)" : "Draft"}</span>
               </label>
             </div>
           </div>
@@ -611,7 +663,7 @@ export default function ProductForm({
           {/* Product Name */}
           <div className="flex flex-col gap-2">
             <label htmlFor="name" className="text-xs font-bold text-ink">
-              Product Name <span className="text-red-500">*</span>
+              {isVi ? "Tên sản phẩm" : "Product Name"} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -621,7 +673,11 @@ export default function ProductForm({
               onChange={(e) => handleInputChange("name", e.target.value, setName)}
               onBlur={() => validateField("name", name)}
               className={`input-primary w-full text-xs min-h-[46px] rounded-xl ${errors.name ? "border-red-500" : ""}`}
-              placeholder="e.g. Buon Ma Thuot Highland Coffee, Bat Trang Ceramic Set..."
+              placeholder={
+                isVi
+                  ? "VD: Cà phê Đặc sản Buôn Ma Thuột, Bộ ấm trà gốm Bát Tràng..."
+                  : "e.g. Buon Ma Thuot Highland Coffee, Bat Trang Ceramic Set..."
+              }
               disabled={isPending}
               required
             />
@@ -636,7 +692,7 @@ export default function ProductForm({
           {/* Category Selection */}
           <div className="flex flex-col gap-2">
             <label htmlFor="category" className="text-xs font-bold text-ink">
-              Category
+              {isVi ? "Danh mục ngành hàng" : "Category"}
             </label>
             <div className="relative">
               <select
@@ -649,7 +705,7 @@ export default function ProductForm({
               >
                 {categories.map((cat) => (
                   <option key={cat} value={cat}>
-                    {cat}
+                    {translateCategory(cat, lang)}
                   </option>
                 ))}
               </select>
@@ -659,7 +715,7 @@ export default function ProductForm({
           {/* Description */}
           <div className="flex flex-col gap-2">
             <label htmlFor="description" className="text-xs font-bold text-ink">
-              Description
+              {isVi ? "Mô tả chi tiết sản phẩm" : "Description"}
             </label>
             <textarea
               id="description"
@@ -667,17 +723,21 @@ export default function ProductForm({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="input-primary w-full min-h-[120px] py-3 rounded-xl resize-y text-xs"
-              placeholder="Describe the product details, ingredients or materials, Vietnamese origin story..."
+              placeholder={
+                isVi
+                  ? "Mô tả chất liệu, thành phần, nguồn gốc làng nghề Việt Nam, quy cách đóng gói..."
+                  : "Describe the product details, ingredients or materials, Vietnamese origin story..."
+              }
               disabled={isPending}
             />
           </div>
 
-          {/* Grid for Inventory & Base Price */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Grid for Inventory, Weight & Base Price */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* Inventory Quantity */}
             <div className="flex flex-col gap-2">
               <label htmlFor="inventory" className="text-xs font-bold text-ink">
-                Stock Quantity <span className="text-red-500">*</span>
+                {isVi ? "Số lượng tồn kho" : "Stock Quantity"} <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -688,7 +748,7 @@ export default function ProductForm({
                 onChange={(e) => handleInputChange("inventory", e.target.value, setInventoryStr)}
                 onBlur={() => validateField("inventory", inventoryStr)}
                 className={`input-primary w-full text-xs min-h-[46px] rounded-xl ${errors.inventory ? "border-red-500" : ""}`}
-                placeholder="e.g. 25"
+                placeholder="VD: 25"
                 disabled={isPending}
                 required
               />
@@ -700,10 +760,65 @@ export default function ProductForm({
               )}
             </div>
 
+            {/* Shipping Weight in kg */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="weight" className="text-xs font-bold text-ink flex items-center justify-between">
+                <span>
+                  {isVi ? "Khối lượng (kg)" : "Unit Weight (kg)"} <span className="text-red-500">*</span>
+                </span>
+                <span className="text-[10px] font-medium text-text-secondary">
+                  {weightKg > 0 ? `${Math.round(weightKg * 1000)}g` : ""}
+                </span>
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  step="0.05"
+                  min="0.05"
+                  max="50"
+                  id="weight"
+                  name="weight"
+                  value={weightStr}
+                  onChange={(e) => handleInputChange("weight", e.target.value, setWeightStr)}
+                  onBlur={() => validateField("weight", weightStr)}
+                  className={`input-primary w-full pl-9 pr-12 text-xs min-h-[46px] rounded-xl ${errors.weight ? "border-red-500" : ""}`}
+                  placeholder="VD: 0.5"
+                  disabled={isPending}
+                  required
+                />
+                <Scale className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-secondary pointer-events-none" />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none text-xs font-bold text-text-secondary">
+                  kg
+                </div>
+              </div>
+              <div className="flex gap-1.5 flex-wrap">
+                {[0.25, 0.5, 1.0, 2.0].map((preset) => (
+                  <button
+                    key={preset}
+                    type="button"
+                    onClick={() => handleInputChange("weight", String(preset), setWeightStr)}
+                    className={`text-[10px] px-2 py-0.5 rounded-full border transition-colors cursor-pointer ${
+                      parseFloat(weightStr) === preset
+                        ? "bg-brand-primary text-white border-brand-primary font-bold"
+                        : "bg-surface-soft text-text-secondary border-border-light hover:border-brand-primary"
+                    }`}
+                  >
+                    {preset < 1 ? `${preset * 1000}g` : `${preset}kg`}
+                  </button>
+                ))}
+              </div>
+              {errors.weight && (
+                <span className="text-xs font-semibold text-red-500 flex items-center gap-1">
+                  <AlertCircle className="h-3.5 w-3.5" />
+                  {errors.weight}
+                </span>
+              )}
+            </div>
+
             {/* Base Price in VND */}
             <div className="flex flex-col gap-2">
               <label htmlFor="basePrice" className="text-xs font-bold text-ink">
-                Base Price (VND) <span className="text-red-500">*</span>
+                {isVi ? "Giá gốc người bán (VND)" : "Base Price (VND)"} <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <input
@@ -715,7 +830,7 @@ export default function ProductForm({
                   onChange={(e) => handleInputChange("basePrice", e.target.value, setBasePriceStr)}
                   onBlur={() => validateField("basePrice", basePriceStr)}
                   className={`input-primary w-full pr-14 text-xs min-h-[46px] rounded-xl ${errors.basePrice ? "border-red-500" : ""}`}
-                  placeholder="e.g. 180000"
+                  placeholder="VD: 180000"
                   disabled={isPending}
                   required
                 />
@@ -738,27 +853,39 @@ export default function ProductForm({
               <div className="flex items-center gap-2 border-b border-border-light pb-2.5">
                 <Calculator className="h-4 w-4 text-brand-primary" />
                 <h4 className="text-xs font-bold text-ink uppercase tracking-wider">
-                  Saigon Hub Pricing Breakdown
+                  {isVi
+                    ? "Bảng tính Giá & Cước Vận Chuyển theo Khối Lượng (Saigon Hub)"
+                    : "Saigon Hub Pricing & Weight Shipping Breakdown"}
                 </h4>
               </div>
 
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-text-secondary">Your Base Price:</span>
+                  <span className="text-text-secondary">
+                    {isVi ? "Giá gốc của bạn (Nhận đủ 100%):" : "Your Base Price (100% Paid to You):"}
+                  </span>
                   <span className="font-bold text-ink">
                     {basePrice.toLocaleString()} VND
                   </span>
                 </div>
                 <div className="flex justify-between text-text-secondary">
-                  <span>+ Packaging Fee:</span>
+                  <span>{isVi ? "+ Phí đóng gói xuất khẩu:" : "+ Export Packaging Fee:"}</span>
                   <span>{packagingFee.toLocaleString()} VND</span>
                 </div>
                 <div className="flex justify-between text-text-secondary">
-                  <span>+ Shipping Hub Fee:</span>
-                  <span>{shippingFee.toLocaleString()} VND</span>
+                  <span>
+                    {isVi
+                      ? `+ Cước bay quốc tế (${weightKg} kg × ${shippingFee.toLocaleString()} VND/kg):`
+                      : `+ Air Shipping (${weightKg} kg × ${shippingFee.toLocaleString()} VND/kg):`}
+                  </span>
+                  <span className="font-medium text-ink">
+                    {calculatedShippingFee.toLocaleString()} VND
+                  </span>
                 </div>
                 <div className="border-t border-border-light my-2 pt-2.5 flex justify-between items-baseline font-semibold">
-                  <span className="text-ink">Estimated Buyer Price:</span>
+                  <span className="text-ink">
+                    {isVi ? "Giá hiển thị cho khách Quốc tế:" : "Estimated Buyer Price:"}
+                  </span>
                   <div className="text-right">
                     <div className="text-base font-bold text-brand-primary">
                       {totalVND.toLocaleString()} VND
@@ -771,7 +898,15 @@ export default function ProductForm({
               </div>
 
               <div className="text-[11px] text-text-secondary leading-relaxed bg-white p-3 rounded-xl border border-border-light">
-                💡 <strong>Transparency Notice</strong>: Buyer checkout runs in USD. You will receive 100% of your base price (<strong>{basePrice.toLocaleString()} VND</strong>) upon delivery, and Kialna coordinates local pickup, packaging, and air courier from the District 1 Saigon Hub directly to U.S. and global doorsteps.
+                {isVi ? (
+                  <>
+                    💡 <strong>Cam kết Thanh toán từ Saigon Hub</strong>: Khách quốc tế thanh toán bằng USD. Ngay khi Saigon Hub kiểm nhận kiện hàng ({weightKg} kg) của bạn, Hub sẽ chuyển khoản đủ 100% tiền hàng (<strong>{basePrice.toLocaleString()} VND</strong>) vào tài khoản ngân hàng Việt Nam của bạn qua <strong>VietQR Napas 247</strong>.
+                  </>
+                ) : (
+                  <>
+                    💡 <strong>Saigon Hub Payout Guarantee</strong>: Buyer checkout runs in USD. Once the Saigon Hub verifies and checks in your parcel ({weightKg} kg), the hub transfers 100% of your base price (<strong>{basePrice.toLocaleString()} VND</strong>) directly to your Vietnamese bank account via <strong>VietQR Napas 247</strong>.
+                  </>
+                )}
               </div>
             </div>
           )}
@@ -785,10 +920,18 @@ export default function ProductForm({
             {isPending ? (
               <>
                 <RefreshCw className="h-4 w-4 animate-spin" />
-                <span>Saving Product...</span>
+                <span>{isVi ? "Đang lưu sản phẩm..." : "Saving Product..."}</span>
               </>
             ) : (
-              <span>{initialProduct ? "Update Listing" : "Create Listing"}</span>
+              <span>
+                {initialProduct
+                  ? isVi
+                    ? "Cập nhật sản phẩm"
+                    : "Update Listing"
+                  : isVi
+                  ? "Đăng bán sản phẩm"
+                  : "Create Listing"}
+              </span>
             )}
           </button>
         </div>

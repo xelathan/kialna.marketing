@@ -66,7 +66,7 @@ export default async function Home() {
               <p className="text-sm sm:text-base text-text-secondary max-w-xl leading-relaxed">
                 Discover authentic Vietnamese products, heritage crafts, highland specialty coffee, organic teas, and textiles. 
                 Kialna connects Vietnamese merchants directly to shoppers in the U.S. and worldwide with transparent pricing 
-                and centralized Saigon District 1 export logistics.
+                and centralized Saigon Hub export logistics.
               </p>
 
               {/* Meta Dual-CTA Hero Pattern */}
@@ -114,7 +114,7 @@ export default async function Home() {
                   </div>
                   <div>
                     <h3 className="text-xs font-bold text-text-primary">Saigon to U.S. Express</h3>
-                    <p className="text-[11px] text-text-secondary mt-0.5 leading-snug">District 1 Hub quality inspection with expedited air transit to your door.</p>
+                    <p className="text-[11px] text-text-secondary mt-0.5 leading-snug">Saigon Hub quality inspection with expedited air transit to your door.</p>
                   </div>
                 </div>
               </div>
@@ -180,7 +180,7 @@ export default async function Home() {
                           <Shield className="h-4 w-4" />
                         </div>
                         <div className="text-left">
-                          <div className="text-xs font-bold text-text-primary">Saigon District 1 Hub</div>
+                          <div className="text-xs font-bold text-text-primary">Saigon Hub</div>
                           <div className="text-[10px] text-text-secondary">Manage 6-stage quality inspection, customs & air transit</div>
                         </div>
                       </div>
@@ -211,7 +211,7 @@ export default async function Home() {
                 Saigon Hub to Your Doorstep Worldwide
               </h2>
               <p className="text-xs sm:text-sm text-sky-100/90 leading-relaxed">
-                Every order is inspected at our Saigon District 1 fulfillment hub for protective export packaging, customs clearance, and expedited air shipping directly to buyers in the U.S. and worldwide.
+                Every order is inspected at our Saigon Hub for protective export packaging, customs clearance, and expedited air shipping directly to buyers in the U.S. and worldwide.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 shrink-0 relative z-10">

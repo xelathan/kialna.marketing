@@ -28,6 +28,9 @@ async function main() {
       email: "seller@kialna.shop",
       phone: "0901234567",
       address: "123 Le Loi, District 1, Ho Chi Minh City, Vietnam",
+      bankName: "Vietcombank (VCB)",
+      bankAccountNumber: "0071001234567",
+      bankAccountName: "NGUYEN VAN A",
       passwordHash: defaultPasswordHash,
     },
   });
@@ -46,10 +49,10 @@ async function main() {
   const admin = await prisma.user.create({
     data: {
       role: "admin",
-      name: "Kialna Shipping Hub (District 1)",
+      name: "Kialna Saigon Hub",
       email: "admin@kialna.shop",
       phone: "02838290000",
-      address: "789 Nguyen Hue, District 1, Ho Chi Minh City, Vietnam",
+      address: "789 Nguyen Hue, Ho Chi Minh City, Vietnam",
       passwordHash: defaultPasswordHash,
     },
   });
@@ -87,6 +90,7 @@ async function main() {
       description: "Artisanal bamboo basket woven by hand in Chuong My craft village. Eco-friendly, sturdy, and elegant for home decor or gifting.",
       category: "Crafts & Decor",
       basePrice: 180000.0, // 180,000 VND
+      weight: 0.6, // 0.6 kg (600g)
       inventory: 25,
       images: JSON.stringify([
         "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=800",
@@ -98,6 +102,7 @@ async function main() {
       description: "Premium sun-dried lotus leaf tea from Dong Thap province. Helps support healthy metabolism and quality sleep. 100% natural.",
       category: "Food & Tea",
       basePrice: 240000.0, // 240,000 VND
+      weight: 0.25, // 0.25 kg (250g)
       inventory: 50,
       images: JSON.stringify([
         "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&q=80&w=800",
@@ -109,6 +114,7 @@ async function main() {
       description: "Authentic hand-tailored Vietnamese Ao Dai made from luxury Ha Dong silk. Vibrant blue color with elegant patterns. Sized Medium.",
       category: "Apparel & Textiles",
       basePrice: 950000.0, // 950,000 VND
+      weight: 0.4, // 0.4 kg (400g)
       inventory: 8,
       images: JSON.stringify([
         "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80&w=800",
@@ -120,6 +126,7 @@ async function main() {
       description: "Premium Bat Trang ceramic Vietnamese coffee filter (phin). Heat-retaining, beautiful design for brewing slow drip coffee at home.",
       category: "Kitchen & Home",
       basePrice: 120000.0, // 120,000 VND
+      weight: 0.35, // 0.35 kg (350g)
       inventory: 100,
       images: JSON.stringify([
         "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=800",

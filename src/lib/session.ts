@@ -10,6 +10,10 @@ export interface SessionUser {
   phone?: string | null;
   address?: string | null;
   logo?: string | null;
+  bankName?: string | null;
+  bankAccountNumber?: string | null;
+  bankAccountName?: string | null;
+  vietQrImage?: string | null;
 }
 
 const SESSION_COOKIE_NAME = "kialna_session_token";
@@ -66,6 +70,10 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
       phone: user.phone,
       address: user.address,
       logo: user.logo,
+      bankName: user.bankName,
+      bankAccountNumber: user.bankAccountNumber,
+      bankAccountName: user.bankAccountName,
+      vietQrImage: user.vietQrImage,
     };
   } catch (error) {
     console.error("Session lookup error:", error);

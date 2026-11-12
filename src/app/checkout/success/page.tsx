@@ -106,7 +106,7 @@ function SuccessContent() {
             </span>
             <h1 className="text-2xl font-bold text-text-primary mt-2">Order Confirmed!</h1>
             <p className="text-xs text-text-secondary mt-1 max-w-md">
-              Thank you for supporting Vietnamese sellers and artisans. Your order has been placed in our Saigon District 1 export fulfillment pipeline.
+              Thank you for supporting Vietnamese sellers and artisans. Your order has been placed in our Saigon Hub export fulfillment pipeline.
             </p>
           </div>
 
@@ -133,7 +133,7 @@ function SuccessContent() {
               2. Ready for Pickup
             </div>
             <div className="p-2.5 rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-border-light text-text-secondary">
-              3. District 1 Hub Dispatch
+              3. Saigon Hub Dispatch
             </div>
           </div>
         </div>

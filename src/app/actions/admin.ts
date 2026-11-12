@@ -109,3 +109,65 @@ export async function updateFeeAmount(feeName: string, amount: number) {
     return { success: false, error: error.message || "Failed to update fee" };
   }
 }
+
+export async function markOrderSellerPaid(
+  orderId: string,
+  payoutMethod: string,
+  payoutRef?: string
+) {
+  const user = await getCurrentUser();
+  if (!user || user.role !== "admin") {
+    return { success: false, error: "Unauthorized. Must be an admin." };
+  }
+
+  try {
+    const existing = await prisma.order.findUnique({
+      where: { id: orderId },
+    });
+
+    if (!existing) {
+      return { success: false, error: "Order not found." };
+    }
+
+    const order = await prisma.order.update({
+      where: { id: orderId },
+      data: {
+        payoutStatus: "paid_by_hub",
+        payoutMethod: payoutMethod || "VietQR Napas 247",
+        payoutRef: payoutRef?.trim() || `VQR-${Date.now().toString().slice(-6)}`,
+        payoutAt: new Date(),
+      },
+    });
+
+    revalidatePath("/");
+    revalidatePath("/seller");
+    return { success: true, order };
+  } catch (error: any) {
+    return { success: false, error: error.message || "Failed to record seller payout" };
+  }
+}
+
+export async function resetOrderSellerPayout(orderId: string) {
+  const user = await getCurrentUser();
+  if (!user || user.role !== "admin") {
+    return { success: false, error: "Unauthorized. Must be an admin." };
+  }
+
+  try {
+    const order = await prisma.order.update({
+      where: { id: orderId },
+      data: {
+        payoutStatus: "unpaid",
+        payoutMethod: null,
+        payoutRef: null,
+        payoutAt: null,
+      },
+    });
+
+    revalidatePath("/");
+    revalidatePath("/seller");
+    return { success: true, order };
+  } catch (error: any) {
+    return { success: false, error: error.message || "Failed to reset seller payout" };
+  }
+}

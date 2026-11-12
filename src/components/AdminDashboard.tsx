@@ -2,9 +2,19 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { updateOrderStatus, updateFeeAmount } from "@/app/actions/admin";
+import {
+  updateOrderStatus,
+  updateFeeAmount,
+  markOrderSellerPaid,
+  resetOrderSellerPayout,
+} from "@/app/actions/admin";
 import RoleSwitcher from "./RoleSwitcher";
 import KialnaLogo from "./KialnaLogo";
+import LanguageToggle, {
+  usePortalLanguage,
+  translateOrderStatus,
+  translateProductName,
+} from "./LanguageSwitcher";
 import {
   Shield,
   Truck,
@@ -27,7 +37,25 @@ import {
   Layers,
   Check,
   LogOut,
+  Scale,
+  Landmark,
+  QrCode,
 } from "lucide-react";
+
+const BANK_BIN_MAP: Record<string, string> = {
+  "Vietcombank (VCB)": "VCB",
+  "Techcombank (TCB)": "TCB",
+  "MB Bank (MB)": "MB",
+  "ACB (Asia Commercial Bank)": "ACB",
+  "VietinBank (CTG)": "ICB",
+  "BIDV": "BIDV",
+  "VPBank": "VPB",
+  "TPBank": "TPB",
+  "Sacombank (STB)": "STB",
+  "Agribank": "VBA",
+  "VIB": "VIB",
+  "HDBank": "HDB",
+};
 
 interface AdminDashboardProps {
   initialOrders: any[];
@@ -54,6 +82,8 @@ const PIPELINE_STAGES = [
 
 export default function AdminDashboard({ initialOrders, initialFees, currentUser }: AdminDashboardProps) {
   const router = useRouter();
+  const { lang, setLang } = usePortalLanguage("admin");
+  const isVi = lang === "vi";
   const [orders, setOrders] = useState<any[]>(initialOrders);
   const [fees, setFees] = useState(initialFees);
   const [filterStage, setFilterStage] = useState<string>("All");
@@ -61,6 +91,8 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
   
   // Selected Order Manifest Modal State
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
+  const [payoutMethodInput, setPayoutMethodInput] = useState("VietQR Napas 247");
+  const [payoutRefInput, setPayoutRefInput] = useState("");
 
   // Fee Config Modal State
   const [isFeeModalOpen, setIsFeeModalOpen] = useState(false);
@@ -89,6 +121,30 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
     return sum + orderLogisticsFee;
   }, 0);
   const totalLogisticsRevenueUSD = totalLogisticsRevenueVND / EXCHANGE_RATE;
+
+  // Seller Payouts Summary (Saigon Hub VND Float Reconciliation)
+  const pendingSellerPayoutVND = orders
+    .filter((o) => o.payoutStatus !== "paid_by_hub")
+    .reduce(
+      (sum, o) =>
+        sum +
+        o.items.reduce(
+          (itemSum: number, item: any) => itemSum + item.sellerPriceAtPurchase * item.quantity,
+          0
+        ),
+      0
+    );
+  const settledSellerPayoutVND = orders
+    .filter((o) => o.payoutStatus === "paid_by_hub")
+    .reduce(
+      (sum, o) =>
+        sum +
+        o.items.reduce(
+          (itemSum: number, item: any) => itemSum + item.sellerPriceAtPurchase * item.quantity,
+          0
+        ),
+      0
+    );
 
   // Filter Orders
   const filteredOrders = orders.filter((o) => {
@@ -129,6 +185,81 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
         }
       } else {
         alert(result.error || "Failed to update status");
+      }
+      setActioningOrderId(null);
+    });
+  };
+
+  const handleMarkSellerPaid = (orderId: string) => {
+    setActioningOrderId(orderId);
+    startTransition(async () => {
+      const result = await markOrderSellerPaid(orderId, payoutMethodInput, payoutRefInput);
+      if (result.success && result.order) {
+        setOrders((prev) =>
+          prev.map((o) =>
+            o.id === orderId
+              ? {
+                  ...o,
+                  payoutStatus: result.order.payoutStatus,
+                  payoutMethod: result.order.payoutMethod,
+                  payoutRef: result.order.payoutRef,
+                  payoutAt: result.order.payoutAt,
+                }
+              : o
+          )
+        );
+        if (selectedOrder && selectedOrder.id === orderId) {
+          setSelectedOrder((prev: any) =>
+            prev
+              ? {
+                  ...prev,
+                  payoutStatus: result.order.payoutStatus,
+                  payoutMethod: result.order.payoutMethod,
+                  payoutRef: result.order.payoutRef,
+                  payoutAt: result.order.payoutAt,
+                }
+              : null
+          );
+        }
+        setPayoutRefInput("");
+      } else {
+        alert(result.error || "Failed to record seller payout");
+      }
+      setActioningOrderId(null);
+    });
+  };
+
+  const handleResetSellerPayout = (orderId: string) => {
+    setActioningOrderId(orderId);
+    startTransition(async () => {
+      const result = await resetOrderSellerPayout(orderId);
+      if (result.success && result.order) {
+        setOrders((prev) =>
+          prev.map((o) =>
+            o.id === orderId
+              ? {
+                  ...o,
+                  payoutStatus: "unpaid",
+                  payoutMethod: null,
+                  payoutRef: null,
+                  payoutAt: null,
+                }
+              : o
+          )
+        );
+        if (selectedOrder && selectedOrder.id === orderId) {
+          setSelectedOrder((prev: any) =>
+            prev
+              ? {
+                  ...prev,
+                  payoutStatus: "unpaid",
+                  payoutMethod: null,
+                  payoutRef: null,
+                  payoutAt: null,
+                }
+              : null
+          );
+        }
       }
       setActioningOrderId(null);
     });
@@ -189,15 +320,15 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
   const getNextActionText = (status: string) => {
     switch (status) {
       case "Ready for Pickup":
-        return "Assign Courier Driver";
+        return isVi ? "Điều phối Tài xế lấy hàng" : "Assign Courier Driver";
       case "Driver Assigned":
-        return "Mark Picked Up";
+        return isVi ? "Xác nhận Đã lấy hàng" : "Mark Picked Up";
       case "Picked Up":
-        return "Receive at Hub (Packaging)";
+        return isVi ? "Nhập kho Saigon Hub (Đóng gói)" : "Receive at Hub (Packaging)";
       case "In Packaging":
-        return "Dispatch Global Shipment";
+        return isVi ? "Xuất kho Bay quốc tế" : "Dispatch Global Shipment";
       case "Shipped":
-        return "Mark Delivered";
+        return isVi ? "Xác nhận Đã giao hàng" : "Mark Delivered";
       default:
         return null;
     }
@@ -211,19 +342,25 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
           <div className="flex items-center gap-3">
             <KialnaLogo size={36} />
             <div>
-              <h1 className="text-base font-bold text-ink tracking-tight leading-tight">Kialna Admin Hub</h1>
-              <p className="text-[10px] text-text-secondary font-medium tracking-wide leading-none">District 1 Logistics & Global Export Hub</p>
+              <h1 className="text-base font-bold text-ink tracking-tight leading-tight">
+                {isVi ? "Kialna Admin Hub" : "Kialna Admin Hub"}
+              </h1>
+              <p className="text-[10px] text-text-secondary font-medium tracking-wide leading-none">
+                {isVi ? "Vận hành Saigon Hub & Xuất khẩu Quốc tế" : "Saigon Hub Logistics & Global Export"}
+              </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
+            <LanguageToggle lang={lang} onChange={setLang} />
+
             <button
               onClick={() => setIsFeeModalOpen(true)}
               className="btn-secondary rounded-full px-4 py-1.5 text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
-              title="Configure Platform Fees"
+              title={isVi ? "Cấu hình Phí Vận chuyển" : "Configure Platform Fees"}
             >
               <Settings className="h-4 w-4" />
-              <span className="hidden sm:inline">Fee Settings</span>
+              <span className="hidden sm:inline">{isVi ? "Cấu hình Phí" : "Fee Settings"}</span>
             </button>
 
             <button
@@ -253,42 +390,63 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 sm:gap-6">
           <div className="card-product rounded-[24px] p-5 sm:p-6 flex flex-col gap-1 bg-white border border-border-light shadow-sm">
             <span className="text-[10px] sm:text-xs font-bold text-text-secondary uppercase tracking-wider">
-              Total Orders
+              {isVi ? "Tổng đơn hàng" : "Total Orders"}
             </span>
             <span className="text-2xl sm:text-3xl font-extrabold text-ink tracking-tight">{totalOrdersCount}</span>
           </div>
 
           <div className="card-product rounded-[24px] p-5 sm:p-6 flex flex-col gap-1 bg-white border border-border-light shadow-sm">
             <span className="text-[10px] sm:text-xs font-bold text-text-secondary uppercase tracking-wider">
-              Action Needed
+              {isVi ? "Chờ lấy hàng" : "Action Needed"}
             </span>
             <span className="text-2xl sm:text-3xl font-extrabold text-amber-600 tracking-tight">{readyCount}</span>
           </div>
 
           <div className="card-product rounded-[24px] p-5 sm:p-6 flex flex-col gap-1 bg-white border border-border-light shadow-sm">
             <span className="text-[10px] sm:text-xs font-bold text-text-secondary uppercase tracking-wider">
-              In Hub Packaging
+              {isVi ? "Đóng gói tại Saigon Hub" : "In Hub Packaging"}
             </span>
             <span className="text-2xl sm:text-3xl font-extrabold text-brand-primary tracking-tight">{hubPackagingCount}</span>
           </div>
 
           <div className="card-product rounded-[24px] p-5 sm:p-6 flex flex-col gap-1 bg-white border border-border-light shadow-sm">
             <span className="text-[10px] sm:text-xs font-bold text-text-secondary uppercase tracking-wider">
-              Shipped / Transit
+              {isVi ? "Đang vận chuyển" : "Shipped / Transit"}
             </span>
             <span className="text-2xl sm:text-3xl font-extrabold text-emerald-600 tracking-tight">{shippedCount}</span>
           </div>
         </div>
 
-        {/* Logistics Revenue Meta Dark Promo Strip */}
-        <div className="card-promo-strip p-6 sm:p-8 rounded-[32px] text-white shadow-xl flex justify-between items-center relative overflow-hidden">
+        {/* Logistics Revenue & Merchant Payout Float Strip */}
+        <div className="card-promo-strip p-6 sm:p-8 rounded-[32px] text-white shadow-xl flex flex-col md:flex-row justify-between md:items-center gap-6 relative overflow-hidden">
           <div className="relative z-10 flex flex-col gap-1">
             <span className="text-xs font-bold uppercase tracking-wider text-white/70">
-              Platform Logistics Fees Collected
+              {isVi
+                ? "Doanh thu Vận chuyển Thu hộ (Cước theo kg + Đóng gói)"
+                : "Platform Logistics Fees Collected (Weight Shipping + Packaging)"}
             </span>
             <div className="flex items-baseline gap-2.5">
               <span className="text-2xl sm:text-4xl font-extrabold tracking-tight">${totalLogisticsRevenueUSD.toFixed(2)} USD</span>
               <span className="text-xs sm:text-sm text-white/60">({totalLogisticsRevenueVND.toLocaleString()} VND)</span>
+            </div>
+          </div>
+
+          <div className="relative z-10 flex flex-wrap gap-3 sm:gap-4">
+            <div className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl px-4 py-3 flex flex-col">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300">
+                {isVi ? "Chờ chuyển khoản Người bán (VND)" : "Unpaid Merchant Float (VND)"}
+              </span>
+              <span className="text-base sm:text-lg font-extrabold text-white">
+                {pendingSellerPayoutVND.toLocaleString()} VND
+              </span>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl px-4 py-3 flex flex-col">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300">
+                {isVi ? "Đã tất toán qua VietQR / Hub" : "Settled via VietQR / Hub"}
+              </span>
+              <span className="text-base sm:text-lg font-extrabold text-white">
+                {settledSellerPayoutVND.toLocaleString()} VND
+              </span>
             </div>
           </div>
           <Truck className="h-16 w-16 text-white/10 absolute right-6 bottom-4 pointer-events-none" />
@@ -302,7 +460,11 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search Order ID, Buyer, or Seller..."
+              placeholder={
+                isVi
+                  ? "Tìm Mã đơn, Người mua, hoặc Người bán..."
+                  : "Search Order ID, Buyer, or Seller..."
+              }
               className="search-pill w-full pl-11 text-xs focus:bg-white transition-all outline-none"
             />
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary pointer-events-none" />
@@ -320,7 +482,7 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
                     : "bg-white text-text-primary border-border-hairline hover:bg-sky-50/60 font-semibold"
                 }`}
               >
-                {stage}
+                {stage === "All" ? (isVi ? "Tất cả" : "All") : translateOrderStatus(stage, lang)}
               </button>
             ))}
           </div>
@@ -332,6 +494,16 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
             filteredOrders.map((o) => {
               const isActioning = actioningOrderId === o.id && isPending;
               const nextActionText = getNextActionText(o.status);
+              const totalWeightKg = o.items.reduce(
+                (sum: number, item: any) =>
+                  sum + (item.weightAtPurchase || item.product.weight || 0.5) * item.quantity,
+                0
+              );
+              const sellerPayoutVND = o.items.reduce(
+                (sum: number, item: any) => sum + item.sellerPriceAtPurchase * item.quantity,
+                0
+              );
+              const isSellerPaid = o.payoutStatus === "paid_by_hub";
 
               return (
                 <div
@@ -342,18 +514,24 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
                   <div className="flex justify-between items-start border-b border-border-light pb-3">
                     <div className="flex flex-col gap-0.5">
                       <span className="text-[10px] font-mono text-text-secondary font-semibold">
-                        ORDER: {o.id.substring(0, 8).toUpperCase()}...
+                        {isVi ? "MÃ ĐƠN:" : "ORDER:"} {o.id.substring(0, 8).toUpperCase()}...
                       </span>
                       <span className="text-xs font-bold text-ink">
-                        Buyer: {o.buyer.name}
+                        {isVi ? "Khách mua:" : "Buyer:"} {o.buyer.name}
                       </span>
                     </div>
 
-                    <span
-                      className="text-[10px] font-bold px-3 py-1 rounded-full bg-surface-soft text-ink border border-border-light uppercase tracking-wide leading-none"
-                    >
-                      {o.status}
-                    </span>
+                    <div className="flex flex-col items-end gap-1">
+                      <span
+                        className="text-[10px] font-bold px-3 py-1 rounded-full bg-surface-soft text-ink border border-border-light uppercase tracking-wide leading-none"
+                      >
+                        {translateOrderStatus(o.status, lang)}
+                      </span>
+                      <span className="text-[10px] text-text-secondary inline-flex items-center gap-1">
+                        <Scale className="h-3 w-3 text-brand-primary" />
+                        <strong className="text-ink">{totalWeightKg.toFixed(2)} kg</strong>
+                      </span>
+                    </div>
                   </div>
 
                   {/* Items summary */}
@@ -361,13 +539,40 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
                     {o.items.map((item: any, idx: number) => (
                       <div key={idx} className="flex justify-between items-center text-text-secondary">
                         <span className="truncate pr-2">
-                          <span className="font-bold text-ink">x{item.quantity}</span> {item.product.name}
+                          <span className="font-bold text-ink">x{item.quantity}</span>{" "}
+                          {translateProductName(item.product.name, lang)}
+                          <span className="text-[10px] ml-1">
+                            ({((item.weightAtPurchase || item.product.weight || 0.5) * item.quantity).toFixed(2)} kg)
+                          </span>
                         </span>
                         <span className="text-[10px] font-medium shrink-0">
-                          Seller: {item.product.seller.name}
+                          {isVi ? "Người bán:" : "Seller:"} {item.product.seller.name}
                         </span>
                       </div>
                     ))}
+                  </div>
+
+                  {/* Seller Payout Status Pill */}
+                  <div
+                    className={`px-3 py-2 rounded-xl border text-[11px] flex items-center justify-between ${
+                      isSellerPaid
+                        ? "bg-emerald-50/70 border-emerald-200 text-emerald-800"
+                        : "bg-amber-50/70 border-amber-200 text-amber-800"
+                    }`}
+                  >
+                    <span className="font-semibold flex items-center gap-1.5">
+                      <Landmark className="h-3.5 w-3.5 shrink-0" />
+                      {isSellerPaid
+                        ? isVi
+                          ? `Đã trả Người bán (${o.payoutMethod || "VietQR"})`
+                          : `Merchant Paid (${o.payoutMethod || "VietQR"})`
+                        : isVi
+                        ? "Chờ trả Người bán:"
+                        : "Merchant Payout Due:"}
+                    </span>
+                    <span className="font-extrabold">
+                      {sellerPayoutVND.toLocaleString()} VND
+                    </span>
                   </div>
 
                   {/* Locations summary */}
@@ -375,13 +580,15 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
                     <div className="flex items-center gap-1.5 truncate">
                       <MapPin className="h-3.5 w-3.5 shrink-0 text-amber-500" />
                       <span className="truncate">
-                        <strong className="text-ink">Pickup:</strong> {o.items[0]?.product.seller.address || "District 1 Hub"}
+                        <strong className="text-ink">{isVi ? "Lấy hàng:" : "Pickup:"}</strong>{" "}
+                        {o.items[0]?.product.seller.address || "Saigon Hub"}
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5 truncate">
                       <Truck className="h-3.5 w-3.5 shrink-0 text-brand-primary" />
                       <span className="truncate">
-                        <strong className="text-ink">Delivery:</strong> {o.buyer.address}
+                        <strong className="text-ink">{isVi ? "Giao đến:" : "Delivery:"}</strong>{" "}
+                        {o.buyer.address}
                       </span>
                     </div>
                   </div>
@@ -392,7 +599,7 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
                       onClick={() => setSelectedOrder(o)}
                       className="btn-secondary rounded-full px-4 py-2 text-xs font-semibold cursor-pointer"
                     >
-                      Manifest
+                      {isVi ? "Chi tiết & VietQR" : "Manifest"}
                     </button>
 
                     {nextActionText ? (
@@ -406,7 +613,8 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
                       </button>
                     ) : (
                       <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-1">
-                        <CheckCircle2 className="h-3.5 w-3.5" /> Delivered & Completed
+                        <CheckCircle2 className="h-3.5 w-3.5" />{" "}
+                        {isVi ? "Đã giao hoàn tất" : "Delivered & Completed"}
                       </span>
                     )}
                   </div>
@@ -425,9 +633,13 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
               <div className="h-12 w-12 rounded-full bg-surface-soft flex items-center justify-center text-text-secondary">
                 <Package className="h-6 w-6 opacity-60" />
               </div>
-              <h3 className="text-base font-bold text-ink">No orders match filter</h3>
+              <h3 className="text-base font-bold text-ink">
+                {isVi ? "Không tìm thấy đơn hàng phù hợp" : "No orders match filter"}
+              </h3>
               <p className="text-xs text-text-secondary max-w-sm">
-                Try selecting a different pipeline tab or clearing your search keywords.
+                {isVi
+                  ? "Hãy thử chọn trạng thái vận chuyển khác hoặc xóa từ khóa tìm kiếm."
+                  : "Try selecting a different pipeline tab or clearing your search keywords."}
               </p>
             </div>
           )}
@@ -441,9 +653,11 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
             {/* Header */}
             <div className="px-6 py-5 border-b border-border-light flex items-center justify-between shrink-0">
               <div>
-                <span className="text-[10px] font-mono text-text-secondary uppercase tracking-wider font-semibold">Logistics Manifest</span>
+                <span className="text-[10px] font-mono text-text-secondary uppercase tracking-wider font-semibold">
+                  {isVi ? "VẬN ĐƠN CHI TIẾT & ĐỐI SOÁT" : "Logistics Manifest"}
+                </span>
                 <h2 className="text-base font-bold text-ink">
-                  Order {selectedOrder.id.substring(0, 8).toUpperCase()}
+                  {isVi ? "Đơn hàng" : "Order"} {selectedOrder.id.substring(0, 8).toUpperCase()}
                 </h2>
               </div>
               <button
@@ -459,13 +673,21 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
               {/* Visual Supply Chain Timeline */}
               <div className="bg-surface-soft p-4 sm:p-5 rounded-2xl border border-border-light flex flex-col gap-2.5">
                 <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">
-                  Supply Chain Pipeline Progress
+                  {isVi ? "TIẾN ĐỘ VẬN CHUYỂN CHUỖI CUNG ỨNG" : "Supply Chain Pipeline Progress"}
                 </span>
                 <div className="flex items-center justify-between relative mt-1">
                   {PIPELINE_STAGES.map((st, idx) => {
                     const currentIdx = PIPELINE_STAGES.indexOf(selectedOrder.status as any);
                     const isDone = idx <= currentIdx;
                     const isCurrent = idx === currentIdx;
+                    const shortStageVi: Record<string, string> = {
+                      "Ready for Pickup": "Chờ lấy",
+                      "Driver Assigned": "Tài xế",
+                      "Picked Up": "Đã lấy",
+                      "In Packaging": "Đóng gói",
+                      Shipped: "Đang bay",
+                      Delivered: "Đã giao",
+                    };
 
                     return (
                       <div key={st} className="flex flex-col items-center gap-1 z-10">
@@ -480,8 +702,8 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
                         >
                           {isDone ? <Check className="h-3.5 w-3.5" /> : idx + 1}
                         </div>
-                        <span className="text-[8px] font-semibold text-text-secondary max-w-[45px] text-center leading-none">
-                          {st.split(" ")[0]}
+                        <span className="text-[8px] font-semibold text-text-secondary max-w-[54px] text-center leading-none">
+                          {isVi ? shortStageVi[st] || st : st.split(" ")[0]}
                         </span>
                       </div>
                     );
@@ -491,7 +713,9 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
 
               {/* Status override selection dropdown */}
               <div className="flex items-center justify-between border-b border-border-light pb-4">
-                <span className="text-xs font-bold text-ink">Manual Status Override</span>
+                <span className="text-xs font-bold text-ink">
+                  {isVi ? "Cập nhật Trạng thái Vận đơn" : "Manual Status Override"}
+                </span>
                 <select
                   value={selectedOrder.status}
                   onChange={(e) => handleSetStatus(selectedOrder.id, e.target.value)}
@@ -500,7 +724,7 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
                 >
                   {PIPELINE_STAGES.map((st) => (
                     <option key={st} value={st}>
-                      {st}
+                      {translateOrderStatus(st, lang)}
                     </option>
                   ))}
                 </select>
@@ -511,7 +735,8 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
                 {/* Seller Info */}
                 <div className="p-3.5 bg-surface-soft rounded-2xl border border-border-light flex flex-col gap-1.5">
                   <span className="text-[10px] font-bold text-amber-600 uppercase flex items-center gap-1">
-                    <User className="h-3 w-3" /> Vietnamese Seller
+                    <User className="h-3 w-3" />{" "}
+                    {isVi ? "NGƯỜI BÁN VIỆT NAM" : "Vietnamese Seller"}
                   </span>
                   <div className="font-bold text-ink">
                     {selectedOrder.items[0]?.product.seller.name}
@@ -527,7 +752,8 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
                 {/* Buyer Info */}
                 <div className="p-3.5 bg-surface-soft rounded-2xl border border-border-light flex flex-col gap-1.5">
                   <span className="text-[10px] font-bold text-brand-primary uppercase flex items-center gap-1">
-                    <Truck className="h-3 w-3" /> International Buyer
+                    <Truck className="h-3 w-3" />{" "}
+                    {isVi ? "KHÁCH MUA QUỐC TẾ" : "International Buyer"}
                   </span>
                   <div className="font-bold text-ink">{selectedOrder.buyer.name}</div>
                   <div className="text-[10px] text-text-secondary leading-tight">
@@ -541,31 +767,246 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
 
               {/* Items Manifest */}
               <div className="space-y-2">
-                <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">
-                  Itemized Manifest & Hub Fees
-                </span>
-                {selectedOrder.items.map((item: any, idx: number) => (
-                  <div key={idx} className="p-3.5 rounded-2xl border border-border-light flex flex-col gap-1 bg-white text-xs">
-                    <div className="flex justify-between font-bold text-ink">
-                      <span>{item.product.name} (x{item.quantity})</span>
-                      <span className="text-brand-primary">${((item.sellerPriceAtPurchase * item.quantity) / EXCHANGE_RATE).toFixed(2)} USD</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">
+                    {isVi
+                      ? "CHI TIẾT KIỆN HÀNG, KHỐI LƯỢNG & CƯỚC HUB"
+                      : "Itemized Manifest, Weight & Hub Fees"}
+                  </span>
+                  <span className="text-[11px] font-bold text-brand-primary flex items-center gap-1">
+                    <Scale className="h-3.5 w-3.5" />
+                    {isVi ? "Tổng khối lượng kiện hàng:" : "Total Parcel Weight:"}{" "}
+                    {selectedOrder.items
+                      .reduce(
+                        (sum: number, i: any) =>
+                          sum + (i.weightAtPurchase || i.product.weight || 0.5) * i.quantity,
+                        0
+                      )
+                      .toFixed(2)}{" "}
+                    kg
+                  </span>
+                </div>
+                {selectedOrder.items.map((item: any, idx: number) => {
+                  const unitWeight = item.weightAtPurchase || item.product.weight || 0.5;
+                  return (
+                    <div key={idx} className="p-3.5 rounded-2xl border border-border-light flex flex-col gap-1 bg-white text-xs">
+                      <div className="flex justify-between font-bold text-ink">
+                        <span>
+                          {translateProductName(item.product.name, lang)} (x{item.quantity}) •{" "}
+                          <span className="text-brand-primary font-semibold">
+                            {(unitWeight * item.quantity).toFixed(2)} kg
+                          </span>
+                        </span>
+                        <span className="text-brand-primary">${((item.sellerPriceAtPurchase * item.quantity) / EXCHANGE_RATE).toFixed(2)} USD</span>
+                      </div>
+                      <div className="flex justify-between text-[10px] text-text-secondary">
+                        <span>
+                          {isVi ? "Giá gốc người bán:" : "Seller Price:"}{" "}
+                          {(item.sellerPriceAtPurchase * item.quantity).toLocaleString()} VND
+                        </span>
+                        <span>
+                          {isVi
+                            ? `Cước bay (${unitWeight}kg/sp): ${(item.shippingFeeAtPurchase * item.quantity).toLocaleString()} VND • Đóng gói: ${(item.packagingFeeAtPurchase * item.quantity).toLocaleString()} VND`
+                            : `Air Shipping (${unitWeight}kg/unit): ${(item.shippingFeeAtPurchase * item.quantity).toLocaleString()} VND • Packaging: ${(item.packagingFeeAtPurchase * item.quantity).toLocaleString()} VND`}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex justify-between text-[10px] text-text-secondary">
-                      <span>Seller Price: {(item.sellerPriceAtPurchase * item.quantity).toLocaleString()} VND</span>
-                      <span>Fees: {((item.shippingFeeAtPurchase + item.packagingFeeAtPurchase) * item.quantity).toLocaleString()} VND</span>
+                  );
+                })}
+              </div>
+
+              {/* Saigon Hub Merchant Payout (VietQR / Napas 247) */}
+              {(() => {
+                const seller = selectedOrder.items[0]?.product?.seller;
+                const sellerPayoutVND = selectedOrder.items.reduce(
+                  (sum: number, i: any) => sum + i.sellerPriceAtPurchase * i.quantity,
+                  0
+                );
+                const isPaid = selectedOrder.payoutStatus === "paid_by_hub";
+                const bankBin = seller?.bankName ? BANK_BIN_MAP[seller.bankName] || "VCB" : "VCB";
+                const orderShortCode = selectedOrder.id.substring(0, 8).toUpperCase();
+                const autoVietQrUrl =
+                  seller?.bankAccountNumber
+                    ? `https://img.vietqr.io/image/${bankBin}-${seller.bankAccountNumber}-compact2.png?amount=${sellerPayoutVND}&addInfo=${encodeURIComponent(
+                        `KIALNA ${orderShortCode}`
+                      )}&accountName=${encodeURIComponent(seller.bankAccountName || seller.name || "")}`
+                    : null;
+                const qrImageToDisplay = seller?.vietQrImage || autoVietQrUrl;
+
+                return (
+                  <div className="p-4 sm:p-5 rounded-2xl border border-border-light bg-surface-soft/80 flex flex-col gap-3.5">
+                    <div className="flex items-center justify-between border-b border-border-light pb-2.5">
+                      <div className="flex items-center gap-2">
+                        <Landmark className="h-4 w-4 text-brand-primary" />
+                        <span className="text-xs font-bold text-ink uppercase tracking-wider">
+                          {isVi
+                            ? "SAIGON HUB → THANH TOÁN CHO NGƯỜI BÁN VIỆT NAM"
+                            : "Saigon Hub → Vietnamese Merchant Payout"}
+                        </span>
+                      </div>
+                      {isPaid ? (
+                        <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 uppercase">
+                          {isVi ? "✓ Đã thanh toán" : "✓ Paid by Hub"}
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200 uppercase">
+                          {isVi
+                            ? `CẦN THANH TOÁN: ${sellerPayoutVND.toLocaleString()} VND`
+                            : `Payout Due: ${sellerPayoutVND.toLocaleString()} VND`}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+                      {/* Left: Bank Account Details */}
+                      <div className="sm:col-span-7 flex flex-col gap-2 text-xs">
+                        <div className="bg-white p-3.5 rounded-xl border border-border-light space-y-1.5">
+                          <div className="flex justify-between">
+                            <span className="text-text-secondary">
+                              {isVi ? "Người bán:" : "Merchant:"}
+                            </span>
+                            <span className="font-bold text-ink">{seller?.name}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-text-secondary">
+                              {isVi ? "Ngân hàng VN:" : "VN Bank:"}
+                            </span>
+                            <span className="font-bold text-ink">
+                              {seller?.bankName || (isVi ? "Chưa cập nhật" : "Not configured")}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-text-secondary">
+                              {isVi ? "Số tài khoản:" : "Account No:"}
+                            </span>
+                            <span className="font-mono font-bold text-brand-primary select-all">
+                              {seller?.bankAccountNumber || "—"}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-text-secondary">
+                              {isVi ? "Chủ tài khoản:" : "Account Holder:"}
+                            </span>
+                            <span className="font-bold text-ink uppercase">
+                              {seller?.bankAccountName || seller?.name?.toUpperCase()}
+                            </span>
+                          </div>
+                          <div className="flex justify-between border-t border-border-light pt-1.5 mt-1">
+                            <span className="text-text-secondary">
+                              {isVi ? "Số tiền chuyển khoản:" : "Transfer Amount:"}
+                            </span>
+                            <span className="font-extrabold text-emerald-700">
+                              {sellerPayoutVND.toLocaleString()} VND
+                            </span>
+                          </div>
+                        </div>
+
+                        {isPaid ? (
+                          <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between">
+                            <div>
+                              <div className="text-xs font-bold text-emerald-900">
+                                {isVi
+                                  ? `Đã tất toán qua ${selectedOrder.payoutMethod || "VietQR Napas 247"}`
+                                  : `Settled via ${selectedOrder.payoutMethod || "VietQR Napas 247"}`}
+                              </div>
+                              <div className="text-[10px] text-emerald-700 font-mono">
+                                {isVi ? "Mã GD:" : "Ref:"} {selectedOrder.payoutRef || "N/A"}
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleResetSellerPayout(selectedOrder.id)}
+                              disabled={isPending}
+                              className="text-[11px] text-red-600 hover:underline font-semibold cursor-pointer"
+                            >
+                              {isVi ? "Hoàn tác" : "Undo"}
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col gap-2 pt-1">
+                            <div className="grid grid-cols-2 gap-2">
+                              <select
+                                value={payoutMethodInput}
+                                onChange={(e) => setPayoutMethodInput(e.target.value)}
+                                className="input-primary py-1.5 px-2.5 text-xs min-h-[38px] rounded-xl cursor-pointer"
+                              >
+                                <option value="VietQR Napas 247">VietQR Napas 247</option>
+                                <option value="Cash on Pickup (COD)">
+                                  {isVi ? "Tiền mặt khi lấy hàng (COD)" : "Cash on Pickup (COD)"}
+                                </option>
+                                <option value="Weekly Bank Batch">
+                                  {isVi ? "Đối soát định kỳ hàng tuần" : "Weekly Bank Batch"}
+                                </option>
+                              </select>
+                              <input
+                                type="text"
+                                value={payoutRefInput}
+                                onChange={(e) => setPayoutRefInput(e.target.value)}
+                                placeholder={
+                                  isVi ? "Mã giao dịch / Ghi chú (tùy chọn)" : "Bank Ref / Note (optional)"
+                                }
+                                className="input-primary py-1.5 px-3 text-xs min-h-[38px] rounded-xl"
+                              />
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleMarkSellerPaid(selectedOrder.id)}
+                              disabled={isPending}
+                              className="btn-primary w-full py-2.5 px-4 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                            >
+                              <CheckCircle2 className="h-4 w-4" />
+                              <span>
+                                {isVi
+                                  ? `Xác nhận đã chuyển ${sellerPayoutVND.toLocaleString()} VND cho Người bán`
+                                  : `Confirm ${sellerPayoutVND.toLocaleString()} VND Paid to Merchant`}
+                              </span>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Right: Scannable VietQR Code */}
+                      <div className="sm:col-span-5 flex flex-col items-center justify-center bg-white p-3 rounded-2xl border border-border-light">
+                        {qrImageToDisplay ? (
+                          <>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={qrImageToDisplay}
+                              alt="Merchant VietQR"
+                              className="w-36 h-36 object-contain rounded-lg"
+                            />
+                            <span className="text-[10px] font-bold text-text-secondary mt-1.5 flex items-center gap-1">
+                              <QrCode className="h-3 w-3 text-brand-primary" />
+                              {isVi ? "Quét bằng App Ngân hàng VN" : "Scan with VN Banking App"}
+                            </span>
+                          </>
+                        ) : (
+                          <div className="py-6 px-3 text-center text-text-secondary flex flex-col items-center gap-1.5">
+                            <QrCode className="h-8 w-8 opacity-40" />
+                            <span className="text-[11px] font-semibold">
+                              {isVi ? "Chưa có mã VietQR" : "No VietQR on file"}
+                            </span>
+                            <span className="text-[10px]">
+                              {isVi
+                                ? "Nhắc người bán thêm Số tài khoản hoặc ảnh mã VietQR trong Hồ sơ Cửa hàng."
+                                : "Ask seller to add bank account or VietQR in Store Profile."}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                ))}
-              </div>
+                );
+              })()}
 
               {/* Financial Ledger Summary */}
               <div className="p-4 bg-surface-soft rounded-2xl border border-border-light text-xs space-y-1.5">
                 <div className="flex justify-between text-text-secondary">
-                  <span>Buyer Total Billed:</span>
+                  <span>{isVi ? "Tổng khách mua đã thanh toán:" : "Buyer Total Billed:"}</span>
                   <span className="font-bold text-brand-primary">${selectedOrder.totalPaid.toFixed(2)} USD</span>
                 </div>
                 <div className="flex justify-between text-text-secondary">
-                  <span>Seller Payout:</span>
+                  <span>{isVi ? "Tiền hàng trả Người bán:" : "Seller Payout:"}</span>
                   <span className="font-semibold text-ink">
                     {(
                       selectedOrder.items.reduce(
@@ -576,7 +1017,9 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
                   </span>
                 </div>
                 <div className="flex justify-between text-text-secondary border-t border-border-light pt-2">
-                  <span>Logistics Fees Kept by Kialna:</span>
+                  <span>
+                    {isVi ? "Phí vận chuyển & đóng gói Saigon Hub thu:" : "Logistics Fees Kept by Kialna:"}
+                  </span>
                   <span className="font-bold text-ink">
                     {(
                       selectedOrder.items.reduce(
@@ -602,7 +1045,9 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
                 <div className="p-1.5 rounded-full bg-brand-primary/10 text-brand-primary">
                   <Settings className="h-5 w-5" />
                 </div>
-                <h3 className="text-base font-bold text-ink">Platform Fee Rates</h3>
+                <h3 className="text-base font-bold text-ink">
+                  {isVi ? "Cấu hình Biểu phí Vận chuyển" : "Platform Fee Rates"}
+                </h3>
               </div>
               <button
                 onClick={() => setIsFeeModalOpen(false)}
@@ -621,7 +1066,9 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
 
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-bold text-ink">
-                  International Shipping Fee (VND)
+                  {isVi
+                    ? "Đơn giá Vận chuyển Hàng không Quốc tế (VND / kg)"
+                    : "International Air Shipping Rate (VND per kg)"}
                 </label>
                 <div className="relative">
                   <input
@@ -629,19 +1076,26 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
                     inputMode="numeric"
                     value={shippingFeeInput}
                     onChange={(e) => setShippingFeeInput(e.target.value)}
-                    className="input-primary w-full pr-24 text-xs min-h-[46px] rounded-xl"
+                    className="input-primary w-full pr-28 text-xs min-h-[46px] rounded-xl"
                     disabled={isPending}
                     required
                   />
                   <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-brand-primary pointer-events-none">
-                    ${(parseFloat(shippingFeeInput || "0") / EXCHANGE_RATE).toFixed(2)} USD
+                    ${(parseFloat(shippingFeeInput || "0") / EXCHANGE_RATE).toFixed(2)} USD / kg
                   </span>
                 </div>
+                <span className="text-[10px] text-text-secondary">
+                  {isVi
+                    ? "Nhân với khối lượng (kg) của từng sản phẩm để tính phí vận chuyển."
+                    : "Multiplied by each product's weight (kg) to calculate shipping cost."}
+                </span>
               </div>
 
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-bold text-ink">
-                  Hub Custom Packaging Fee (VND)
+                  {isVi
+                    ? "Phí Đóng gói Tiêu chuẩn Xuất khẩu tại Hub (VND)"
+                    : "Hub Custom Packaging Fee (VND)"}
                 </label>
                 <div className="relative">
                   <input
@@ -664,7 +1118,13 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
                 className="btn-primary w-full mt-2 text-xs font-bold min-h-[50px] rounded-full shadow-lg shadow-brand-primary/20 cursor-pointer"
                 disabled={isPending}
               >
-                {isPending ? "Updating Fee Rates..." : "Save Platform Fee Rates"}
+                {isPending
+                  ? isVi
+                    ? "Đang lưu biểu phí..."
+                    : "Updating Fee Rates..."
+                  : isVi
+                  ? "Lưu Biểu phí Vận chuyển"
+                  : "Save Platform Fee Rates"}
               </button>
             </form>
           </div>
@@ -672,7 +1132,7 @@ export default function AdminDashboard({ initialOrders, initialFees, currentUser
       )}
 
       {/* 5. Role Switcher Widget */}
-      <RoleSwitcher currentUser={currentUser} />
+      <RoleSwitcher currentUser={currentUser} lang={lang} />
     </div>
   );
 }

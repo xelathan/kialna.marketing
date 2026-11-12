@@ -125,6 +125,10 @@ export async function updateUserProfile(data: {
   phone?: string | null;
   address?: string | null;
   logo?: string | null;
+  bankName?: string | null;
+  bankAccountNumber?: string | null;
+  bankAccountName?: string | null;
+  vietQrImage?: string | null;
 }) {
   const user = await getCurrentUser();
   if (!user) {
@@ -139,6 +143,10 @@ export async function updateUserProfile(data: {
         ...(data.phone !== undefined && { phone: data.phone?.trim() || null }),
         ...(data.address !== undefined && { address: data.address?.trim() || null }),
         ...(data.logo !== undefined && { logo: data.logo || null }),
+        ...(data.bankName !== undefined && { bankName: data.bankName?.trim() || null }),
+        ...(data.bankAccountNumber !== undefined && { bankAccountNumber: data.bankAccountNumber?.trim() || null }),
+        ...(data.bankAccountName !== undefined && { bankAccountName: data.bankAccountName?.trim().toUpperCase() || null }),
+        ...(data.vietQrImage !== undefined && { vietQrImage: data.vietQrImage || null }),
       },
     });
 
@@ -153,6 +161,10 @@ export async function updateUserProfile(data: {
         phone: updatedUser.phone,
         address: updatedUser.address,
         logo: updatedUser.logo,
+        bankName: updatedUser.bankName,
+        bankAccountNumber: updatedUser.bankAccountNumber,
+        bankAccountName: updatedUser.bankAccountName,
+        vietQrImage: updatedUser.vietQrImage,
       },
     };
   } catch (error: any) {

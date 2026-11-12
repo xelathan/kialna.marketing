@@ -37,6 +37,7 @@ export async function createProduct(data: {
   description?: string;
   category?: string;
   basePrice: number;
+  weight: number;
   inventory: number;
   images: string[];
   status: string;
@@ -54,6 +55,10 @@ export async function createProduct(data: {
     return { success: false, error: "Price cannot be negative." };
   }
 
+  if (!data.weight || data.weight <= 0) {
+    return { success: false, error: "Product weight must be greater than 0." };
+  }
+
   if (data.inventory < 0) {
     return { success: false, error: "Inventory cannot be negative." };
   }
@@ -66,6 +71,7 @@ export async function createProduct(data: {
         description: data.description?.trim() || null,
         category: data.category?.trim() || "General",
         basePrice: data.basePrice,
+        weight: data.weight,
         inventory: data.inventory,
         images: JSON.stringify(data.images),
         status: data.status || "active",
@@ -87,6 +93,7 @@ export async function updateProduct(
     description?: string;
     category?: string;
     basePrice: number;
+    weight: number;
     inventory: number;
     images: string[];
     status: string;
@@ -103,6 +110,10 @@ export async function updateProduct(
 
   if (data.basePrice < 0) {
     return { success: false, error: "Price cannot be negative." };
+  }
+
+  if (!data.weight || data.weight <= 0) {
+    return { success: false, error: "Product weight must be greater than 0." };
   }
 
   if (data.inventory < 0) {
@@ -130,6 +141,7 @@ export async function updateProduct(
         description: data.description?.trim() || null,
         category: data.category?.trim() || "General",
         basePrice: data.basePrice,
+        weight: data.weight,
         inventory: data.inventory,
         images: JSON.stringify(data.images),
         status: data.status || "active",
@@ -235,6 +247,10 @@ export async function getSellerOrders() {
         ordersMap.set(orderId, {
           id: item.order.id,
           status: item.order.status,
+          payoutStatus: item.order.payoutStatus,
+          payoutMethod: item.order.payoutMethod,
+          payoutRef: item.order.payoutRef,
+          payoutAt: item.order.payoutAt,
           totalPaid: item.order.totalPaid,
           createdAt: item.order.createdAt,
           buyerName: item.order.buyer.name,
@@ -247,6 +263,7 @@ export async function getSellerOrders() {
         id: item.id,
         name: item.product.name,
         quantity: item.quantity,
+        weight: item.weightAtPurchase || item.product.weight || 0.5,
         price: item.sellerPriceAtPurchase,
         shippingFee: item.shippingFeeAtPurchase,
         packagingFee: item.packagingFeeAtPurchase,

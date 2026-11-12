@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Kialna | Authentic Vietnamese Products • Direct to U.S. & Worldwide",
-  description: "Connecting Vietnamese sellers and artisans directly to global buyers, especially in the U.S. Shop authentic crafts, specialty coffee, organic teas, textiles, and authentic Vietnamese products with transparent pricing and Saigon District 1 export logistics.",
+  description: "Connecting Vietnamese sellers and artisans directly to global buyers, especially in the U.S. Shop authentic crafts, specialty coffee, organic teas, textiles, and authentic Vietnamese products with transparent pricing and Saigon Hub export logistics.",
   icons: {
     icon: [
       { url: "/icon.svg", type: "image/svg+xml" },

@@ -30,8 +30,8 @@ export default async function NewProductPage() {
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <div>
-            <h1 className="text-base sm:text-lg font-bold text-text-primary">Add New Listing</h1>
-            <p className="text-xs text-text-secondary">Create a new authentic Vietnamese product listing</p>
+            <h1 className="text-base sm:text-lg font-bold text-text-primary">Đăng Sản Phẩm Mới • Add New Listing</h1>
+            <p className="text-xs text-text-secondary">Tạo sản phẩm Việt Nam mới để bán toàn cầu • Create a new Vietnamese product listing</p>
           </div>
         </div>
       </header>
