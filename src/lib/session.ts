@@ -62,6 +62,12 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
 
     if (!user) return null;
 
+    const statusRows: any[] = await prisma.$queryRawUnsafe(
+      "SELECT status FROM User WHERE id = ? LIMIT 1",
+      userId
+    );
+    if (statusRows[0]?.status === "disabled") return null;
+
     return {
       id: user.id,
       role: user.role,

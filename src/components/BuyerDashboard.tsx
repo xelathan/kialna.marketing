@@ -50,9 +50,18 @@ interface BuyerDashboardProps {
     address?: string | null;
     logo?: string | null;
   };
+  initialFees?: {
+    shipping: number;
+    packaging: number;
+    service: number;
+  };
 }
 
-export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDashboardProps) {
+export default function BuyerDashboard({
+  initialProducts,
+  currentUser,
+  initialFees,
+}: BuyerDashboardProps) {
   const router = useRouter();
   const { lang, setLang } = usePortalLanguage("buyer");
   const isVi = lang === "vi";
@@ -87,11 +96,14 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
   const [ordersError, setOrdersError] = useState("");
 
   const EXCHANGE_RATE = 25000; // 25,000 VND = 1 USD
-  const SHIPPING_RATE_PER_KG = 120000; // 120,000 VND per kg
-  const FIXED_PACKAGING = 30000; // 30,000 VND per unit
+  const SHIPPING_RATE_PER_KG = initialFees?.shipping ?? 120000; // 120,000 VND per kg
+  const FIXED_PACKAGING = initialFees?.packaging ?? 30000; // 30,000 VND per unit
+  const DEFAULT_SERVICE_FEE = initialFees?.service ?? 0;
 
   const getProductWeightKg = (p: any) => (p?.weight && p.weight > 0 ? p.weight : 0.5);
   const getUnitShippingVND = (p: any) => Math.round(SHIPPING_RATE_PER_KG * getProductWeightKg(p));
+  const getUnitServiceFeeVND = (p: any) =>
+    p?.serviceFee && p.serviceFee > 0 ? p.serviceFee : DEFAULT_SERVICE_FEE;
 
   // Load orders when entering order view
   useEffect(() => {
@@ -176,6 +188,10 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
 
   // Totals calculations
   const cartSubtotalVND = cart.reduce((acc, item) => acc + item.product.basePrice * item.quantity, 0);
+  const cartServiceFeeVND = cart.reduce(
+    (acc, item) => acc + getUnitServiceFeeVND(item.product) * item.quantity,
+    0
+  );
   const cartTotalWeightKg = cart.reduce(
     (acc, item) => acc + getProductWeightKg(item.product) * item.quantity,
     0
@@ -185,7 +201,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
     0
   );
   const cartPackagingVND = cart.reduce((acc, item) => acc + FIXED_PACKAGING * item.quantity, 0);
-  const cartTotalVND = cartSubtotalVND + cartShippingVND + cartPackagingVND;
+  const cartTotalVND = cartSubtotalVND + cartServiceFeeVND + cartShippingVND + cartPackagingVND;
   const cartTotalUSD = cartTotalVND / EXCHANGE_RATE;
 
   const [checkoutStep, setCheckoutStep] = useState<"details" | "payment">("details");
@@ -878,6 +894,14 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                       ${(selectedProduct.basePrice / EXCHANGE_RATE).toFixed(2)} USD
                     </span>
                   </div>
+                  {getUnitServiceFeeVND(selectedProduct) > 0 && (
+                    <div className="flex justify-between text-text-secondary">
+                      <span>{isVi ? "+ Phí dịch vụ sản phẩm:" : "+ Service Fee:"}</span>
+                      <span>
+                        ${(getUnitServiceFeeVND(selectedProduct) / EXCHANGE_RATE).toFixed(2)} USD
+                      </span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-text-secondary">
                     <span>{isVi ? "+ Phí đóng gói xuất khẩu:" : "+ Export Packaging Fee:"}</span>
                     <span>${(FIXED_PACKAGING / EXCHANGE_RATE).toFixed(2)} USD</span>
@@ -894,10 +918,10 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                     <span className="text-ink">{isVi ? "Tổng mỗi sản phẩm:" : "Total Per Unit:"}</span>
                     <div className="text-right">
                       <div className="text-base font-bold text-brand-primary">
-                        ${((selectedProduct.basePrice + getUnitShippingVND(selectedProduct) + FIXED_PACKAGING) / EXCHANGE_RATE).toFixed(2)} USD
+                        ${((selectedProduct.basePrice + getUnitServiceFeeVND(selectedProduct) + getUnitShippingVND(selectedProduct) + FIXED_PACKAGING) / EXCHANGE_RATE).toFixed(2)} USD
                       </div>
                       <div className="text-[10px] text-text-secondary mt-0.5 leading-none">
-                        {(selectedProduct.basePrice + getUnitShippingVND(selectedProduct) + FIXED_PACKAGING).toLocaleString()} VND
+                        {(selectedProduct.basePrice + getUnitServiceFeeVND(selectedProduct) + getUnitShippingVND(selectedProduct) + FIXED_PACKAGING).toLocaleString()} VND
                       </div>
                     </div>
                   </div>
@@ -940,7 +964,7 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                   >
                     <ShoppingBag className="h-4 w-4" />
                     <span>
-                      {isVi ? "Thêm vào giỏ" : "Add to Cart"} — ${(((selectedProduct.basePrice + getUnitShippingVND(selectedProduct) + FIXED_PACKAGING) * detailQuantity) / EXCHANGE_RATE).toFixed(2)} USD
+                      {isVi ? "Thêm vào giỏ" : "Add to Cart"} — ${(((selectedProduct.basePrice + getUnitServiceFeeVND(selectedProduct) + getUnitShippingVND(selectedProduct) + FIXED_PACKAGING) * detailQuantity) / EXCHANGE_RATE).toFixed(2)} USD
                     </span>
                   </button>
                 </div>
@@ -1080,6 +1104,14 @@ export default function BuyerDashboard({ initialProducts, currentUser }: BuyerDa
                       ${(cartSubtotalVND / EXCHANGE_RATE).toFixed(2)} USD
                     </span>
                   </div>
+                  {cartServiceFeeVND > 0 && (
+                    <div className="flex justify-between">
+                      <span>{isVi ? "Phí dịch vụ sản phẩm:" : "Service Fees:"}</span>
+                      <span className="text-ink font-semibold">
+                        ${(cartServiceFeeVND / EXCHANGE_RATE).toFixed(2)} USD
+                      </span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span>{isVi ? "Phí đóng gói:" : "Packaging Fees:"}</span>
                     <span className="text-ink font-semibold">

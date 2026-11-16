@@ -55,10 +55,11 @@ export async function createOrder(
 
   try {
     const result = await prisma.$transaction(async (tx) => {
-      // 1. Fetch fees dynamically (shipping fee is rate per kg; packaging fee is per unit)
+      // 1. Fetch fees dynamically (shipping fee is rate per kg; packaging fee is per unit; service fee is per listing item)
       const fees = await tx.fee.findMany();
       const shippingRatePerKg = fees.find((f) => f.feeName === "shipping")?.amount || 120000;
       const packagingFee = fees.find((f) => f.feeName === "packaging")?.amount || 30000;
+      const defaultServiceFee = fees.find((f) => f.feeName === "service")?.amount || 0;
 
       let totalVND = 0;
       const verifiedItems = [];
@@ -81,15 +82,22 @@ export async function createOrder(
           throw new Error(`Insufficient stock for "${product.name}". Only ${product.inventory} left.`);
         }
 
+        const feeRows: any[] = await tx.$queryRawUnsafe(
+          "SELECT serviceFee FROM Product WHERE id = ? LIMIT 1",
+          product.id
+        );
+        const dbServiceFee = Number(product.serviceFee ?? feeRows[0]?.serviceFee ?? 0);
         const unitWeightKg = product.weight && product.weight > 0 ? product.weight : 0.5;
         const unitShippingFee = Math.round(shippingRatePerKg * unitWeightKg);
-        const itemCostVND = (product.basePrice + unitShippingFee + packagingFee) * item.quantity;
+        const unitServiceFee = dbServiceFee > 0 ? dbServiceFee : defaultServiceFee;
+        const itemCostVND = (product.basePrice + unitServiceFee + unitShippingFee + packagingFee) * item.quantity;
         totalVND += itemCostVND;
 
         verifiedItems.push({
           product,
           quantity: item.quantity,
           basePrice: product.basePrice,
+          unitServiceFee,
           unitWeightKg,
           unitShippingFee,
         });
@@ -122,7 +130,7 @@ export async function createOrder(
 
       // 5. Create OrderItems & deduct stock
       for (const item of verifiedItems) {
-        await tx.orderItem.create({
+        const createdItem = await tx.orderItem.create({
           data: {
             orderId: order.id,
             productId: item.product.id,
@@ -133,6 +141,12 @@ export async function createOrder(
             packagingFeeAtPurchase: packagingFee,
           },
         });
+
+        await tx.$executeRawUnsafe(
+          "UPDATE OrderItem SET serviceFeeAtPurchase = ? WHERE id = ?",
+          item.unitServiceFee,
+          createdItem.id
+        );
 
         await tx.product.update({
           where: { id: item.product.id },
@@ -181,19 +195,22 @@ export async function createStripeCheckoutSession(
   }
 
   try {
-    // 1. Fetch fees (shipping is rate per kg; packaging is per unit)
+    // 1. Fetch fees (shipping is rate per kg; packaging is per unit; service is per listing item)
     const fees = await prisma.fee.findMany();
     const shippingRatePerKg = fees.find((f) => f.feeName === "shipping")?.amount || 120000;
     const packagingFee = fees.find((f) => f.feeName === "packaging")?.amount || 30000;
+    const defaultServiceFee = fees.find((f) => f.feeName === "service")?.amount || 0;
 
     let totalVND = 0;
     let totalQuantity = 0;
     let totalShippingVND = 0;
+    let totalServiceVND = 0;
     let totalWeightKg = 0;
     const verifiedItems: {
       product: any;
       quantity: number;
       basePrice: number;
+      unitServiceFee: number;
       unitWeightKg: number;
       unitShippingFee: number;
     }[] = [];
@@ -216,18 +233,26 @@ export async function createStripeCheckoutSession(
         throw new Error(`Insufficient stock for "${product.name}". Only ${product.inventory} available.`);
       }
 
+      const feeRows: any[] = await prisma.$queryRawUnsafe(
+        "SELECT serviceFee FROM Product WHERE id = ? LIMIT 1",
+        product.id
+      );
+      const dbServiceFee = Number(product.serviceFee ?? feeRows[0]?.serviceFee ?? 0);
       const unitWeightKg = product.weight && product.weight > 0 ? product.weight : 0.5;
       const unitShippingFee = Math.round(shippingRatePerKg * unitWeightKg);
-      const itemTotalVND = (product.basePrice + unitShippingFee + packagingFee) * item.quantity;
+      const unitServiceFee = dbServiceFee > 0 ? dbServiceFee : defaultServiceFee;
+      const itemTotalVND = (product.basePrice + unitServiceFee + unitShippingFee + packagingFee) * item.quantity;
       totalVND += itemTotalVND;
       totalQuantity += item.quantity;
       totalShippingVND += unitShippingFee * item.quantity;
+      totalServiceVND += unitServiceFee * item.quantity;
       totalWeightKg += unitWeightKg * item.quantity;
 
       verifiedItems.push({
         product,
         quantity: item.quantity,
         basePrice: product.basePrice,
+        unitServiceFee,
         unitWeightKg,
         unitShippingFee,
       });
@@ -250,7 +275,7 @@ export async function createStripeCheckoutSession(
 
     // 4. Create OrderItems linked to this pending order
     for (const item of verifiedItems) {
-      await prisma.orderItem.create({
+      const createdItem = await prisma.orderItem.create({
         data: {
           orderId: order.id,
           productId: item.product.id,
@@ -261,6 +286,11 @@ export async function createStripeCheckoutSession(
           packagingFeeAtPurchase: packagingFee,
         },
       });
+      await prisma.$executeRawUnsafe(
+        "UPDATE OrderItem SET serviceFeeAtPurchase = ? WHERE id = ?",
+        item.unitServiceFee,
+        createdItem.id
+      );
     }
 
     // 5. Construct transparent Stripe line items
@@ -268,13 +298,13 @@ export async function createStripeCheckoutSession(
 
     // Craft base items
     for (const item of verifiedItems) {
-      const unitCents = Math.round((item.basePrice / EXCHANGE_RATE) * 100);
+      const unitCents = Math.round(((item.basePrice + item.unitServiceFee) / EXCHANGE_RATE) * 100);
       lineItems.push({
         price_data: {
           currency: "usd",
           product_data: {
-            name: `${item.product.name} (Seller Base Price)`,
-            description: `Authentic Vietnamese Product • ${item.unitWeightKg} kg • ${item.basePrice.toLocaleString()} VND base`,
+            name: `${item.product.name}`,
+            description: `Authentic Vietnamese Product • ${item.unitWeightKg} kg • ${(item.basePrice + item.unitServiceFee).toLocaleString()} VND`,
           },
           unit_amount: unitCents,
         },
@@ -446,12 +476,14 @@ export async function createPaymentIntent(
     const fees = await prisma.fee.findMany();
     const shippingRatePerKg = fees.find((f) => f.feeName === "shipping")?.amount || 120000;
     const packagingFee = fees.find((f) => f.feeName === "packaging")?.amount || 30000;
+    const defaultServiceFee = fees.find((f) => f.feeName === "service")?.amount || 0;
 
     let totalVND = 0;
     const verifiedItems: {
       product: any;
       quantity: number;
       basePrice: number;
+      unitServiceFee: number;
       unitWeightKg: number;
       unitShippingFee: number;
     }[] = [];
@@ -473,15 +505,22 @@ export async function createPaymentIntent(
         throw new Error(`Insufficient stock for "${product.name}". Only ${product.inventory} available.`);
       }
 
+      const feeRows: any[] = await prisma.$queryRawUnsafe(
+        "SELECT serviceFee FROM Product WHERE id = ? LIMIT 1",
+        product.id
+      );
+      const dbServiceFee = Number(product.serviceFee ?? feeRows[0]?.serviceFee ?? 0);
       const unitWeightKg = product.weight && product.weight > 0 ? product.weight : 0.5;
       const unitShippingFee = Math.round(shippingRatePerKg * unitWeightKg);
-      const itemTotalVND = (product.basePrice + unitShippingFee + packagingFee) * item.quantity;
+      const unitServiceFee = dbServiceFee > 0 ? dbServiceFee : defaultServiceFee;
+      const itemTotalVND = (product.basePrice + unitServiceFee + unitShippingFee + packagingFee) * item.quantity;
       totalVND += itemTotalVND;
 
       verifiedItems.push({
         product,
         quantity: item.quantity,
         basePrice: product.basePrice,
+        unitServiceFee,
         unitWeightKg,
         unitShippingFee,
       });
@@ -504,7 +543,7 @@ export async function createPaymentIntent(
     });
 
     for (const item of verifiedItems) {
-      await prisma.orderItem.create({
+      const createdItem = await prisma.orderItem.create({
         data: {
           orderId: order.id,
           productId: item.product.id,
@@ -515,6 +554,11 @@ export async function createPaymentIntent(
           packagingFeeAtPurchase: packagingFee,
         },
       });
+      await prisma.$executeRawUnsafe(
+        "UPDATE OrderItem SET serviceFeeAtPurchase = ? WHERE id = ?",
+        item.unitServiceFee,
+        createdItem.id
+      );
     }
 
     // Create Stripe PaymentIntent

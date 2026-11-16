@@ -11,6 +11,7 @@ import {
   Mail,
   ArrowRight,
   Shield,
+  Crown,
   ShoppingBag,
   Store,
   AlertCircle,
@@ -43,7 +44,7 @@ export default function LoginPage() {
     });
   };
 
-  const handleDemoLogin = (role: "seller" | "buyer" | "admin") => {
+  const handleDemoLogin = (role: "seller" | "buyer" | "admin" | "site_admin") => {
     setIsDemoPending(role);
     setError("");
     startTransition(async () => {
@@ -141,7 +142,7 @@ export default function LoginPage() {
         </div>
 
         {/* Demo Fast Logins */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           <button
             type="button"
             onClick={() => handleDemoLogin("seller")}
@@ -177,8 +178,21 @@ export default function LoginPage() {
             <div className="p-2 bg-cyan-100 text-[#164e63] rounded-full mb-1 group-hover:scale-105 transition-transform">
               <Shield className="h-4 w-4" />
             </div>
-            <span className="text-xs font-bold text-text-primary">Admin</span>
+            <span className="text-xs font-bold text-text-primary">Hub Admin</span>
             <span className="text-[10px] text-text-secondary">Saigon Hub</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleDemoLogin("site_admin")}
+            disabled={isPending}
+            className="flex flex-col items-center justify-center p-3 rounded-[20px] border border-amber-200 hover:border-amber-500 bg-amber-50/50 hover:bg-white text-center transition-all cursor-pointer group"
+          >
+            <div className="p-2 bg-amber-100 text-amber-700 rounded-full mb-1 group-hover:scale-105 transition-transform">
+              <Crown className="h-4 w-4" />
+            </div>
+            <span className="text-xs font-bold text-text-primary">Site Admin</span>
+            <span className="text-[10px] text-amber-700 font-semibold">Superuser</span>
           </button>
         </div>
 

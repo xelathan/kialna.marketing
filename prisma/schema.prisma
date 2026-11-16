@@ -12,7 +12,8 @@ datasource db {
 
 model User {
   id                String    @id @default(uuid())
-  role              String    // "seller", "buyer", "admin"
+  role              String    // "seller", "buyer", "admin" (Saigon Hub Admin), "site_admin" (Site Admin - supersedes Hub Admin)
+  status            String    @default("active") // "active", "disabled"
   name              String
   email             String    @unique
   phone             String?
@@ -37,6 +38,7 @@ model Product {
   description String?
   category    String      @default("General")
   basePrice   Float       // Base price in VND
+  serviceFee  Float       @default(0) // Additional service fee in VND set by Site Admin for this listing item
   weight      Float       @default(0.5) // Product weight in kg (used by shipper to calculate shipping cost)
   inventory   Int         @default(0)
   images      String      // Store images as JSON array string: '["url1", "url2"]'
@@ -83,6 +85,7 @@ model OrderItem {
   quantity                 Int
   weightAtPurchase         Float   @default(0.5) // Unit weight in kg at time of purchase
   sellerPriceAtPurchase    Float
+  serviceFeeAtPurchase     Float   @default(0)   // Additional listing service fee in VND at time of purchase
   shippingFeeAtPurchase    Float
   packagingFeeAtPurchase   Float
 }

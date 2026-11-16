@@ -15,7 +15,16 @@ export async function getSellerProducts() {
       where: { sellerId: user.id },
       orderBy: { createdAt: "desc" },
     });
-    return { success: true, products };
+    const feeRows: any[] = await prisma.$queryRawUnsafe(
+      "SELECT id, serviceFee FROM Product WHERE sellerId = ?",
+      user.id
+    );
+    const feeMap = new Map(feeRows.map((r) => [r.id, Number(r.serviceFee || 0)]));
+    const enrichedProducts = products.map((p: any) => ({
+      ...p,
+      serviceFee: p.serviceFee ?? feeMap.get(p.id) ?? 0,
+    }));
+    return { success: true, products: enrichedProducts };
   } catch (error: any) {
     return { success: false, error: error.message || "Failed to fetch products" };
   }
@@ -26,9 +35,16 @@ export async function getFees() {
     const fees = await prisma.fee.findMany();
     const shipping = fees.find((f) => f.feeName === "shipping")?.amount || 0;
     const packaging = fees.find((f) => f.feeName === "packaging")?.amount || 0;
-    return { success: true, shipping, packaging };
+    const service = fees.find((f) => f.feeName === "service")?.amount || 0;
+    return { success: true, shipping, packaging, service };
   } catch (error: any) {
-    return { success: false, error: error.message || "Failed to fetch fees", shipping: 0, packaging: 0 };
+    return {
+      success: false,
+      error: error.message || "Failed to fetch fees",
+      shipping: 0,
+      packaging: 0,
+      service: 0,
+    };
   }
 }
 

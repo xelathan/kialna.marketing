@@ -1,6 +1,6 @@
 import { getCurrentUser } from "@/lib/session";
 import { getSellerProducts, getSellerOrders } from "@/app/actions/products";
-import { getAdminOrders, getPlatformFees } from "@/app/actions/admin";
+import { getAdminOrders, getAllAdminProducts, getHubAdmins, getPlatformFees } from "@/app/actions/admin";
 import SellerDashboard from "@/components/SellerDashboard";
 import BuyerDashboard from "@/components/BuyerDashboard";
 import AdminDashboard from "@/components/AdminDashboard";
@@ -263,33 +263,56 @@ export default async function Home() {
 
   // Route: Buyer Interface (Phase 3)
   if (user.role === "buyer") {
-    const products = await prisma.product.findMany({
+    const rawProducts = await prisma.product.findMany({
       where: { status: "active" },
       orderBy: { createdAt: "desc" },
     });
+    const feeRows: any[] = await prisma.$queryRawUnsafe(
+      "SELECT id, serviceFee FROM Product"
+    );
+    const feeMap = new Map(feeRows.map((r) => [r.id, Number(r.serviceFee || 0)]));
+    const products = rawProducts.map((p: any) => ({
+      ...p,
+      serviceFee: p.serviceFee ?? feeMap.get(p.id) ?? 0,
+    }));
+    const feesResult = await getPlatformFees();
 
     return (
       <BuyerDashboard
         initialProducts={products}
         currentUser={user}
+        initialFees={{
+          shipping: feesResult.shipping ?? 120000,
+          packaging: feesResult.packaging ?? 30000,
+          service: feesResult.service ?? 0,
+        }}
       />
     );
   }
 
-  // Route: Admin Logistics Hub (Phase 4)
-  if (user.role === "admin") {
+  // Route: Admin Logistics Hub & Site Admin (Supersedes Hub Admin)
+  if (user.role === "admin" || user.role === "site_admin") {
     const ordersResult = await getAdminOrders();
+    const productsResult =
+      user.role === "site_admin" ? await getAllAdminProducts() : { success: true, products: [] };
+    const hubAdminsResult =
+      user.role === "site_admin" ? await getHubAdmins() : { success: true, hubAdmins: [] };
     const feesResult = await getPlatformFees();
 
     const orders = ordersResult.success ? ordersResult.orders : [];
+    const products = productsResult.success ? productsResult.products : [];
+    const hubAdmins = hubAdminsResult.success ? hubAdminsResult.hubAdmins : [];
     const fees = {
       shipping: feesResult.shipping ?? 120000,
       packaging: feesResult.packaging ?? 30000,
+      service: feesResult.service ?? 0,
     };
 
     return (
       <AdminDashboard
         initialOrders={orders || []}
+        initialProducts={products || []}
+        initialHubAdmins={hubAdmins || []}
         initialFees={fees}
         currentUser={user}
       />

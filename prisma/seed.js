@@ -57,10 +57,22 @@ async function main() {
     },
   });
 
+  const siteAdmin = await prisma.user.create({
+    data: {
+      role: "site_admin",
+      name: "Kialna Site Admin",
+      email: "siteadmin@kialna.shop",
+      phone: "+18005550199",
+      address: "Kialna Global HQ & Saigon Hub Oversight",
+      passwordHash: defaultPasswordHash,
+    },
+  });
+
   console.log("Created users with password 'password123':", {
     sellerId: seller.id,
     buyerId: buyer.id,
     adminId: admin.id,
+    siteAdminId: siteAdmin.id,
   });
 
   // 3. Create Fees (in VND)
@@ -78,9 +90,17 @@ async function main() {
     },
   });
 
+  const serviceFee = await prisma.fee.create({
+    data: {
+      feeName: "service",
+      amount: 25000.0, // 25,000 VND ($1.00 USD) default platform service fee
+    },
+  });
+
   console.log("Created fees:", {
     shippingFee: shippingFee.amount,
     packagingFee: packagingFee.amount,
+    serviceFee: serviceFee.amount,
   });
 
   // 4. Create Products (linked to the Seller A)

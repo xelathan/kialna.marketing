@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { switchRole, signOut } from "@/app/actions/auth";
-import { User, Shield, ShoppingBag, RefreshCw, LogOut, LogIn, UserPlus } from "lucide-react";
+import { User, Shield, Crown, ShoppingBag, RefreshCw, LogOut, LogIn, UserPlus } from "lucide-react";
 import type { Language } from "./LanguageSwitcher";
 
 interface RoleSwitcherProps {
@@ -25,6 +25,20 @@ export default function RoleSwitcher({ currentUser, lang }: RoleSwitcherProps) {
 
   const roles = [
     {
+      name: "site_admin",
+      label: isVi ? "Quản trị Hệ thống (Site Admin)" : "Site Admin (Superuser)",
+      shortLabel: isVi ? "SITE ADMIN" : "SITE ADMIN",
+      icon: Crown,
+      color: "text-amber-700 bg-amber-50",
+    },
+    {
+      name: "admin",
+      label: isVi ? "Quản trị Admin Hub" : "Admin Hub",
+      shortLabel: isVi ? "ADMIN HUB" : "ADMIN HUB",
+      icon: Shield,
+      color: "text-[#164e63] bg-cyan-50",
+    },
+    {
       name: "seller",
       label: isVi ? "Người bán Việt Nam" : "Vietnamese Seller",
       shortLabel: isVi ? "NGƯỜI BÁN" : "SELLER",
@@ -37,13 +51,6 @@ export default function RoleSwitcher({ currentUser, lang }: RoleSwitcherProps) {
       shortLabel: isVi ? "NGƯỜI MUA" : "BUYER",
       icon: User,
       color: "text-teal-700 bg-teal-50",
-    },
-    {
-      name: "admin",
-      label: isVi ? "Quản trị Saigon Hub" : "Saigon Hub Admin",
-      shortLabel: isVi ? "QUẢN TRỊ" : "ADMIN",
-      icon: Shield,
-      color: "text-[#164e63] bg-cyan-50",
     },
   ];
 

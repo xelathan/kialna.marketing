@@ -21,6 +21,17 @@ export async function signIn(formData: { email: string; password?: string }) {
     return { success: false, error: "No account found with this email." };
   }
 
+  const statusRows: any[] = await prisma.$queryRawUnsafe(
+    "SELECT status FROM User WHERE id = ? LIMIT 1",
+    user.id
+  );
+  if (statusRows[0]?.status === "disabled") {
+    return {
+      success: false,
+      error: "This account has been disabled by the Site Admin. Please contact support.",
+    };
+  }
+
   // If user has a passwordHash, verify it
   if (user.passwordHash) {
     if (!password) {
@@ -101,9 +112,38 @@ export async function signOut() {
 }
 
 export async function switchRole(role: string) {
-  const user = await prisma.user.findFirst({
+  const candidates = await prisma.user.findMany({
     where: { role },
   });
+
+  const disabledRows: any[] = await prisma.$queryRawUnsafe(
+    'SELECT id FROM User WHERE role = ? AND status = "disabled"',
+    role
+  );
+  const disabledIds = new Set(disabledRows.map((r) => r.id));
+
+  let user = candidates.find((u) => !disabledIds.has(u.id)) || null;
+
+  // Auto-provision Site Admin if not yet seeded in existing DB
+  if (!user && role === "site_admin") {
+    const passwordHash = await hashPassword("password123");
+    user = await prisma.user.upsert({
+      where: { email: "siteadmin@kialna.shop" },
+      update: { role: "site_admin" },
+      create: {
+        role: "site_admin",
+        name: "Kialna Site Admin",
+        email: "siteadmin@kialna.shop",
+        phone: "+18005550199",
+        address: "Kialna Global HQ & Saigon Hub Oversight",
+        passwordHash,
+      },
+    });
+    await prisma.$executeRawUnsafe(
+      'UPDATE User SET status = "active" WHERE id = ?',
+      user.id
+    );
+  }
 
   if (user) {
     await createSession(user.id);
@@ -111,7 +151,10 @@ export async function switchRole(role: string) {
     return { success: true, user };
   }
 
-  return { success: false, error: `No user with role "${role}" found.` };
+  return {
+    success: false,
+    error: `No active user with role "${role}" found (account may be disabled or deleted).`,
+  };
 }
 
 export async function getAllUsers() {
