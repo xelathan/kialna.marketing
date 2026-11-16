@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import prisma from "@/lib/db";
+import prisma, { ensureDbSchema } from "@/lib/db";
 import { signToken, verifyToken } from "@/lib/auth-crypto";
 
 export interface SessionUser {
@@ -56,17 +56,17 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
   }
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    });
-
-    if (!user) return null;
-
-    const statusRows: any[] = await prisma.$queryRawUnsafe(
-      "SELECT status FROM User WHERE id = ? LIMIT 1",
+    await ensureDbSchema();
+    const rows: any[] = await prisma.$queryRawUnsafe(
+      `SELECT id, role, status, name, email, phone, address, logo, bankName, bankAccountNumber, bankAccountName, vietQrImage
+       FROM "User"
+       WHERE id = ?
+       LIMIT 1`,
       userId
     );
-    if (statusRows[0]?.status === "disabled") return null;
+
+    const user = rows[0];
+    if (!user || user.status === "disabled") return null;
 
     return {
       id: user.id,

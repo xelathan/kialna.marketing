@@ -1,6 +1,7 @@
 "use server";
 
-import prisma from "@/lib/db";
+import crypto from "node:crypto";
+import prisma, { ensureDbSchema } from "@/lib/db";
 import { getCurrentUser } from "@/lib/session";
 import { hashPassword } from "@/lib/auth-crypto";
 import { revalidatePath } from "next/cache";
@@ -277,23 +278,21 @@ export async function getHubAdmins() {
   }
 
   try {
-    const users = await prisma.user.findMany({
-      where: { role: "admin" },
-      orderBy: { createdAt: "desc" },
-    });
-
-    const statusRows: any[] = await prisma.$queryRawUnsafe(
-      'SELECT id, status FROM User WHERE role = "admin"'
+    await ensureDbSchema();
+    const rows: any[] = await prisma.$queryRawUnsafe(
+      `SELECT id, name, email, phone, address, status, createdAt, updatedAt
+       FROM "User"
+       WHERE role = 'admin'
+       ORDER BY createdAt DESC`
     );
-    const statusMap = new Map(statusRows.map((r) => [r.id, r.status || "active"]));
 
-    const hubAdmins = users.map((u) => ({
+    const hubAdmins = rows.map((u) => ({
       id: u.id,
       name: u.name,
       email: u.email,
       phone: u.phone,
       address: u.address,
-      status: statusMap.get(u.id) || "active",
+      status: u.status || "active",
       createdAt: u.createdAt,
       updatedAt: u.updatedAt,
     }));
@@ -334,41 +333,41 @@ export async function createHubAdmin(data: {
   }
 
   try {
-    const existing = await prisma.user.findUnique({
-      where: { email },
-    });
+    await ensureDbSchema();
+    const existingRows: any[] = await prisma.$queryRawUnsafe(
+      `SELECT id FROM "User" WHERE lower(email) = ? LIMIT 1`,
+      email
+    );
 
-    if (existing) {
+    if (existingRows.length > 0) {
       return { success: false, error: "An account with this email already exists." };
     }
 
     const passwordHash = await hashPassword(password);
-
-    const created = await prisma.user.create({
-      data: {
-        role: "admin",
-        name,
-        email,
-        phone: data.phone?.trim() || null,
-        address: data.address?.trim() || "Saigon Hub",
-        passwordHash,
-      },
-    });
+    const newId = crypto.randomUUID();
+    const phone = data.phone?.trim() || null;
+    const address = data.address?.trim() || "Saigon Hub";
 
     await prisma.$executeRawUnsafe(
-      'UPDATE User SET status = "active" WHERE id = ?',
-      created.id
+      `INSERT INTO "User" (id, role, status, name, email, phone, address, passwordHash, createdAt, updatedAt)
+       VALUES (?, 'admin', 'active', ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+      newId,
+      name,
+      email,
+      phone,
+      address,
+      passwordHash
     );
 
     const hubAdmin = {
-      id: created.id,
-      name: created.name,
-      email: created.email,
-      phone: created.phone,
-      address: created.address,
+      id: newId,
+      name,
+      email,
+      phone,
+      address,
       status: "active",
-      createdAt: created.createdAt,
-      updatedAt: created.updatedAt,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     revalidatePath("/");
@@ -411,53 +410,66 @@ export async function updateHubAdmin(
   }
 
   try {
-    const existing = await prisma.user.findUnique({
-      where: { id: hubAdminId },
-    });
+    await ensureDbSchema();
+    const existingRows: any[] = await prisma.$queryRawUnsafe(
+      `SELECT id, role, email, status, createdAt FROM "User" WHERE id = ? LIMIT 1`,
+      hubAdminId
+    );
+    const existing = existingRows[0];
 
     if (!existing || existing.role !== "admin") {
       return { success: false, error: "Hub Admin account not found." };
     }
 
-    if (email !== existing.email) {
-      const emailTaken = await prisma.user.findUnique({
-        where: { email },
-      });
-      if (emailTaken && emailTaken.id !== hubAdminId) {
+    if (email !== existing.email?.toLowerCase()) {
+      const emailTakenRows: any[] = await prisma.$queryRawUnsafe(
+        `SELECT id FROM "User" WHERE lower(email) = ? AND id != ? LIMIT 1`,
+        email,
+        hubAdminId
+      );
+      if (emailTakenRows.length > 0) {
         return { success: false, error: "Another account with this email already exists." };
       }
     }
 
-    const updateData: any = {
-      name,
-      email,
-      phone: data.phone?.trim() || null,
-      address: data.address?.trim() || null,
-    };
+    const phone = data.phone?.trim() || null;
+    const address = data.address?.trim() || null;
 
     if (password) {
-      updateData.passwordHash = await hashPassword(password);
+      const passwordHash = await hashPassword(password);
+      await prisma.$executeRawUnsafe(
+        `UPDATE "User"
+         SET name = ?, email = ?, phone = ?, address = ?, passwordHash = ?, updatedAt = CURRENT_TIMESTAMP
+         WHERE id = ? AND role = 'admin'`,
+        name,
+        email,
+        phone,
+        address,
+        passwordHash,
+        hubAdminId
+      );
+    } else {
+      await prisma.$executeRawUnsafe(
+        `UPDATE "User"
+         SET name = ?, email = ?, phone = ?, address = ?, updatedAt = CURRENT_TIMESTAMP
+         WHERE id = ? AND role = 'admin'`,
+        name,
+        email,
+        phone,
+        address,
+        hubAdminId
+      );
     }
 
-    const updated = await prisma.user.update({
-      where: { id: hubAdminId },
-      data: updateData,
-    });
-
-    const statusRows: any[] = await prisma.$queryRawUnsafe(
-      "SELECT status FROM User WHERE id = ? LIMIT 1",
-      hubAdminId
-    );
-
     const hubAdmin = {
-      id: updated.id,
-      name: updated.name,
-      email: updated.email,
-      phone: updated.phone,
-      address: updated.address,
-      status: statusRows[0]?.status || "active",
-      createdAt: updated.createdAt,
-      updatedAt: updated.updatedAt,
+      id: hubAdminId,
+      name,
+      email,
+      phone,
+      address,
+      status: existing.status || "active",
+      createdAt: existing.createdAt,
+      updatedAt: new Date(),
     };
 
     revalidatePath("/");
@@ -480,16 +492,19 @@ export async function toggleHubAdminStatus(
   }
 
   try {
-    const existing = await prisma.user.findUnique({
-      where: { id: hubAdminId },
-    });
+    await ensureDbSchema();
+    const existingRows: any[] = await prisma.$queryRawUnsafe(
+      `SELECT id, role, name, email, phone, address, createdAt FROM "User" WHERE id = ? LIMIT 1`,
+      hubAdminId
+    );
+    const existing = existingRows[0];
 
     if (!existing || existing.role !== "admin") {
       return { success: false, error: "Hub Admin account not found." };
     }
 
     await prisma.$executeRawUnsafe(
-      'UPDATE User SET status = ?, updatedAt = CURRENT_TIMESTAMP WHERE id = ? AND role = "admin"',
+      `UPDATE "User" SET status = ?, updatedAt = CURRENT_TIMESTAMP WHERE id = ? AND role = 'admin'`,
       nextStatus,
       hubAdminId
     );
@@ -522,17 +537,21 @@ export async function deleteHubAdmin(hubAdminId: string) {
   }
 
   try {
-    const existing = await prisma.user.findUnique({
-      where: { id: hubAdminId },
-    });
+    await ensureDbSchema();
+    const existingRows: any[] = await prisma.$queryRawUnsafe(
+      `SELECT id, role FROM "User" WHERE id = ? LIMIT 1`,
+      hubAdminId
+    );
+    const existing = existingRows[0];
 
     if (!existing || existing.role !== "admin") {
       return { success: false, error: "Hub Admin account not found." };
     }
 
-    await prisma.user.delete({
-      where: { id: hubAdminId },
-    });
+    await prisma.$executeRawUnsafe(
+      `DELETE FROM "User" WHERE id = ? AND role = 'admin'`,
+      hubAdminId
+    );
 
     revalidatePath("/");
     return { success: true };
